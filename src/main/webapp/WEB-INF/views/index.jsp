@@ -67,11 +67,11 @@
     <h2>Hệ thống Yonex</h2>
     <% 
         
-        com.sport.model.User userObj = (com.sport.model.User) session.getAttribute("user");
+        com.sport.entity.User userObj = (com.sport.entity.User) session.getAttribute("user");
         if(userObj != null){ 
     %>
         <p>Xin chào mừng trở lại,</p>
-        <p class="user-name"><%= userObj.getName() %></p>
+        <p class="user-name"><%= userObj.getFullName() %></p>
         <p style="font-size: 12px; color: #666;"><%= userObj.getEmail() %></p>
     <% } else { %>
         <p>Vui lòng <a href="${pageContext.request.contextPath}/login.htm">đăng nhập</a>.</p>
