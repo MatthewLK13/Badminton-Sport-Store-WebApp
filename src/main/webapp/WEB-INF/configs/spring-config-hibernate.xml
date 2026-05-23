@@ -15,13 +15,12 @@
 			http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 	
 	<!-- Kết nối CSDL -->
-	<bean id="dataSource" 
-	    	class="org.springframework.jdbc.datasource.DriverManagerDataSource"
-			p:driverClassName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-			p:url="jdbc:sqlserver://localhost:1433;databaseName=BadmintonShop;encrypt=true;trustServerCertificate=true;"
-			p:username="admin"
-			p:password="123456">
-	</bean>
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+    <property name="url" value="jdbc:sqlserver://localhost:1433;databaseName=BadmintonShop;encrypt=false;trustServerCertificate=true;"/>
+    <property name="username" value="sa"/>
+    <property name="password" value="123456"/>
+</bean>
 	
 	<!-- Cấu hình Hibernate -->
 	<bean id="sessionFactory" 

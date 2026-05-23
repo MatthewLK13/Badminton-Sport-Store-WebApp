@@ -1,0 +1,70 @@
+@charset "UTF-8";
+/* 1. Đặt thuộc tính cho thẻ LI chứa chữ SẢN PHẨM */
+.dropdown-target {
+    position: relative; /* Giữ làm điểm neo cho menu con */
+}
+
+/* 2. Giấu cái bảng Mega Menu đi và cho nó bay lên trên (Floating) */
+.mega-menu {
+    position: absolute;   /* Cho phép menu bay lơ lửng, không đẩy chữ khác xuống */
+    top: 100%;            /* Xuất hiện ngay sát phía dưới chữ SẢN PHẨM */
+    left: 50%;            /* Căn lề chuẩn */
+    transform: translateX(-50%); /* Căn giữa menu so với chữ SẢN PHẨM */
+    width: 600px;         /* Đặt độ rộng cố định cho cái bảng (hoặc dùng 100vw nếu thích tràn màn hình) */
+    background-color: #ffffff;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15); /* Tạo bóng đổ bồng bềnh */
+    padding: 20px;
+    border-radius: 4px;   /* Bo góc nhẹ cho đẹp */
+    z-index: 9999;        /* Đảm bảo nó luôn nằm đè lên nội dung bên dưới (như cái chữ Hệ thống Yonex) */
+    
+    /* CHÌA KHÓA: Ban đầu giấu hoàn toàn nó đi */
+    display: none; 
+}
+
+/* 3. Phép thuật Hover: Khi rê chuột vào LI, hiện .mega-menu bên trong nó lên */
+.dropdown-target:hover .mega-menu {
+    display: block; 
+}
+
+/* --- CẤU HÌNH LAYOUT BÊN TRONG MENU (Chia cột giống VNB) --- */
+.mega-menu-content {
+    display: flex;         /* Sắp xếp các cột nằm ngang hàng nhau */
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.menu-column {
+    flex: 1;               /* Chia đều độ rộng cho các cột */
+    text-align: left;      /* Căn lề trái cho chữ chỉnh chu */
+}
+
+.menu-column h3 {
+    font-size: 14px;
+    color: #000;          /* Đổi màu đen đậm cho giống phong cách Yonex */
+    margin-bottom: 12px;
+    font-weight: bold;
+    border-bottom: 2px solid #000; /* Đường gạch chân dưới tiêu đề cột */
+    padding-bottom: 4px;
+}
+
+.menu-column ul {
+    list-style: none;     /* Bỏ mấy cái dấu chấm tròn đen xấu xí đi */
+    padding: 0;
+    margin: 0;
+}
+
+.menu-column ul li {
+    margin-bottom: 8px;   /* Khoảng cách giữa các dòng */
+}
+
+.menu-column ul li a {
+    font-size: 13px;
+    color: #555;          /* Màu chữ xám thanh lịch */
+    text-decoration: none;
+    display: block;
+}
+
+/* Đổi màu chữ sang xanh hoặc đỏ khi rê chuột vào từng dòng nhỏ */
+.menu-column ul li a:hover {
+    color: #e36009;       /* Màu cam giống cái icon user của bạn */
+}

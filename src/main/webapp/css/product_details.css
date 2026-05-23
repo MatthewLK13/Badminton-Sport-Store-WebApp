@@ -1,0 +1,268 @@
+@charset "UTF-8";
+
+/* ===== LAYOUT CHÍNH ===== */
+.detail-container {
+    max-width: 1300px;
+    margin: 40px auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    box-sizing: border-box;
+}
+
+/* ===== KHU VỰC ẢNH THEO DÚNG FIGMA (ẢNH THU NHỎ NẰM DƯỚI) ===== */
+.detail-images {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+}
+
+/* Khung ảnh chính phía trên */
+.main-image-wrapper {
+    background: #F5F5F5;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1/1; /* Giữ khung ảnh chính luôn hình vuông */
+    padding: 30px;
+    box-sizing: border-box;
+}
+
+.main-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Giữ nguyên tỷ lệ ảnh, hiển thị đầy đủ bên trong khung */
+    transition: transform 0.3s ease;
+}
+
+.main-image:hover {
+    transform: scale(1.05); /* Hiệu ứng zoom nhẹ khi di chuột vào */
+}
+
+/* Danh sách Thumbnail nằm ngang phía dưới ảnh chính */
+.thumb-list {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    justify-content: flex-start; /* Thumbnail nằm từ bên trái sang */
+    overflow-x: auto; /* Cho phép cuộn ngang nếu nhiều thumbnail */
+}
+
+.thumb-wrapper {
+    width: 75px; /* Kích thước thumbnail cố định */
+    height: 75px;
+    background: #F5F5F5;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+    flex-shrink: 0; /* Không cho phép thumbnail bị bóp méo */
+}
+
+.thumb-wrapper.active,
+.thumb-wrapper:hover {
+    border-color: #000;
+}
+
+.thumb-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* ===== THÔNG TIN SẢN PHẨM (TẠM THỜI ĐỂ TRỐNG STYLE CHO BƯỚC SAU) ===== */
+/* ===== ĐỊNH DẠNG CHI TIẾT CỘT PHẢI ===== */
+.detail-info {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', sans-serif; /* Đảm bảo giao diện trông hiện đại */
+}
+
+/* Thể loại & Badge Mới */
+.info-top-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.product-category {
+    font-size: 14px;
+    color: #666;
+}
+
+.badge-new {
+    align-self: flex-start;
+    background-color: #000;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    text-transform: uppercase;
+    border-radius: 2px;
+}
+
+/* Tên & Giá */
+.detail-name {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000;
+    margin: 0 0 8px 0;
+}
+
+.detail-price {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+    margin: 0 0 24px 0;
+}
+
+/* Các section tùy chọn (Màu sắc, Kích cỡ) */
+.option-section {
+    margin-bottom: 24px;
+}
+
+.option-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 12px;
+}
+
+/* Color Picker */
+.color-picker-list {
+    display: flex;
+    gap: 10px;
+}
+
+.color-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    border: 1px solid #dbdbdb;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.color-box.active {
+    border: 2px solid #000;
+    transform: scale(1.05);
+}
+
+/* Size Picker Grid (Dạng lưới như trong ảnh Figma) */
+.size-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Chia đều thành 5 cột mỗi hàng */
+    gap: 8px;
+    max-width: 400px; /* Khống chế chiều rộng khu vực chọn size */
+}
+
+.size-box {
+    height: 40px;
+    border: 1px solid #E5E5E5;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+    cursor: pointer;
+    background-color: #fff;
+    transition: all 0.2s;
+}
+
+.size-box:hover {
+    border-color: #000;
+}
+
+.size-box.active {
+    border-color: #000;
+    background-color: #F5F5F5;
+    font-weight: 600;
+}
+
+.size-box.disabled {
+    background-color: #f9f9f9;
+    color: #ccc;
+    border-color: #eee;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Khung chú ý kích cỡ */
+.size-note-box {
+    border: 1px solid #000;
+    padding: 16px;
+    border-radius: 4px;
+    max-width: 400px;
+    margin-bottom: 24px;
+    box-sizing: border-box;
+}
+
+.note-title {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-decoration: underline;
+}
+
+.note-desc {
+    font-size: 13px;
+    color: #333;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Khu vực Nút bấm hành động */
+.actions-wrapper {
+    display: flex;
+    gap: 12px;
+    max-width: 400px;
+}
+
+.btn-add-to-cart {
+    flex: 1;
+    height: 50px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-add-to-cart:hover {
+    background-color: #222;
+}
+
+.btn-wishlist {
+    width: 50px;
+    height: 50px;
+    background-color: #fff;
+    border: 1px solid #E5E5E5;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #000;
+    transition: all 0.2s;
+}
+
+.btn-wishlist:hover {
+    border-color: #000;
+    background-color: #f9f9f9;
+}

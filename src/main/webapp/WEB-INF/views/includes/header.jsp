@@ -1,4 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/header.css">
+<%
+    // Lấy user từ session để kiểm tra đăng nhập
+    com.sport.entity.User sessionUser = (com.sport.entity.User) session.getAttribute("user");
+    boolean isLoggedIn = (sessionUser != null);
+%>
+
 <!-- Top Black Bar -->
 <div class="black-bar"></div>
 
@@ -8,7 +15,18 @@
         <a href="#">Tìm cửa hàng</a>
         <a href="#">Trợ giúp</a>
         <a href="#">Theo dõi đơn hàng</a>
-        <a href="${pageContext.request.contextPath}/login.htm">Đăng nhập</a>
+
+        <% if (isLoggedIn) { %>
+            <%-- Đã đăng nhập: hiển thị tên + Đăng xuất --%>
+            <a href="${pageContext.request.contextPath}/profile.htm">
+                <%= sessionUser.getFullName() %>
+            </a>
+            <a href="${pageContext.request.contextPath}/logout.htm">Đăng xuất</a>
+        <% } else { %>
+            <%-- Chưa đăng nhập: hiển thị Đăng nhập --%>
+            <a href="${pageContext.request.contextPath}/login.htm">Đăng nhập</a>
+        <% } %>
+
         <a href="#">VI</a>
     </div>
 
@@ -17,10 +35,44 @@
             <img src="${pageContext.request.contextPath}/images/yonex-logo.png" alt="Yonex Logo">
             <span class="logo-text">YONEX</span>
         </div>
-        
+
         <ul class="nav-center">
-            <li><a href="#">TRANG CHỦ</a></li>
-            <li><a href="#">SẢN PHẨM</a></li>
+            <li><a href="${pageContext.request.contextPath}/home.htm">TRANG CHỦ</a></li>
+            <li class="dropdown-target">
+            <a href="#" class="nav-item-products">SẢN PHẨM ▾</a>
+            
+            <div class="mega-menu">
+                <div class="mega-menu-content">
+                    
+                    <div class="menu-column">
+                        <h3><a href ="${pageContext.request.contextPath}/products/index.htm?id=1">VỢT CẦU LÔNG</a></h3>
+                        <ul>
+                            <li><a href="${pageContext.request.contextPath}/products/index.htm?id=1&brand=Yonex">Vợt Yonex</a></li>
+							<li><a href="${pageContext.request.contextPath}/products/index.htm?id=1&brand=Victor">Vợt Victor</a></li>
+							<li><a href="${pageContext.request.contextPath}/products/index.htm?id=1&brand=Lining">Vợt Lining</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-column">
+                        <h3><a href ="#">GIÀY CẦU LÔNG</a></h3>
+                        <ul>
+                            <li><a href="${pageContext.request.contextPath}/products/index.htm?id=2&brand=1">Giày Yonex</a></li>
+                            <li><a href="${pageContext.request.contextPath}/products/index.htm?id=2&brand=2">Giày Kawasaki</a></li>
+                            <li><a href="${pageContext.request.contextPath}/products/index.htm?id=2&brand=3">Giày Kumpoo</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="menu-column">
+                        <h3><a href ="#">ÁO CẦU LÔNG</a></h3>
+                        <ul>
+                            <li><a href="${pageContext.request.contextPath}/products/index.htm?id=3&brand=1">Áo Yonex</a></li>
+                            <li><a href="${pageContext.request.contextPath}/products/index.htm?id=3&brand=2">Áo VNB</a></li>
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
             <li><a href="#">ATHLETE INSPIRED</a></li>
             <li class="gray"><a href="#">CÁC THƯƠNG HIỆU</a></li>
             <li class="gray"><a href="#">SALES</a></li>
@@ -32,7 +84,16 @@
                 <i class="fa-solid fa-magnifying-glass" style="font-size: 10px;"></i>
             </div>
             <div class="icons">
-                <i class="fa-regular fa-user"></i>
+                <%-- Icon user: nếu đã login → vào profile, chưa login → vào login --%>
+                <% if (isLoggedIn) { %>
+                    <a href="${pageContext.request.contextPath}/profile.htm" style="color: inherit; text-decoration: none;">
+                        <i class="fa-solid fa-user" style="color: #e36009;"></i>
+                    </a>
+                <% } else { %>
+                    <a href="${pageContext.request.contextPath}/login.htm" style="color: inherit; text-decoration: none;">
+                        <i class="fa-regular fa-user"></i>
+                    </a>
+                <% } %>
                 <i class="fa-solid fa-heart"></i>
                 <i class="fa-solid fa-bag-shopping"></i>
             </div>
