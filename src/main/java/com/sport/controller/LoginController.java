@@ -34,7 +34,8 @@ public class LoginController {
         User user = userDAO.findByEmailOrPhone(username);
 
         if (user != null) {
-            if (user.getPasswordHash().equals(password)) {
+            String hashedInputPassword = org.springframework.util.DigestUtils.md5DigestAsHex(password.getBytes());
+            if (user.getPasswordHash().equals(hashedInputPassword)) {
                 session.setAttribute("user", user);
                 return "redirect:/home.htm"; 
             }
