@@ -8,12 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import javax.mail.internet.MimeMessage;
 
 @Controller
 public class RegisterController {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private JavaMailSender mailSender;
 
     @RequestMapping(value = "/register.htm", method = RequestMethod.GET)
     public String showRegister() {
@@ -82,7 +88,8 @@ public class RegisterController {
         newUser.setFullName(fullname);
         newUser.setEmail(email);
         newUser.setPhone(phone);
-        newUser.setPasswordHash(pass); // TODO: hash password nếu cần bảo mật cao hơn
+        String hashedPassword = org.springframework.util.DigestUtils.md5DigestAsHex(pass.getBytes());
+        newUser.setPasswordHash(hashedPassword);
 
         // Gán role mặc định là User (role_id = 2)
         Role role = new Role();
@@ -90,6 +97,25 @@ public class RegisterController {
         newUser.setRole(role);
 
         userDAO.saveUser(newUser);
+
+        // --- Gửi email thông báo ---
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            
+            helper.setFrom("lmkhoidev@gmail.com", "Yonex Sport");
+            helper.setTo(email);
+            helper.setSubject("Đăng ký tài khoản thành công - Yonex Sport");
+            helper.setText("Chào " + fullname + ",<br><br>"
+                    + "Chúc mừng bạn đã đăng ký tài khoản thành công tại Yonex Sport!<br>"
+                    + "Email đăng nhập: " + email + "<br><br>"
+                    + "Cảm ơn bạn đã đồng hành cùng chúng tôi.", true);
+            
+            mailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Lỗi gửi email: " + e.getMessage());
+        }
 
         model.addAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
         return "login";
