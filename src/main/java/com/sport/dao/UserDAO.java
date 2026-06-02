@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.sport.entity.User;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -21,6 +22,14 @@ public class UserDAO {
         Query query = session.createQuery(hql);
         query.setParameter("id", identifier);
         return (User) query.uniqueResult();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<User> getAllUsers() {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM User u ORDER BY u.id ASC";
+        Query query = session.createQuery(hql);
+        return query.list();
     }
 
     public boolean existsByEmail(String email) {
@@ -39,6 +48,13 @@ public class UserDAO {
         query.setParameter("phone", phone);
         Long count = (Long) query.uniqueResult();
         return count != null && count > 0;
+    }
+
+    public Long countTotalUsers() {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "SELECT COUNT(u) FROM User u";
+        Query query = session.createQuery(hql);
+        return (Long) query.uniqueResult();
     }
 
     public void saveUser(User user) {

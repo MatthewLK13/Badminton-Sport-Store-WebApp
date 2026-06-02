@@ -289,7 +289,7 @@
                             <td>
                                 <!-- Giả lập Role cho phù hợp Figma -->
                                 <c:choose>
-                                    <c:when var="isEven" test="${item.id % 3 == 0}">
+                                    <c:when test="${item.id % 3 == 0}">
                                         <span class="badge admin">Admin</span>
                                     </c:when>
                                     <c:when test="${item.id % 3 == 1}">
