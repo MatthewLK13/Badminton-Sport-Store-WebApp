@@ -17,7 +17,9 @@
 	
 	<!-- Spring MVC Annotation -->
 	<context:annotation-config />
-	<mvc:annotation-driven/>
+	<!-- Thêm vào spring-config-mvc.xml -->
+<context:annotation-config />
+<mvc:annotation-driven />
 	
 	<!-- Cấu hình view -->
 	<bean id="viewResolver" 

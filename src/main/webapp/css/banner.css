@@ -1,0 +1,22 @@
+@charset "UTF-8";
+.gear-banner{
+    position:relative;
+    width:92%;
+    margin:50px auto;
+}
+
+.gear-banner img{
+    width:100%;
+}
+
+.gear-content{
+    position:absolute;
+    bottom:50px;
+    left:40px;
+    color:white;
+}
+
+.gear-content h2{
+    font-size:45px;
+    font-family:Impact;
+}

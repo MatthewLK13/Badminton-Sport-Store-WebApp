@@ -38,4 +38,8 @@
     <welcome-file>index.jsp</welcome-file>
     <welcome-file>index.htm</welcome-file>
   </welcome-file-list>
+  <servlet-mapping>
+  <servlet-name>spring</servlet-name>
+  <url-pattern>/api/*</url-pattern>
+</servlet-mapping>
 </web-app>

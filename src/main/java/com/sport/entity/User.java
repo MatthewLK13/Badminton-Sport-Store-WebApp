@@ -16,16 +16,19 @@ public class User {
     @Column(unique = true)
     private String phone;
 
-    @Column(name = "password_hash", nullable = false)
+    // SỬA TẠI ĐÂY: Tên cột dưới database của bạn là "password" chứ không phải "password_hash"
+    @Column(name = "password", nullable = false)
     private String passwordHash;
 
-    @Column(name = "full_name", nullable = false)
+    // ĐÃ CHUẨN: Tên cột dưới database trùng khớp là "fullname"
+    @Column(name = "fullname", nullable = false)
     private String fullName;
 
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
 
+    // SỬA TẠI ĐÂY: Tên cột dưới database của bạn là "is_active" (viết thường có gạch dưới)
     @Column(name = "is_active", insertable = false)
     private Boolean isActive;
 

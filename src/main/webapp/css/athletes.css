@@ -1,0 +1,129 @@
+/* ==========================================================================
+   CONTAINER TỔNG PHẦN ATHLETES (FIX CHUẨN KHÔNG VỠ HÌNH)
+   ========================================================================== */
+.athletes-section {
+    width: 100%;
+    margin: 60px 0 40px 0;
+    padding: 0 2%;            
+    box-sizing: border-box;
+}
+
+.athletes-header {
+   font-family: 'Iosevka Charon Mono', monospace !important;
+    font-size: 24px;
+    font-weight: 700 !important;
+    color: #000000;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.athletes-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 25px; 
+}
+
+/* ==========================================================================
+   BỐ CỤC CÁC HÀNG ẢNH
+   ========================================================================== */
+.athletes-top-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px; 
+    width: 100%;
+}
+
+.athletes-top-row .athlete-card {
+    flex: 1;
+    width: 50%;
+}
+
+.athletes-bottom-row {
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+}
+
+
+.athletes-bottom-row .large-single {
+    width: calc(50% - 7.5px); 
+}
+
+
+.athlete-img-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3/1.7; 
+    overflow: hidden;
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+
+.athlete-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    display: block;
+}
+
+/* Ảnh gốc ban đầu */
+.img-base {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ảnh hiển thị khi Hover */
+.img-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    opacity: 0; /* Mặc định ẩn */
+    transition: opacity 0.35s ease-in-out; /* Hiệu ứng chuyển ảnh mượt */
+}
+
+/* Kích hoạt trạng thái xuất hiện khi đưa chuột vào Card */
+.athlete-card:hover .img-hover {
+    opacity: 1;
+}
+
+/* Chú thích chữ bên dưới */
+.athlete-caption {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111;
+    margin-top: 10px;
+    text-align: left;
+    text-transform: uppercase;
+}
+
+.brand-footer {
+    width: 100%;
+    margin-top: 50px;       
+    display: flex;
+    flex-direction: column;
+    align-items: center;    
+    justify-content: center;
+    gap: 6px;               
+}
+
+/* Định dạng kích cỡ hiển thị của Logo */
+.footer-logo {
+    height: 70px;           
+    width: auto;           
+    object-fit: contain;
+}
+
+/* Chữ slogan nhỏ màu xám/đen mảnh dưới logo */
+.footer-slogan {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-size: 10px;       
+    font-weight: 400;
+    color: #666666;
+    text-transform: lowercase; 
+    letter-spacing: 1px;   
+}

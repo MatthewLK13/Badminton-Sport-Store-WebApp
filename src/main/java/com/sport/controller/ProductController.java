@@ -37,7 +37,7 @@ public class ProductController {
 	    Map<String, List<String>> dynamicFilters = productDao.getGroupedFiltersByCategoryId(categoryId);
 	    model.addAttribute("dynamicFilters", dynamicFilters);
 
-	    // Nếu có brand thì thêm vào attrs
+	   
 	    if (brandName != null && !brandName.isEmpty()) {
 	        if (attrs == null) attrs = new ArrayList<>();
 	        attrs.add(brandName);
@@ -63,11 +63,25 @@ public class ProductController {
 	
 	@RequestMapping(value ="details" , method = RequestMethod.GET)
 	public String showProductDetails(
-			@RequestParam("id") int productId,
-			ModelMap model
-			) {
-		ProductsEntity product = productDao.getProductById(productId);
-		model.addAttribute("product", product);
-		return "desktop6/product_details";
+	        @RequestParam("id") int productId,
+	        ModelMap model) {
+
+	    ProductsEntity product = productDao.getProductById(productId);
+	    model.addAttribute("product", product);
+
+	    List<ProductAttributeEntity> attrs = productDao.getAttributesByProductId(productId);
+	    model.addAttribute("productAttrs", attrs);
+
+	    // Sản phẩm liên quan cùng category
+	    List<ProductsEntity> related = productDao.getRelatedProducts(
+	        product.getCategory_id().getId(), productId);
+	    model.addAttribute("relatedProducts", related);
+
+	    // Sản phẩm hoàn thiện phong cách (category khác)
+	    List<ProductsEntity> complementary = productDao.getComplementaryProducts(
+	        product.getCategory_id().getId());
+	    model.addAttribute("complementaryProducts", complementary);
+
+	    return "desktop6/product_details";
 	}
 }

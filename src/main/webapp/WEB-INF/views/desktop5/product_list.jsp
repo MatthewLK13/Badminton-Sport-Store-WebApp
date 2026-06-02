@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@include file="/WEB-INF/views/includes/header.jsp" %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 
@@ -7,28 +7,39 @@
 <!DOCTYPE html>
 <html>
 <head>
+<%@include file="/WEB-INF/views/includes/header.jsp" %>
 <meta charset="UTF-8">
 <title>Badminton shoes - Yonex</title>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/header.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/product.css">
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/style.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+    
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/banner.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/hero.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/athletes.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/products.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/spotlight.css">
 </head>
 <body>
     <div class="breadcrumb-container">
         <div class="breadcrumb-content">
             <a href="${pageContext.request.contextPath}/home.htm">Trang chủ</a>
-            <span class="breadcrumb-separator">></span>
+<span class="breadcrumb-separator">></span>
 
-            <a href="${pageContext.request.contextPath}/products/index.htm?id=${param.id}">${category.categoryName}</a>
+<c:choose>
+    <c:when test="${not empty param.brand}">
+        <a href="${pageContext.request.contextPath}/products/index.htm?id=${param.id}">
+            ${category.categoryName}
+        </a>
+        <span class="breadcrumb-separator">></span>
+        <a href="#" class="active">${category.categoryName} ${param.brand}</a>
+    </c:when>
 
-            <c:choose>
-                <c:when test="${not empty param.brand}">
-                    <span class="breadcrumb-separator">></span>
-                    <a href="#" class="active">${category.categoryName} ${param.brand}</a>
-                </c:when>
-                <c:otherwise>
-                </c:otherwise>
-            </c:choose>
+    <c:otherwise>
+        <a href="#" class="active">${category.categoryName}</a>
+    </c:otherwise>
+</c:choose>
         </div>
     </div>
 
@@ -142,33 +153,49 @@
     <div id="drawerOverlay" class="drawer-overlay" onclick="toggleFilterDrawer()"></div>
 
     <div class="products-grid-container">
-        <c:forEach items="${products}" var="p">
-	        <a href="${pageContext.request.contextPath}/products/details.htm?id=${p.id}" 
-	   style="text-decoration: none; color: inherit;">
-	            <div class="product-card">
-	                <div class="product-image-wrapper">
-	                    <button class="wishlist-btn"><i class="fa-regular fa-heart"></i></button>
-	                    
-	                    <%--Gọi ảnh động tự động chuẩn hóa từ hàm avatarName --%>
-	                    <img src="${pageContext.request.contextPath}/images/products/${p.avatarName}"
-	                         alt="${p.productName}" class="product-img">
-	                </div>
-	                <div class="product-info">
-	                    <span class="product-price">$ ${p.price} </span>
-	                    <h3 class="product-name">${p.productName}</h3>
-	                    <span class="product-color-title">Màu sắc</span>
-	                    <div class="product-colors-dots">
-	                        <span class="color-dot" style="background-color: #D1D1D1;"></span>
-	                    </div>
-	                </div>
-	            </div>
-	          </a>
-        </c:forEach>
+    <c:forEach items="${products}" var="p">
+        
+        <%-- Bọc cả card trong div, không dùng <a> bọc toàn bộ --%>
+        <div class="product-card-wrapper" style="position: relative;">
+            
+            <%-- Nút wishlist đặt NGOÀI thẻ <a>, dùng position absolute --%>
+            <button class="wishlist-btn"
+        data-product-id="${p.id}"
+        onclick="toggleWishlist(${p.id}, this)"
+        style="position:absolute; top:16px; right:16px; z-index:10; background:transparent; border:none; cursor:pointer;">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path class="heart-path" fill-rule="evenodd" clip-rule="evenodd"
+                          d="M19.6431 7.05858C19.6103 4.79858 18.3289 2.57286 16.3617 1.65572C15.3044 1.16162 14.0982 1.09057 12.9903 1.45715C11.9831 1.77715 10.9731 2.43286 10.0003 3.46429C9.02742 2.43286 8.01742 1.77858 7.01028 1.45715C5.90232 1.09057 4.69612 1.16162 3.63885 1.65572C1.67171 2.57286 0.390279 4.79858 0.357422 7.05858V7.07001C0.357422 10.3657 2.31742 13.2857 4.39456 15.3357C5.33754 16.2725 6.38375 17.0992 7.51314 17.8C7.99599 18.0943 8.45171 18.33 8.85599 18.4957C9.24171 18.6529 9.64599 18.7729 10.0003 18.7729C10.3546 18.7729 10.7574 18.6529 11.1431 18.4957C11.5489 18.3314 12.0046 18.0957 12.486 17.8014C13.6159 17.1002 14.6626 16.273 15.606 15.3357C17.6831 13.2857 19.6431 10.3657 19.6431 7.07144V7.05858Z"
+                          fill="rgba(0,0,0,0.1)" stroke="black" stroke-width="1.2"/>
+                </svg>
+            </button>
 
-        <c:if test="${empty products}">
-            <p style="padding: 20px;">Không tìm thấy sản phẩm nào.</p>
-        </c:if>
-    </div>
+            <%-- Thẻ <a> chỉ bọc phần nội dung card --%>
+            <a href="${pageContext.request.contextPath}/products/details.htm?id=${p.id}" 
+               style="text-decoration: none; color: inherit; display:block;">
+                <div class="product-card">
+                    <div class="product-image-wrapper">
+                        <img src="${pageContext.request.contextPath}/images/products/${p.avatarName}"
+                             alt="${p.productName}" class="product-img">
+                    </div>
+                    <div class="product-info">
+                        <span class="product-price">$ ${p.price}</span>
+                        <h3 class="product-name">${p.productName}</h3>
+                        <span class="product-color-title">Màu sắc</span>
+                        <div class="product-colors-dots">
+                            <span class="color-dot" style="background-color: #D1D1D1;"></span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </c:forEach>
+
+    <c:if test="${empty products}">
+        <p style="padding: 20px;">Không tìm thấy sản phẩm nào.</p>
+    </c:if>
+</div>
 
     <c:if test="${totalPages > 1}">
         <div class="pagination-container" style="display: flex; justify-content: center; align-items: center; margin: 40px 0; gap: 8px;">
@@ -198,8 +225,8 @@
         </div>
     </c:if>
 
-    <%--  Đã sửa: Khối hiển thị bài viết chi tiết dưới danh sách sản phẩm  --%>
-    <div class="category-description-section" style="max-width: 1200px; margin: 50px auto; padding: 0 20px; font-family: 'Inter', sans-serif; color: #333; line-height: 1.8;">
+
+    <div class="category-description-section" style="max-width: 1600px; margin: 50px auto; padding: 0 20px; font-family: 'Inter', sans-serif; color: #333; line-height: 1.8;">
         
         <c:if test="${not empty category.longDescription}">
             <p class="description-lead" style="font-size: 16px; font-weight: 500; margin-bottom: 25px; color: #555;">
@@ -220,7 +247,32 @@
         </c:if>
         
     </div> 
+    
     <script>
+    function toggleWishlist(productId, btn) {
+        console.log('Clicking wishlist for product:', productId);
+        
+        fetch('${pageContext.request.contextPath}/api/wishlist/toggle', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'productId=' + productId
+        })
+        .then(r => {
+            console.log('Response status:', r.status);
+            return r.json();
+        })
+        .then(data => {
+            console.log('Response data:', data);
+            if (data.status === 'login_required') {
+                alert('Vui lòng đăng nhập!');
+                return;
+            }
+            // Đổi màu trái tim
+            updateWishlistButtonState(productId, data.status === 'added');
+            updateWishlistBadge(data.count);
+        })
+        .catch(err => console.error('Error:', err));
+    }
 function toggleFilterDrawer() {
     document.getElementById('filterDrawer').classList.toggle('open');
     document.getElementById('drawerOverlay').classList.toggle('open');

@@ -123,8 +123,8 @@ public class AdminProductController {
 			        }
 
 			        // Tiến hành gọi AI xử lý xóa nền và lưu thẳng vào Desktop
+
 			        boolean isRemoved = BackgroundRemoverService.removeBackground(tempFile, desktopPathToSave);
-			        
 			        if (isRemoved) {
 			            // Nếu AI thành công, copy bản tách nền từ Desktop sang Server tạm của Tomcat để web hiển thị ngay
 			            java.nio.file.Files.copy(
@@ -173,21 +173,100 @@ public class AdminProductController {
 					session.save(variant); 
 				}
 			}
-			//  Lưu ProductAttributes
 			if (attrKeys != null && attrValues != null) {
 			    for (int k = 0; k < attrKeys.length; k++) {
-			        if (attrValues[k] != null && !attrValues[k].isEmpty()) {
-			            // Dùng SQL native để insert
-			            session.createSQLQuery(
-			                "INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, :key, :val)"
-			            )
-			            .setParameter("pid", product.getId())
-			            .setParameter("key", attrKeys[k])
-			            .setParameter("val", attrValues[k])
-			            .executeUpdate();
-			        }
+			        String key = attrKeys[k];
+			        String value = (k < attrValues.length) ? attrValues[k] : "";
+			        if (key == null || key.trim().isEmpty()) continue;
+			        if (value == null || value.trim().isEmpty()) continue;
+			        session.createSQLQuery(
+			            "INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, :key, :val)"
+			        )
+			        .setParameter("pid", product.getId())
+			        .setParameter("key", key.trim())
+			        .setParameter("val", value.trim())
+			        .executeUpdate();
 			    }
 			}
+			//  Lưu ProductAttributes
+			// ============================================================
+						// XỬ LÝ TỰ ĐỘNG BÓC TÁCH BỘ LỌC (BRAND, SIZE, WEIGHT) CHO DB
+						// ============================================================
+						
+						// 1. Tự động lưu bộ lọc Thương hiệu (brand_filter) dựa trên brandId (Áp dụng cho TẤT CẢ danh mục)
+						String brandNameFilter = "";
+						if (brandId == 1) brandNameFilter = "Yonex";
+						else if (brandId == 2) brandNameFilter = "Victor";
+						else if (brandId == 3) brandNameFilter = "Lining";
+
+						if (!brandNameFilter.isEmpty()) {
+							session.createSQLQuery(
+								"INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, 'brand_filter', :val)"
+							)
+							.setParameter("pid", product.getId())
+							.setParameter("val", brandNameFilter)
+							.executeUpdate();
+						}
+
+						// 2. Tự động duyệt qua tồn kho để lưu bộ lọc Kích cỡ hoặc Trọng lượng
+						if (variantNames != null) {
+							java.util.Set<String> addedFilters = new java.util.HashSet<>();
+							
+							for (String vName : variantNames) {
+								if (vName == null || vName.trim().isEmpty()) continue;
+								
+								String trimmedName = vName.trim();
+								String upperName = trimmedName.toUpperCase();
+								
+								// THƯỜNG HỢP 1: NẾU LÀ SẢN PHẨM QUẦN ÁO (Biến thể nhập dạng chữ: S, M, L, XL, XXL)
+								if (categoryId == 3 && (upperName.equals("S") || upperName.equals("M") || upperName.equals("L") 
+										|| upperName.equals("XL") || upperName.equals("XXL") || upperName.contains("SIZE"))) {
+									
+									String sizeValue = trimmedName.replaceAll("(?i)Size\\s*", "").toUpperCase().trim();
+									if (!sizeValue.isEmpty() && addedFilters.add("cloth_size_" + sizeValue)) {
+										session.createSQLQuery(
+			                                // Đổi từ 'size_filter' thành 'cloth_size' ở đây
+											"INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, 'cloth_size', :val)"
+										)
+										.setParameter("pid", product.getId())
+										.setParameter("val", sizeValue)
+										.executeUpdate();
+									}
+								}
+								
+								// TRƯỜNG HỢP 2: NẾU LÀ GIÀY CẦU LÔNG (Chuỗi chứa chữ "Size" hoặc chỉ chứa số, ví dụ "40", "41")
+								else if (categoryId == 2 && (trimmedName.toLowerCase().contains("size") || trimmedName.matches("\\d+"))) {
+									String sizeValue = trimmedName.replaceAll("(?i)Size\\s*", "").trim();
+									if (!sizeValue.isEmpty() && addedFilters.add("size_filter_" + sizeValue)) {
+										session.createSQLQuery(
+											"INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, 'size_filter', :val)"
+										)
+										.setParameter("pid", product.getId())
+										.setParameter("val", sizeValue)
+										.executeUpdate();
+									}
+								}
+								
+								// TRƯỜNG HỢP 3: NẾU LÀ VỢT CẦU LÔNG (Chuỗi chứa chữ "U", ví dụ "4U G5" -> bóc lấy "4U")
+								else if (upperName.contains("U")) {
+									String weightValue = "";
+									if (upperName.contains("2U")) weightValue = "2U";
+									else if (upperName.contains("3U")) weightValue = "3U";
+									else if (upperName.contains("4U")) weightValue = "4U";
+									else if (upperName.contains("5U")) weightValue = "5U";
+									
+									if (!weightValue.isEmpty() && addedFilters.add("weight_" + weightValue)) {
+										session.createSQLQuery(
+											"INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, 'weight', :val)"
+										)
+										.setParameter("pid", product.getId())
+										.setParameter("val", weightValue)
+										.executeUpdate();
+									}
+								}
+							}
+						}
+					
 			
 			t.commit();
 			System.out.println("Hoàn tất! Toàn bộ dữ liệu đã được commit thành công xuống Database.");
@@ -204,7 +283,7 @@ public class AdminProductController {
 			}
 		}
 		
-		// Thành công: Điều hướng ra trang danh sách sản phẩm
+		
 		return "desktop5/product_list"; 
 	}
 }

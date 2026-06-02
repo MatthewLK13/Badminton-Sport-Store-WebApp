@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 
 import com.sport.entity.BrandsEntity;
 import com.sport.entity.CategoriesEntity;
+import com.sport.entity.ProductAttributeEntity;
+import com.sport.entity.ProductVariantsEntity;
 import com.sport.entity.ProductsEntity;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -206,7 +208,7 @@ public class ProductDao {
     }
 
     /**
-     * Hàm truy vấn lọc danh sách sản phẩm theo nhiều tiêu chí động (Sử dụng kỹ thuật HAVING COUNT).
+     * Hàm truy vấn lọc danh sách sản phẩm theo nhiều tiêu chí động 
      */
     public List<ProductsEntity> getProductsByDynamicFilters(
             Integer categoryId, List<String> attrs, Double minPrice, Double maxPrice,
@@ -302,5 +304,66 @@ public class ProductDao {
             e.printStackTrace();
             return 0;
         }
+    }
+    public List<ProductAttributeEntity> getAttributesByProductId(int productId) {
+        Session session = factory.getCurrentSession();
+        Query query = session.createQuery(
+            "FROM ProductAttributeEntity WHERE productId = :pid");
+        query.setParameter("pid", productId);
+        return query.list();
+    }
+    
+    public List<ProductsEntity> getRelatedProducts(int categoryId,int excludeProductId){
+    	Session session = factory.getCurrentSession();
+    	Query query = session.createQuery(
+    			"SELECT DISTINCT p FROM ProductsEntity p " +
+    			        "LEFT JOIN FETCH p.productImages " +
+    			        "WHERE p.category_id.id = :catId AND p.id != :excludeId " +
+    			        "ORDER BY p.id DESC"
+    			);
+    	query.setParameter("catId", categoryId);
+    	query.setParameter("excludeId", excludeProductId);
+    	query.setMaxResults(8);
+    	return query.list();
+    }
+    public List<ProductsEntity> getComplementaryProducts(int categoryId) {
+        Session session = factory.getCurrentSession();
+        Query query = session.createQuery(
+            "SELECT DISTINCT p FROM ProductsEntity p " +
+            "LEFT JOIN FETCH p.productImages " +
+            "WHERE p.category_id.id != :catId " +
+            "ORDER BY p.id DESC");
+        query.setParameter("catId", categoryId);
+        query.setMaxResults(4);
+        return query.list();
+    }
+    public ProductVariantsEntity getVariantById(int variantId) {
+        Session session = factory.getCurrentSession();
+
+        Query query = session.createQuery(
+            "SELECT DISTINCT v FROM ProductVariantsEntity v " +
+            "JOIN FETCH v.product p " +
+            "LEFT JOIN FETCH p.productImages " +
+            "WHERE v.id = :id"
+        );
+
+        query.setParameter("id", variantId);
+
+        List<ProductVariantsEntity> list = query.list();
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    public ProductVariantsEntity getDefaultVariantByProductId(int productId) {
+        Session session = factory.getCurrentSession();
+        Query query = session.createQuery(
+            "FROM ProductVariantsEntity v " +
+            "WHERE v.product.id = :productId AND v.stock_quantity > 0 " +
+            "ORDER BY v.id ASC"
+        );
+        query.setParameter("productId", productId);
+        query.setMaxResults(1);
+
+        List<ProductVariantsEntity> list = query.list();
+        return list.isEmpty() ? null : list.get(0);
     }
 }

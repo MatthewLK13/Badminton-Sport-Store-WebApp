@@ -69,12 +69,22 @@ body { background-color: #f3f5f4; padding: 40px 0; font-family: 'Segoe UI', sans
                     <option value="1">Vợt cầu lông</option>
                     <option value="2">Giày cầu lông</option>
                     <option value="3">Quần áo cầu lông</option>
+                    <option value="4">Túi vợt cầu lông</option>
+                    <option value="5">Phụ kiện cầu lông</option>
                 </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label fw-semibold">Thương hiệu (Brand ID)</label>
-                <input type="number" name="brandId" class="form-control" placeholder="Ví dụ: 1" required>
-            </div>
+    <label class="form-label fw-semibold">Thương hiệu</label>
+    <select name="brandId" class="form-select" required>
+        <option value="">-- Chọn thương hiệu --</option>
+        <option value="1">Yonex</option>
+        <option value="2">Victor</option>
+        <option value="3">Lining</option>
+        <option value="4">Mizuno</option>
+        <option value="5">Kawasaki</option>
+        <option value="6">Venson</option>
+    </select>
+</div>
         </div>
 
         <div class="row mb-3">
@@ -120,26 +130,32 @@ body { background-color: #f3f5f4; padding: 40px 0; font-family: 'Segoe UI', sans
 </div>
 
 <script>
-// Cấu hình tiêu chí theo từng category - khớp với FilterAttributes trong DB
 const categoryAttributes = {
-    "1": [ // Vợt cầu lông
+    "1": [ // Vợt cầu lông (ĐÃ LOẠI BỎ THUỘC TÍNH "WEIGHT" TRÙNG LẶP)
         { key: "flexibility", label: "Độ cứng đũa", options: ["Cứng", "Trung bình", "Mềm"] },
-        { key: "weight",      label: "Trọng lượng (U)", options: ["2U", "3U", "4U", "5U"] },
         { key: "swingweight", label: "Swingweight", options: ["Nặng đầu", "Cân bằng", "Nhẹ đầu"] },
         { key: "balance_point",label: "Điểm cân bằng", options: ["Head Heavy", "Even Balance", "Head Light"] },
         { key: "play_style",  label: "Phong cách chơi", options: ["Tấn công", "Phòng thủ", "Toàn diện"] },
-        { key: "play_level",  label: "Trình độ chơi", options: ["Người mới", "Trung cấp", "Chuyên nghiệp"] },
-        { key: "brand_filter",label: "Thương hiệu", options: ["Yonex", "Victor", "Lining"] }
+        { key: "play_level",  label: "Trình độ chơi", options: ["Người mới", "Trung cấp", "Chuyên nghiệp"] }
     ],
     "2": [ // Giày cầu lông
         { key: "foot_type",   label: "Kiểu bàn chân", options: ["Slim", "Wide", "Normal"] },
-        { key: "brand_filter",label: "Thương hiệu", options: ["Yonex", "Victor", "Lining"] },
-        { key: "size_filter", label: "Size giày", options: ["39", "40", "41", "42", "43", "44"] },
         { key: "segment_filter", label: "Phân khúc", options: ["Cao cấp", "Trung cấp", "Phổ thông"] }
     ],
-    "3": [ // Quần áo
-        { key: "brand_filter",label: "Thương hiệu", options: ["Yonex", "Victor", "Lining"] },
-        { key: "size_filter", label: "Size quần áo", options: ["S", "M", "L", "XL", "XXL"] }
+    "3": [ // Quần áo cầu lông
+        { key: "clothe_type", label: "Loại trang phục", options: ["Quần", "Áo"] }
+        
+    ],
+    "4": [ // Túi cầu lông
+        { key: "suitable_for", label: "Phù hợp cho", options: ["Nam", "Nữ", "Tất cả"] },
+        { key: "bag_type", label: "Thể loại túi", options: ["Đeo ngang vai", "Đeo trên lưng"] },
+        { key: "num_of_compartments", label: "Số ngăn lớn", options: ["1 ngăn", "2 ngăn", "3 ngăn"] }
+    ],
+    "5": [ // Phụ kiện cầu lông
+    	{key: "accessory_type", 
+        label: "Loại phụ kiện", 
+        type: "combobox", // Đổi loại để kích hoạt giao diện vừa nhập vừa chọn
+        options: ["Quấn cán", "Quả cầu lông", "Cước căng vợt", "Lót giày", "Băng chặn mồ hôi"]}
     ]
 };
 
@@ -147,7 +163,8 @@ function loadAttributes(categoryId) {
     const container = document.getElementById('attr-container');
     container.innerHTML = '';
 
-    if (!categoryId || !categoryAttributes[categoryId]) return;
+    // Nếu không có category hoặc category không có thuộc tính động (như quần áo) thì bỏ qua
+    if (!categoryId || !categoryAttributes[categoryId] || categoryAttributes[categoryId].length === 0) return;
 
     const attrs = categoryAttributes[categoryId];
     let html = '<div class="attr-section"><h6>THÔNG TIN CHI TIẾT SẢN PHẨM</h6><div class="row g-3">';
@@ -159,12 +176,25 @@ function loadAttributes(categoryId) {
         for (let j = 0; j < attr.options.length; j++) {
             optionsHtml += '<option value="' + attr.options[j] + '">' + attr.options[j] + '</option>';
         }
-
-        html += '<div class="col-md-6">';
-        html += '<label class="form-label fw-semibold">' + attr.label + '</label>';
-        html += '<input type="hidden" name="attrKeys" value="' + attr.key + '">';
-        html += '<select name="attrValues" class="form-select">' + optionsHtml + '</select>';
-        html += '</div>';
+     
+        if (attr.type === "combobox") {
+            html += '<div class="col-md-6 mb-3">';
+            html += '<label class="form-label fw-semibold">' + attr.label + '</label>';
+            html += '<input type="hidden" name="attrKeys" value="' + attr.key + '">';
+            html += '<input type="text" name="attrValues" list="datalist_' + attr.key + '" class="form-control" placeholder="Chọn từ danh sách hoặc tự nhập mới..." required>';
+            html += '<datalist id="datalist_' + attr.key + '">';
+            attr.options.forEach(function(opt) {
+                html += '<option value="' + opt + '">';
+            });
+            html += '</datalist>';
+            html += '</div>';
+        } else {
+            html += '<div class="col-md-6">';
+            html += '<label class="form-label fw-semibold">' + attr.label + '</label>';
+            html += '<input type="hidden" name="attrKeys" value="' + attr.key + '">';
+            html += '<select name="attrValues" class="form-select" required>' + optionsHtml + '</select>';
+            html += '</div>';
+        }
     }
 
     html += '</div></div>';
