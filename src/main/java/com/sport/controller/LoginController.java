@@ -43,10 +43,4 @@ public class LoginController {
         model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
         return "login";
     }
-
-    @RequestMapping("/logout.htm")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login.htm";
-    }
-}
+}

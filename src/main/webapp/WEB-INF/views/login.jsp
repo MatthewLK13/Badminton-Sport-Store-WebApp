@@ -20,5 +20,28 @@
         <jsp:include page="components/login-form.jsp" />
     </div>
 
+    <!-- Toast notification -->
+    <div id="toast"></div>
+    <script>
+        function showToast(message, type) {
+            const container = document.getElementById("toast");
+            const toast = document.createElement("div");
+            toast.className = "toast " + type;
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add("show"), 100);
+            setTimeout(() => {
+                toast.classList.remove("show");
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        }
+        <% if (request.getAttribute("error") != null) { %>
+            showToast("<%= request.getAttribute("error") %>", "error");
+        <% } %>
+        <% if (request.getAttribute("success") != null) { %>
+            showToast("<%= request.getAttribute("success") %>", "success");
+        <% } %>
+    </script>
+
 </body>
-</html>
+</html>

@@ -23,8 +23,31 @@ public class UserDAO {
         return (User) query.uniqueResult();
     }
 
+    public boolean existsByEmail(String email) {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "SELECT COUNT(u) FROM User u WHERE u.email = :email";
+        Query query = session.createQuery(hql);
+        query.setParameter("email", email);
+        Long count = (Long) query.uniqueResult();
+        return count != null && count > 0;
+    }
+
+    public boolean existsByPhone(String phone) {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "SELECT COUNT(u) FROM User u WHERE u.phone = :phone";
+        Query query = session.createQuery(hql);
+        query.setParameter("phone", phone);
+        Long count = (Long) query.uniqueResult();
+        return count != null && count > 0;
+    }
+
     public void saveUser(User user) {
         Session session = sessionFactory.getCurrentSession();
         session.save(user);
     }
-}
+
+    public void updateUser(User user) {
+        Session session = sessionFactory.getCurrentSession();
+        session.update(user);
+    }
+}
