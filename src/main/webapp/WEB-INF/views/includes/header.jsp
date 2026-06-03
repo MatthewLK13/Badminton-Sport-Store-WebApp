@@ -456,7 +456,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function loadWishlistItems() {
-    	fetch('${pageContext.request.contextPath}/api/wishlist/items')
+    	fetch('${pageContext.request.contextPath}/wishlist/items')
             .then(r => r.json())
             .then(data => {
                 var container = document.getElementById('wishlistItems');
@@ -516,7 +516,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function removeFromWishlist(productId) {
-        fetch('${pageContext.request.contextPath}/api/wishlist/toggle', {
+        fetch('${pageContext.request.contextPath}/wishlist/toggle', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'productId=' + productId
@@ -531,7 +531,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function loadWishlistCount() {
-    	fetch('${pageContext.request.contextPath}/api/wishlist/count')
+    	fetch('${pageContext.request.contextPath}/wishlist/count')
             .then(r => r.json())
             .then(data => updateWishlistBadge(data.count))
             .catch(() => {});
@@ -549,7 +549,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function toggleWishlist(productId, btn) {
-    	fetch('${pageContext.request.contextPath}/api/wishlist/toggle', {
+    	fetch('${pageContext.request.contextPath}/wishlist/toggle', {
     	    method: 'POST',
     	    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
     	    body: 'productId=' + productId
@@ -577,7 +577,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function loadCartItems() {
-    	fetch('${pageContext.request.contextPath}/api/cart/items')
+    	fetch('${pageContext.request.contextPath}/cart/items')
             .then(r => r.json())
             .then(data => {
             	var container = document.getElementById('cart-items-list');
@@ -619,7 +619,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function updateCart(cartId, quantity) {
-    	fetch('${pageContext.request.contextPath}/api/cart/update', {
+    	fetch('${pageContext.request.contextPath}/cart/update', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'cartId=' + cartId + '&quantity=' + quantity
@@ -632,7 +632,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function removeFromCart(cartId) {
-    	fetch('${pageContext.request.contextPath}/api/cart/remove', {
+    	fetch('${pageContext.request.contextPath}/cart/remove', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'cartId=' + cartId
@@ -645,7 +645,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function loadCartCount() {
-    	fetch('${pageContext.request.contextPath}/api/cart/count')
+    	fetch('${pageContext.request.contextPath}/cart/count')
             .then(r => r.json())
             .then(data => updateCartBadge(data.count))
             .catch(() => {});
@@ -663,7 +663,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function addToCart(variantId, quantity) {
-    	fetch('${pageContext.request.contextPath}/api/cart/add', {
+    	fetch('${pageContext.request.contextPath}/cart/add', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'variantId=' + variantId + '&quantity=' + (quantity || 1)

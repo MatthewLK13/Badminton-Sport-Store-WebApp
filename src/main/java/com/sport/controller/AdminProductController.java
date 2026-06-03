@@ -106,36 +106,16 @@ public class AdminProductController {
 			    
 			    //  Đường dẫn ảo trong thư mục build của Server Tomcat
 			    String fullPathToSave = uploadFolder + java.io.File.separator + finalFileName;
-			    
-			    // TỰ ĐỘNG LẤY ĐƯỜNG DẪN THẬT ngoài Desktop dựa vào Server ảo (Lùi 4 cấp thư mục để về src gốc)
-			 // XÓA TOÀN BỘ đoạn tính workspaceDir cũ, thay bằng dòng này:
-			    String desktopPathToSave = "C:\\Users\\Administrator\\Documents\\LTW\\Badminton-Sport-Store-WebApp\\src\\main\\webapp\\images\\products\\" + finalFileName;
 
 			    // Tạo sẵn file tạm để nhận dữ liệu upload
 			    java.io.File tempFile = java.io.File.createTempFile("upload_", file.getOriginalFilename());
 			    file.transferTo(tempFile);
-			    
+
 			    try {
-			        // Đảm bảo thư mục Desktop thật sự tồn tại trước khi ghi file
-			        java.io.File desktopFolder = new java.io.File(desktopPathToSave).getParentFile();
-			        if (!desktopFolder.exists()) {
-			            desktopFolder.mkdirs();
-			        }
-
-			        // Tiến hành gọi AI xử lý xóa nền và lưu thẳng vào Desktop
-
-			        boolean isRemoved = BackgroundRemoverService.removeBackground(tempFile, desktopPathToSave);
-			        if (isRemoved) {
-			            // Nếu AI thành công, copy bản tách nền từ Desktop sang Server tạm của Tomcat để web hiển thị ngay
-			            java.nio.file.Files.copy(
-			                new java.io.File(desktopPathToSave).toPath(), 
-			                new java.io.File(fullPathToSave).toPath(), 
-			                java.nio.file.StandardCopyOption.REPLACE_EXISTING
-			            );
-			            System.out.println("Đã xóa nền và đồng bộ ảnh thành công!");
-			        } else {
-			            // Nếu AI thất bại (hết lượt), tự động copy ảnh gốc của khách vào cả 2 nơi để cứu vãn
-			            java.nio.file.Files.copy(tempFile.toPath(), new java.io.File(desktopPathToSave).toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+			        // Gọi AI xử lý xóa nền và lưu vào thư mục Server Tomcat
+			        boolean isRemoved = BackgroundRemoverService.removeBackground(tempFile, fullPathToSave);
+			        if (!isRemoved) {
+			            // Nếu AI thất bại (hết lượt), tự động copy ảnh gốc vào thư mục
 			            java.nio.file.Files.copy(tempFile.toPath(), new java.io.File(fullPathToSave).toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 			            System.out.println(" [AI Thất Bại] Hệ thống tự động chuyển hướng lưu giữ lại ảnh gốc!");
 			        }

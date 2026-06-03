@@ -157,7 +157,7 @@
                     <div class="image-wrapper">
                         <span class="tag-new">NEW</span>
                         <a href="${pageContext.request.contextPath}/products/details.htm?id=${product.id}" style="display: block;">
-                            <img src="${pageContext.request.contextPath}/images/${product.avatarName}" alt="${product.productName}">
+                            <img src="${pageContext.request.contextPath}/images/products/${product.avatarName}" alt="${product.productName}">
                         </a>
                     </div>
                     

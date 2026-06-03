@@ -16,9 +16,35 @@ import com.sport.dao.ProductDao;
 @Controller
 @RequestMapping("products")
 public class ProductController {
-	
+
 	@Autowired
 	private ProductDao productDao;
+
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public String searchProducts(
+	        @RequestParam(value = "search", required = false) String keyword,
+	        @RequestParam(value = "page", defaultValue = "1") Integer page,
+	        ModelMap model) {
+
+	    int pageSize = 20;
+	    List<ProductsEntity> products;
+	    long totalProducts;
+
+	    if (keyword != null && !keyword.trim().isEmpty()) {
+	        products = productDao.searchProducts(keyword.trim(), page, pageSize);
+	        totalProducts = productDao.countSearchProducts(keyword.trim());
+	        model.addAttribute("searchKeyword", keyword.trim());
+	    } else {
+	        products = productDao.getNewArrivals(pageSize);
+	        totalProducts = productDao.countAllProducts();
+	    }
+
+	    model.addAttribute("products", products);
+	    model.addAttribute("currentPage", page);
+	    model.addAttribute("totalPages", (int) Math.ceil((double) totalProducts / pageSize));
+
+	    return "desktop5/product_list";
+	}
 	
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String listProducts(

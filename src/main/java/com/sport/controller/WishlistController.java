@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import com.sport.dao.CartDao;
 import com.sport.dao.ProductDao;
 import com.sport.dao.WishlistDao;
 import com.sport.entity.ProductVariantsEntity;
@@ -26,6 +27,9 @@ public class WishlistController {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private CartDao cartDao;
 
     @RequestMapping(value = "/toggle", method = RequestMethod.POST)
     @ResponseBody
@@ -93,5 +97,18 @@ public class WishlistController {
             }
         }
         return result;
+    }
+
+    @RequestMapping(value = "/addToCart", method = RequestMethod.POST)
+    public String addToCart(
+            @RequestParam("variantId") int variantId,
+            @RequestParam(value = "quantity", defaultValue = "1") int quantity,
+            HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            cartDao.add(user.getId(), variantId, quantity);
+        }
+        return "redirect:/wishlist.htm";
     }
 }

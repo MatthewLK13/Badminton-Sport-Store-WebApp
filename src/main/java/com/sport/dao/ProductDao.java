@@ -375,4 +375,30 @@ public class ProductDao {
         query.setMaxResults(limit);
         return query.list();
     }
+
+    public List<ProductsEntity> searchProducts(String keyword, int page, int pageSize) {
+        Session session = factory.getCurrentSession();
+        Query query = session.createQuery(
+            "FROM ProductsEntity p WHERE p.productName LIKE :keyword OR p.description LIKE :keyword ORDER BY p.id DESC"
+        );
+        query.setParameter("keyword", "%" + keyword + "%");
+        query.setFirstResult((page - 1) * pageSize);
+        query.setMaxResults(pageSize);
+        return query.list();
+    }
+
+    public long countSearchProducts(String keyword) {
+        Session session = factory.getCurrentSession();
+        Query query = session.createQuery(
+            "SELECT COUNT(p.id) FROM ProductsEntity p WHERE p.productName LIKE :keyword OR p.description LIKE :keyword"
+        );
+        query.setParameter("keyword", "%" + keyword + "%");
+        return (Long) query.uniqueResult();
+    }
+
+    public long countAllProducts() {
+        Session session = factory.getCurrentSession();
+        Query query = session.createQuery("SELECT COUNT(p.id) FROM ProductsEntity p");
+        return (Long) query.uniqueResult();
+    }
 }

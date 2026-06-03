@@ -252,7 +252,7 @@
     function toggleWishlist(productId, btn) {
         console.log('Clicking wishlist for product:', productId);
         
-        fetch('${pageContext.request.contextPath}/api/wishlist/toggle', {
+        fetch('${pageContext.request.contextPath}/wishlist/toggle', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'productId=' + productId
