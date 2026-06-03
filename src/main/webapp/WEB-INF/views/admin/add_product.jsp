@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -64,7 +65,7 @@ body { background-color: #f3f5f4; padding: 40px 0; font-family: 'Segoe UI', sans
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label fw-semibold">Danh mục</label>
-                <select name="categoryId" class="form-select" onchange="loadAttributes(this.value)" required>
+                <select name="categoryId" class="form-select" required>
                     <option value="">-- Chọn danh mục --</option>
                     <option value="1">Vợt cầu lông</option>
                     <option value="2">Giày cầu lông</option>
@@ -98,26 +99,34 @@ body { background-color: #f3f5f4; padding: 40px 0; font-family: 'Segoe UI', sans
             </div>
         </div>
 
-        <%-- TIÊU CHÍ ĐỘNG THEO CATEGORY --%>
-        <div id="attr-container"></div>
-
-        <%-- VARIANTS --%>
+        <%-- ATTRIBUTES (TĨNH) --%>
         <div class="mb-4 mt-4">
-            <label class="form-label fw-bold">Kích cỡ & Số lượng tồn kho</label>
-            <div id="variant-container">
-                <div class="row g-2 mb-2 variant-row">
+            <label class="form-label fw-bold">Thuộc tính chi tiết (Điền nếu cần)</label>
+            <c:forEach begin="1" end="5" var="i">
+                <div class="row g-2 mb-2">
                     <div class="col-md-6">
-                        <input type="text" name="variantNames" class="form-control" placeholder="Ví dụ: Size 40" required>
+                        <input type="text" name="attrKeys" class="form-control" placeholder="Tên thuộc tính (VD: Độ cứng)">
                     </div>
-                    <div class="col-md-4">
-                        <input type="number" name="stockQuantities" class="form-control" placeholder="Số lượng" required>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="button" class="btn btn-outline-danger w-100" onclick="removeVariant(this)">✕</button>
+                    <div class="col-md-6">
+                        <input type="text" name="attrValues" class="form-control" placeholder="Giá trị (VD: Cứng)">
                     </div>
                 </div>
-            </div>
-            <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addVariant()">+ Thêm size</button>
+            </c:forEach>
+        </div>
+
+        <%-- VARIANTS (TĨNH) --%>
+        <div class="mb-4 mt-4">
+            <label class="form-label fw-bold">Kích cỡ & Số lượng tồn kho</label>
+            <c:forEach begin="1" end="5" var="i">
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                        <input type="text" name="variantNames" class="form-control" placeholder="Tên biến thể (VD: Size 40)">
+                    </div>
+                    <div class="col-md-6">
+                        <input type="number" name="stockQuantities" class="form-control" placeholder="Số lượng tồn kho (VD: 10)">
+                    </div>
+                </div>
+            </c:forEach>
         </div>
 
         <div class="d-grid mt-4">
@@ -129,103 +138,5 @@ body { background-color: #f3f5f4; padding: 40px 0; font-family: 'Segoe UI', sans
 </div>
 </div>
 
-<script>
-const categoryAttributes = {
-    "1": [ // Vợt cầu lông (ĐÃ LOẠI BỎ THUỘC TÍNH "WEIGHT" TRÙNG LẶP)
-        { key: "flexibility", label: "Độ cứng đũa", options: ["Cứng", "Trung bình", "Mềm"] },
-        { key: "swingweight", label: "Swingweight", options: ["Nặng đầu", "Cân bằng", "Nhẹ đầu"] },
-        { key: "balance_point",label: "Điểm cân bằng", options: ["Head Heavy", "Even Balance", "Head Light"] },
-        { key: "play_style",  label: "Phong cách chơi", options: ["Tấn công", "Phòng thủ", "Toàn diện"] },
-        { key: "play_level",  label: "Trình độ chơi", options: ["Người mới", "Trung cấp", "Chuyên nghiệp"] }
-    ],
-    "2": [ // Giày cầu lông
-        { key: "foot_type",   label: "Kiểu bàn chân", options: ["Slim", "Wide", "Normal"] },
-        { key: "segment_filter", label: "Phân khúc", options: ["Cao cấp", "Trung cấp", "Phổ thông"] }
-    ],
-    "3": [ // Quần áo cầu lông
-        { key: "clothe_type", label: "Loại trang phục", options: ["Quần", "Áo"] }
-        
-    ],
-    "4": [ // Túi cầu lông
-        { key: "suitable_for", label: "Phù hợp cho", options: ["Nam", "Nữ", "Tất cả"] },
-        { key: "bag_type", label: "Thể loại túi", options: ["Đeo ngang vai", "Đeo trên lưng"] },
-        { key: "num_of_compartments", label: "Số ngăn lớn", options: ["1 ngăn", "2 ngăn", "3 ngăn"] }
-    ],
-    "5": [ // Phụ kiện cầu lông
-    	{key: "accessory_type", 
-        label: "Loại phụ kiện", 
-        type: "combobox", // Đổi loại để kích hoạt giao diện vừa nhập vừa chọn
-        options: ["Quấn cán", "Quả cầu lông", "Cước căng vợt", "Lót giày", "Băng chặn mồ hôi"]}
-    ]
-};
-
-function loadAttributes(categoryId) {
-    const container = document.getElementById('attr-container');
-    container.innerHTML = '';
-
-    // Nếu không có category hoặc category không có thuộc tính động (như quần áo) thì bỏ qua
-    if (!categoryId || !categoryAttributes[categoryId] || categoryAttributes[categoryId].length === 0) return;
-
-    const attrs = categoryAttributes[categoryId];
-    let html = '<div class="attr-section"><h6>THÔNG TIN CHI TIẾT SẢN PHẨM</h6><div class="row g-3">';
-
-    for (let i = 0; i < attrs.length; i++) {
-        const attr = attrs[i];
-
-        let optionsHtml = '<option value="">-- Chọn ' + attr.label + ' --</option>';
-        for (let j = 0; j < attr.options.length; j++) {
-            optionsHtml += '<option value="' + attr.options[j] + '">' + attr.options[j] + '</option>';
-        }
-     
-        if (attr.type === "combobox") {
-            html += '<div class="col-md-6 mb-3">';
-            html += '<label class="form-label fw-semibold">' + attr.label + '</label>';
-            html += '<input type="hidden" name="attrKeys" value="' + attr.key + '">';
-            html += '<input type="text" name="attrValues" list="datalist_' + attr.key + '" class="form-control" placeholder="Chọn từ danh sách hoặc tự nhập mới..." required>';
-            html += '<datalist id="datalist_' + attr.key + '">';
-            attr.options.forEach(function(opt) {
-                html += '<option value="' + opt + '">';
-            });
-            html += '</datalist>';
-            html += '</div>';
-        } else {
-            html += '<div class="col-md-6">';
-            html += '<label class="form-label fw-semibold">' + attr.label + '</label>';
-            html += '<input type="hidden" name="attrKeys" value="' + attr.key + '">';
-            html += '<select name="attrValues" class="form-select" required>' + optionsHtml + '</select>';
-            html += '</div>';
-        }
-    }
-
-    html += '</div></div>';
-    container.innerHTML = html;
-}
-
-function addVariant() {
-    const container = document.getElementById('variant-container');
-    const newRow = document.createElement('div');
-    newRow.className = 'row g-2 mb-2 variant-row';
-    newRow.innerHTML = `
-        <div class="col-md-6">
-            <input type="text" name="variantNames" class="form-control" placeholder="Ví dụ: Size 41" required>
-        </div>
-        <div class="col-md-4">
-            <input type="number" name="stockQuantities" class="form-control" placeholder="Số lượng" required>
-        </div>
-        <div class="col-md-2">
-            <button type="button" class="btn btn-outline-danger w-100" onclick="removeVariant(this)">✕</button>
-        </div>`;
-    container.appendChild(newRow);
-}
-
-function removeVariant(btn) {
-    const rows = document.querySelectorAll('.variant-row');
-    if (rows.length > 1) {
-        btn.closest('.variant-row').remove();
-    } else {
-        alert("Phải có ít nhất một biến thể!");
-    }
-}
-</script>
 </body>
 </html>

@@ -256,16 +256,21 @@
 
         <div class="orders-list-box">
             <!-- Filter panel -->
+            <form action="${pageContext.request.contextPath}/admin/order/management.htm" method="GET">
             <div class="filter-row">
                 <div class="filter-group">
                     <label>Search</label>
-                    <input type="text" id="searchInput" class="filter-input" placeholder="Search by name/email/ID">
+                    <input type="text" name="keyword" class="filter-input" placeholder="Search by name/email/ID" value="${param.keyword}">
                 </div>
                 <div class="filter-group">
                     <label>Order date</label>
-                    <input type="date" id="dateInput" class="filter-input">
+                    <input type="date" name="orderDate" class="filter-input" value="${param.orderDate}">
+                </div>
+                <div class="filter-group" style="justify-content: flex-end;">
+                    <button type="submit" class="btn btn-outline-secondary" style="height: 36px; padding: 0 20px; border-radius: 10px; cursor: pointer; border: 1px solid #ccc;">Filter</button>
                 </div>
             </div>
+            </form>
 
             <h3 class="orders-list-title">Orders list</h3>
             <table>
@@ -321,35 +326,5 @@
         </div>
     </div>
 
-    <!-- Script JavaScript để lọc (Search) Real-Time như Figma -->
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const dateInput = document.getElementById('dateInput');
-        const rows = document.querySelectorAll('.order-row');
-
-        function filterOrders() {
-            const searchValue = searchInput.value.toLowerCase().trim();
-            const dateValue = dateInput.value; // định dạng YYYY-MM-DD
-
-            rows.forEach(row => {
-                const idText = row.cells[0].textContent.toLowerCase();
-                const nameText = row.querySelector('.user-name-col').textContent.toLowerCase();
-                const codeText = row.cells[2].textContent.toLowerCase();
-                const rowDate = row.getAttribute('data-date'); // YYYY-MM-DD
-
-                const matchesSearch = idText.includes(searchValue) || nameText.includes(searchValue) || codeText.includes(searchValue);
-                const matchesDate = !dateValue || rowDate === dateValue;
-
-                if (matchesSearch && matchesDate) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        searchInput.addEventListener('input', filterOrders);
-        dateInput.addEventListener('change', filterOrders);
-    </script>
 </body>
 </html>
