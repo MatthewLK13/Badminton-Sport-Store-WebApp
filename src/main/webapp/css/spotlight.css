@@ -1,0 +1,169 @@
+.spotlight-section {
+    width: 100%;
+    margin: 50px 0;
+    padding: 0 2%;
+    box-sizing: border-box;
+}
+
+.spotlight-header {
+    font-family: 'Iosevka Charon Mono', monospace !important;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    text-transform: uppercase;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+    text-align: left;
+}
+
+.spotlight-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.spotlight-card {
+    position: relative;
+    flex: 1;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+}
+
+.spotlight-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.card-content {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+    right: 25px;
+    z-index: 2;
+}
+
+.card-content h3 {
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 6px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.card-sparkle {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 25px;
+    z-index: 2;
+}
+
+.spotlight-large-banner {
+    position: relative;
+    width: 100%;
+    height: 550px;
+    overflow: hidden;
+    border: none !important;
+    box-sizing: border-box;
+}
+
+.spotlight-large-banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.large-banner-content {
+    position: absolute;
+    bottom: 45px;
+    left: 45px;
+    max-width: 480px;
+    z-index: 2;
+}
+
+.large-banner-content h2 {
+    font-family: 'Inria Serif', serif !important;
+    font-size: 32px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.large-banner-content p {
+    font-family: 'Inter', sans-serif !important;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #ffffff;
+    white-space: nowrap;
+    margin: 0 0 25px 0;
+}
+
+.btn-shop-now {
+    display: inline-block;
+    background-color: #ffffff;
+    color: #000000;
+    text-decoration: none;
+    padding: 14px 40px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-shop-now:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+.large-banner-sparkle {
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 50px;
+    z-index: 2;
+}
+
+.explore-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    padding-bottom: 3px;
+    transition: all 0.25s ease-in-out;
+}
+
+.explore-link .arrow {
+    display: inline-block;
+    transition: transform 0.25s ease-in-out;
+}
+
+.explore-link:hover {
+    color: #FFCC00;
+    border-bottom-color: #FFCC00;
+    cursor: pointer;
+}
+
+.explore-link:hover .arrow {
+    transform: translateX(4px);
+}

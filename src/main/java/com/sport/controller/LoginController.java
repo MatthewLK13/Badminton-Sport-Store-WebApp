@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.sport.dao.CartDao;
 import com.sport.dao.UserDAO;
+import com.sport.dao.WishlistDao;
 import com.sport.entity.User;
 
 @Controller
@@ -15,6 +17,12 @@ public class LoginController {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private CartDao cartDao;
+
+    @Autowired
+    private WishlistDao wishlistDao;
 
     @RequestMapping(value = "/login.htm", method = RequestMethod.GET)
     public String showLogin() {
@@ -37,7 +45,9 @@ public class LoginController {
             String hashedInputPassword = org.springframework.util.DigestUtils.md5DigestAsHex(password.getBytes());
             if (user.getPasswordHash().equals(hashedInputPassword)) {
                 session.setAttribute("user", user);
-                return "redirect:/home.htm"; 
+                session.setAttribute("cartCount", cartDao.countByUserId(user.getId()));
+                session.setAttribute("wishlistCount", wishlistDao.countByUserId(user.getId()));
+                return "redirect:/home.htm";
             }
         }
 
