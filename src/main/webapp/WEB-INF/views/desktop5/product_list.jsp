@@ -158,17 +158,17 @@
         <%-- Bọc cả card trong div, không dùng <a> bọc toàn bộ --%>
         <div class="product-card-wrapper" style="position: relative;">
             
-            <%-- Nút wishlist đặt NGOÀI thẻ <a>, dùng position absolute --%>
-            <button class="wishlist-btn"
-        data-product-id="${p.id}"
-        onclick="toggleWishlist(${p.id}, this)"
-        style="position:absolute; top:16px; right:16px; z-index:10; background:transparent; border:none; cursor:pointer;">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path class="heart-path" fill-rule="evenodd" clip-rule="evenodd"
-                          d="M19.6431 7.05858C19.6103 4.79858 18.3289 2.57286 16.3617 1.65572C15.3044 1.16162 14.0982 1.09057 12.9903 1.45715C11.9831 1.77715 10.9731 2.43286 10.0003 3.46429C9.02742 2.43286 8.01742 1.77858 7.01028 1.45715C5.90232 1.09057 4.69612 1.16162 3.63885 1.65572C1.67171 2.57286 0.390279 4.79858 0.357422 7.05858V7.07001C0.357422 10.3657 2.31742 13.2857 4.39456 15.3357C5.33754 16.2725 6.38375 17.0992 7.51314 17.8C7.99599 18.0943 8.45171 18.33 8.85599 18.4957C9.24171 18.6529 9.64599 18.7729 10.0003 18.7729C10.3546 18.7729 10.7574 18.6529 11.1431 18.4957C11.5489 18.3314 12.0046 18.0957 12.486 17.8014C13.6159 17.1002 14.6626 16.273 15.606 15.3357C17.6831 13.2857 19.6431 10.3657 19.6431 7.07144V7.05858Z"
-                          fill="rgba(0,0,0,0.1)" stroke="black" stroke-width="1.2"/>
-                </svg>
-            </button>
+            <%-- Nút wishlist bằng Form --%>
+            <form action="${pageContext.request.contextPath}/wishlist/toggle.htm" method="post" style="position:absolute; top:16px; right:16px; z-index:10;">
+                <input type="hidden" name="productId" value="${p.id}">
+                <button type="submit" class="wishlist-btn" style="background:transparent; border:none; cursor:pointer;">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path class="heart-path" fill-rule="evenodd" clip-rule="evenodd"
+                              d="M19.6431 7.05858C19.6103 4.79858 18.3289 2.57286 16.3617 1.65572C15.3044 1.16162 14.0982 1.09057 12.9903 1.45715C11.9831 1.77715 10.9731 2.43286 10.0003 3.46429C9.02742 2.43286 8.01742 1.77858 7.01028 1.45715C5.90232 1.09057 4.69612 1.16162 3.63885 1.65572C1.67171 2.57286 0.390279 4.79858 0.357422 7.05858V7.07001C0.357422 10.3657 2.31742 13.2857 4.39456 15.3357C5.33754 16.2725 6.38375 17.0992 7.51314 17.8C7.99599 18.0943 8.45171 18.33 8.85599 18.4957C9.24171 18.6529 9.64599 18.7729 10.0003 18.7729C10.3546 18.7729 10.7574 18.6529 11.1431 18.4957C11.5489 18.3314 12.0046 18.0957 12.486 17.8014C13.6159 17.1002 14.6626 16.273 15.606 15.3357C17.6831 13.2857 19.6431 10.3657 19.6431 7.07144V7.05858Z"
+                              fill="rgba(0,0,0,0.1)" stroke="black" stroke-width="1.2"/>
+                    </svg>
+                </button>
+            </form>
 
             <%-- Thẻ <a> chỉ bọc phần nội dung card --%>
             <a href="${pageContext.request.contextPath}/products/details.htm?id=${p.id}" 
@@ -249,30 +249,7 @@
     </div> 
     
     <script>
-    function toggleWishlist(productId, btn) {
-        console.log('Clicking wishlist for product:', productId);
-        
-        fetch('${pageContext.request.contextPath}/wishlist/toggle', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'productId=' + productId
-        })
-        .then(r => {
-            console.log('Response status:', r.status);
-            return r.json();
-        })
-        .then(data => {
-            console.log('Response data:', data);
-            if (data.status === 'login_required') {
-                alert('Vui lòng đăng nhập!');
-                return;
-            }
-            // Đổi màu trái tim
-            updateWishlistButtonState(productId, data.status === 'added');
-            updateWishlistBadge(data.count);
-        })
-        .catch(err => console.error('Error:', err));
-    }
+
 function toggleFilterDrawer() {
     document.getElementById('filterDrawer').classList.toggle('open');
     document.getElementById('drawerOverlay').classList.toggle('open');

@@ -32,18 +32,14 @@ public class WishlistController {
     private CartDao cartDao;
 
     @RequestMapping(value = "/toggle", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Object> toggle(
+    public String toggle(
             @RequestParam("productId") int productId,
-            HttpSession session) {
+            HttpSession session,
+            javax.servlet.http.HttpServletRequest request) {
 
-        Map<String, Object> result = new HashMap<>();
         User user = (User) session.getAttribute("user");
-
         if (user == null) {
-            result.put("status", "login_required");
-            result.put("count", 0);
-            return result;
+            return "redirect:/login.htm";
         }
 
         int userId = user.getId();
@@ -51,14 +47,14 @@ public class WishlistController {
 
         if (exists) {
             wishlistDao.remove(userId, productId);
-            result.put("status", "removed");
         } else {
             wishlistDao.add(userId, productId);
-            result.put("status", "added");
         }
 
-        result.put("count", wishlistDao.countByUserId(userId));
-        return result;
+        session.setAttribute("wishlistCount", wishlistDao.countByUserId(userId));
+
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/home.htm");
     }
 
     @RequestMapping(value = "/count", method = RequestMethod.GET)

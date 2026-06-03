@@ -19,7 +19,17 @@
 	<context:annotation-config />
 	<!-- Thêm vào spring-config-mvc.xml -->
 <context:annotation-config />
-<mvc:annotation-driven />
+<mvc:annotation-driven>
+    <mvc:message-converters>
+        <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+            <property name="supportedMediaTypes">
+                <list>
+                    <value>application/json;charset=UTF-8</value>
+                </list>
+            </property>
+        </bean>
+    </mvc:message-converters>
+</mvc:annotation-driven>
 	
 	<!-- Cấu hình view -->
 	<bean id="viewResolver" 
