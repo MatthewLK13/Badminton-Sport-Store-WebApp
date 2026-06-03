@@ -660,7 +660,7 @@ body { top: 0px !important; }
     gap: 50px;
 }
 
-.mega-column h3 a{
+.mega-column h3 {
     font-family: 'Impact', 'Arial Black', sans-serif;
     font-size: 14px;
     letter-spacing: 1.5px;

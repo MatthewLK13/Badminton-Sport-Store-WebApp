@@ -1,4 +1,4 @@
-/*document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     const cartBtn = document.getElementById("cart-btn");
     const cartDrawer = document.getElementById("cart-drawer");
     const closeCartBtn = document.getElementById("close-cart-btn");
@@ -32,4 +32,4 @@
             cartDrawer.classList.remove("open");
         });
     }
-});*/
+});

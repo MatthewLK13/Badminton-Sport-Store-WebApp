@@ -23,7 +23,7 @@ public class HomeController {
     public String home(ModelMap model) {
         List<ProductsEntity> products = productDao.getNewArrivals(6);
         model.addAttribute("products", products);
-        return "home";
+        return "index2";
     }
     @RequestMapping(value = "/athlete/an-se-young.htm", method = RequestMethod.GET)
     public String showAnSeYoungProfile(ModelMap model) {
@@ -51,5 +51,25 @@ public class HomeController {
             session.invalidate();
         }
         return "redirect:/login.htm";
+    }
+
+    @RequestMapping(value = "/promo.htm", method = RequestMethod.GET)
+    public String promo() {
+        return "promo";
+    }
+
+    @RequestMapping(value = "/stores.htm", method = RequestMethod.GET)
+    public String stores() {
+        return "stores";
+    }
+
+    @RequestMapping(value = "/help.htm", method = RequestMethod.GET)
+    public String help() {
+        return "help";
+    }
+
+    @RequestMapping(value = "/order-tracking.htm", method = RequestMethod.GET)
+    public String orderTracking() {
+        return "order-tracking";
     }
 }

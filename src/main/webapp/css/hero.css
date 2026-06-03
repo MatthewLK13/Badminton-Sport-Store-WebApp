@@ -8,7 +8,7 @@ html, body {
 .hero-section {
     width: 100%;
     height: 750px; 
-    background-image: url('../images/homepage/image1.png');
+    background-image: url('../images/image1.png');
     background-size: cover; 
     background-position: center 90%; 
     background-repeat: no-repeat;
@@ -122,23 +122,37 @@ html, body {
 }
 
 .btn-learn-more {
-    display: flex;             
-    align-items: center;       
-    justify-content: center;   
-    width: 217px;
-    height: 100px;
-    box-sizing: border-box;    
+    /* Ép buộc căn giữa bằng Flexbox */
+    display: flex !important;             
+    align-items: center !important;       
+    justify-content: center !important;   
+    
+    /* Kích thước */
+    width: 217px !important;
+    height: 100px !important;
+    
+    /* Reset mọi thuộc tính gây lệch */
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important; /* Quan trọng: Ngắt bỏ ảnh hưởng của dòng */
+    text-align: center !important;
+    
+    /* Định dạng */
+    box-sizing: border-box !important;    
     border: 5px solid #C4D5F5; 
     background-color: #ffffff;
     color: #000000;
-    text-decoration: none;
+    text-decoration: none !important;
     font-size: 14px;           
     font-family: 'Inter', sans-serif; 
     font-weight: 700 !important; 
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    
+    /* Hiệu ứng */
     box-shadow: 0px 4px 4px 0px #00000040;
     transition: all 0.2s ease-in-out;
+   /* Đảm bảo không bị ảnh hưởng bởi line-height */
 }
 
 .btn-learn-more:hover {
