@@ -1,23 +1,28 @@
 package com.sport.service;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class BackgroundRemoverService {
 
     
-    private static final String API_KEY = "wHFnVwsLYGiUK65tUjjjueCa";
+    private static final String API_KEY = System.getenv("REMOVE_BG_API_KEY");
     private static final String API_URL = "https://api.remove.bg/v1.0/removebg";
 
     public static boolean removeBackground(File sourceFile, String targetPath) {
+        if (API_KEY == null || API_KEY.isBlank()) {
+            System.err.println("REMOVE_BG_API_KEY environment variable is not set. Skipping background removal.");
+            return false;
+        }
+
         OkHttpClient client = new OkHttpClient();
 
        

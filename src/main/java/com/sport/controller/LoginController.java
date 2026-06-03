@@ -7,7 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.sport.dao.CartDao;
 import com.sport.dao.UserDAO;
+import com.sport.dao.WishlistDao;
 import com.sport.entity.User;
 
 @Controller
@@ -15,6 +17,12 @@ public class LoginController {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private CartDao cartDao;
+
+    @Autowired
+    private WishlistDao wishlistDao;
 
     @RequestMapping(value = "/login.htm", method = RequestMethod.GET)
     public String showLogin() {
@@ -34,19 +42,16 @@ public class LoginController {
         User user = userDAO.findByEmailOrPhone(username);
 
         if (user != null) {
-            if (user.getPasswordHash().equals(password)) {
+            String hashedInputPassword = org.springframework.util.DigestUtils.md5DigestAsHex(password.getBytes());
+            if (user.getPasswordHash().equals(hashedInputPassword)) {
                 session.setAttribute("user", user);
-                return "redirect:/home.htm"; 
+                session.setAttribute("cartCount", cartDao.countByUserId(user.getId()));
+                session.setAttribute("wishlistCount", wishlistDao.countByUserId(user.getId()));
+                return "redirect:/home.htm";
             }
         }
 
         model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
         return "login";
     }
-
-    @RequestMapping("/logout.htm")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login.htm";
-    }
-}
+}

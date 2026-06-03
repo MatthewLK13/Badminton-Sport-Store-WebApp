@@ -3,6 +3,7 @@ package com.sport.controller;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import com.sport.dao.CartDao;
@@ -118,5 +119,23 @@ public class CartController {
         cartDao.remove(cartId);
         long count = cartDao.countByUserId(user.getId());
         return "{\"status\":\"removed\",\"count\":" + count + "}";
+    }
+
+    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    public String viewCart(HttpSession session, ModelMap model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) return "redirect:/login.htm";
+
+        List<CartEntity> cartItems = cartDao.getByUserId(user.getId());
+        double cartTotal = 0;
+        for (CartEntity item : cartItems) {
+            ProductVariantsEntity variant = productDao.getVariantById(item.getProductVariantId());
+            if (variant != null && variant.getProduct() != null) {
+                cartTotal += variant.getProduct().getPrice() * item.getQuantity();
+            }
+        }
+        model.addAttribute("cartTotal", String.format("%.2f", cartTotal));
+        model.addAttribute("cartItems", cartItems);
+        return "cart";
     }
 }

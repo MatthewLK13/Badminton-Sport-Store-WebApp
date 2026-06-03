@@ -145,9 +145,6 @@
 <section class="products-section">
     <h2 class="products-header">NEW ARRIVALS</h2>
     <div class="products-container">
-        <button class="slider-btn prev-btn"><span class="btn-icon"></span></button>
-        <button class="slider-btn next-btn"><span class="btn-icon"></span></button>
-
         <div class="products-grid">
             <%-- Vòng lặp lấy danh sách 6 sản phẩm động từ Database --%>
             <c:forEach var="product" items="${products}" varStatus="status">
@@ -156,23 +153,23 @@
                     <%-- SỬA TẠI ĐÂY: Thẻ <div> bọc ngoài, thẻ <a> nằm trong để ôm lấy <img> chuẩn HTML --%>
                     <div class="image-wrapper">
                         <span class="tag-new">NEW</span>
-                        <a href="${pageContext.request.contextPath}/product/detail.htm?id=${product.id}" style="display: block;">
-                            <img src="${pageContext.request.contextPath}/images/${product.image}" alt="${product.name}">
+                        <a href="${pageContext.request.contextPath}/products/details.htm?id=${product.id}" style="display: block;">
+                            <img src="${pageContext.request.contextPath}/images/products/${product.avatarName}" alt="${product.productName}">
                         </a>
                     </div>
-                    
+
                     <div class="product-info">
                         <%-- Tiêu đề tên sản phẩm chứa link chi tiết --%>
                         <h3 class="product-name">
-                            <a href="${pageContext.request.contextPath}/product/detail.htm?id=${product.id}">
-                                ${product.name}
+                            <a href="${pageContext.request.contextPath}/products/details.htm?id=${product.id}">
+                                ${product.productName}
                             </a>
                         </h3>
-                        
+
                         <p class="product-cate">
                             <c:choose>
-                                <c:when test="${product.categoryId == 1}">Badminton Racket</c:when>
-                                <c:when test="${product.categoryId == 2}">Badminton Footwear</c:when>
+                                <c:when test="${product.category_id.id == 1}">Badminton Racket</c:when>
+                                <c:when test="${product.category_id.id == 2}">Badminton Footwear</c:when>
                                 <c:otherwise>Badminton Equipment</c:otherwise>
                             </c:choose>
                         </p>
@@ -247,122 +244,5 @@
         </div>
     </div>
 </section>
-    <script src="${pageContext.request.contextPath}/js/main.js"></script>
-   
-    <script type="text/javascript">
-    setTimeout(function() {
-       
-        const currentLangText = document.getElementById("current-lang-text");
-        const savedLang = localStorage.getItem('selected_lang');
-        
-        if (currentLangText) {
-            if (savedLang) {
-               
-                currentLangText.innerText = savedLang;
-            } else {
-                
-                currentLangText.innerText = "VI";
-            }
-        }
-
-        const langTrigger = document.getElementById("lang-trigger-btn");
-        const langList = document.getElementById("langList");
-        const cartBtn = document.getElementById("cart-btn");
-        const cartSidebar = document.getElementById("cart-sidebar"); 
-        const closeCartBtn = document.getElementById("close-cart-btn");
-        const cartOverlay = document.getElementById("cart-overlay");
-        
-       
-        if (langTrigger && langList) {
-            langTrigger.addEventListener("click", function(event) {
-                event.preventDefault();
-                event.stopPropagation(); 
-                langList.classList.toggle("show");
-            });
-
-            document.addEventListener("click", function(event) {
-                if (!langTrigger.contains(event.target) && !langList.contains(event.target)) {
-                    langList.classList.remove("show");
-                }
-            });
-        }
-
-       
-        if (cartBtn && cartSidebar) {
-            cartBtn.addEventListener("click", function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                cartSidebar.classList.add("active");
-                if(cartOverlay) cartOverlay.classList.add("active");
-            });
-        }
-
-        if (closeCartBtn) {
-            closeCartBtn.addEventListener("click", function(e) {
-                e.stopPropagation();
-                if(cartSidebar) cartSidebar.classList.remove("active");
-                if(cartOverlay) cartOverlay.classList.remove("active");
-            });
-        }
-
-        if (cartOverlay) {
-            cartOverlay.addEventListener("click", function() {
-                if(cartSidebar) cartSidebar.classList.remove("active");
-                if(cartOverlay) cartOverlay.classList.remove("active");
-            });
-        }
-    }, 0);
-    </script>
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const grid = document.querySelector(".products-grid");
-    const prevBtn = document.querySelector(".prev-btn");
-    const nextBtn = document.querySelector(".next-btn");
-
-    if (grid && prevBtn && nextBtn) {
-        
-        function getScrollAmount() {
-            const firstCard = grid.querySelector(".product-card");
-            if (firstCard) {
-                return firstCard.clientWidth + 20; 
-            }
-            return 300; 
-        }
-
-        
-        nextBtn.addEventListener("click", function () {
-            grid.scrollBy({
-                left: getScrollAmount(),
-                behavior: "smooth"
-            });
-        });
-
-        
-        prevBtn.addEventListener("click", function () {
-            grid.scrollBy({
-                left: -getScrollAmount(),
-                behavior: "smooth"
-            });
-        });
-        
-        
-        grid.addEventListener("scroll", function() {
-          
-            if (grid.scrollLeft <= 5) {
-                prevBtn.style.opacity = "0.5";
-            } else {
-                prevBtn.style.opacity = "1";
-            }
-            
-           
-            if (grid.scrollLeft + grid.clientWidth >= grid.scrollWidth - 5) {
-                nextBtn.style.opacity = "0.5";
-            } else {
-                nextBtn.style.opacity = "1";
-            }
-        });
-    }
-});
-</script>
 </body>
 </html>

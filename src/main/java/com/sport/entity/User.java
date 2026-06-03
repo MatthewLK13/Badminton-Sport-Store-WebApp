@@ -24,13 +24,16 @@ public class User {
     @Column(name = "fullname", nullable = false)
     private String fullName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id")
     private Role role;
 
     // SỬA TẠI ĐÂY: Tên cột dưới database của bạn là "is_active" (viết thường có gạch dưới)
     @Column(name = "is_active", insertable = false)
     private Boolean isActive;
+
+    @Column(name = "address")
+    private String address;
 
     // Getters and Setters
     public Integer getId() { return id; }
@@ -47,4 +50,6 @@ public class User {
     public void setRole(Role role) { this.role = role; }
     public Boolean getIsActive() { return isActive; }
     public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 }
