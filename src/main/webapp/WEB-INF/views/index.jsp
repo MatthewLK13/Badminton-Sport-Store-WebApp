@@ -36,28 +36,12 @@
         </div>
     </div>
 
-    <!-- Toast notification -->
-    <div id="toast"></div>
-    <script>
-        function showToast(message, type) {
-            const container = document.getElementById("toast");
-            const toast = document.createElement("div");
-            toast.className = "toast " + type;
-            toast.innerText = message;
-            container.appendChild(toast);
-            setTimeout(() => toast.classList.add("show"), 100);
-            setTimeout(() => {
-                toast.classList.remove("show");
-                setTimeout(() => toast.remove(), 400);
-            }, 3000);
-        }
-        <% if (request.getAttribute("success") != null) { %>
-            showToast("<%= request.getAttribute("success") %>", "success");
-        <% } %>
-        <% if (request.getAttribute("error") != null) { %>
-            showToast("<%= request.getAttribute("error") %>", "error");
-        <% } %>
-    </script>
+    <% if (request.getAttribute("error") != null) { %>
+        <div class="alert error" style="color:red; text-align:center; padding: 10px; margin-top: 15px; border: 1px solid red; border-radius: 5px;"><%= request.getAttribute("error") %></div>
+    <% } %>
+    <% if (request.getAttribute("success") != null) { %>
+        <div class="alert success" style="color:green; text-align:center; padding: 10px; margin-top: 15px; border: 1px solid green; border-radius: 5px;"><%= request.getAttribute("success") %></div>
+    <% } %>
 
 </body>
 </html>

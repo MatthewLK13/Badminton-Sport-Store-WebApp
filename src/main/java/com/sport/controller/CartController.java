@@ -27,18 +27,20 @@ public class CartController {
 
     // Thêm vào giỏ
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    @ResponseBody
     public String add(
             @RequestParam("variantId") int variantId,
             @RequestParam(value = "quantity", defaultValue = "1") int quantity,
-            HttpSession session) {
+            HttpSession session,
+            javax.servlet.http.HttpServletRequest request) {
 
         User user = (User) session.getAttribute("user");
-        if (user == null) return "{\"status\":\"login_required\",\"count\":0}";
+        if (user == null) return "redirect:/login.htm";
 
         cartDao.add(user.getId(), variantId, quantity);
         long count = cartDao.countByUserId(user.getId());
-        return "{\"status\":\"added\",\"count\":" + count + "}";
+        session.setAttribute("cartCount", count);
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/cart/index.htm");
     }
 
     // Đếm số lượng
