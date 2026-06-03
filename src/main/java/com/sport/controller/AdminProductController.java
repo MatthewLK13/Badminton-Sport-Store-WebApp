@@ -1,289 +1,193 @@
 package com.sport.controller;
 
-import java.io.File;
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.sport.entity.BrandsEntity;
-import com.sport.entity.CategoriesEntity;
-import com.sport.entity.ProductImagesEntity;
+import javax.servlet.http.HttpServletResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sport.dao.AdminProductDao;
+import com.sport.entity.ProductAttributeEntity;
+import com.sport.entity.ProductVariantsEntity;
 import com.sport.entity.ProductsEntity;
-import com.sport.entity.ProductVariantsEntity; 
-import com.sport.service.BackgroundRemoverService;
 
 @Controller
 @RequestMapping("/admin/product")
 public class AdminProductController {
-	
-	@Autowired
-	private SessionFactory factory;
-	
-	@Autowired
-	private ServletContext context;
-	
-	@RequestMapping("/add")
-	public String showAddForm() {
-		return "admin/add_product";
-	}
-	
-	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String saveProduct(
-			@RequestParam("productName") String productName,
-			@RequestParam("categoryId") int categoryId,
-			@RequestParam("brandId") int brandId,
-			@RequestParam("price") Double price,
-			@RequestParam("description") String description,
-			@RequestParam("fileMain") MultipartFile fileMain,
-			@RequestParam("fileRight") MultipartFile fileRight,
-			@RequestParam("fileTop") MultipartFile fileTop,
-			@RequestParam("fileBottom") MultipartFile fileBottom,
-			@RequestParam("variantNames") String[] variantNames,
-			@RequestParam(value = "attrKeys", required = false) String[] attrKeys,
-			@RequestParam(value = "attrValues", required = false) String[] attrValues,
-			@RequestParam("stockQuantities") Integer[] stockQuantities 
-			) {
-		System.out.println("=== REAL PATH: " + context.getRealPath("/"));
-		Session session = factory.openSession();
-		Transaction t = session.beginTransaction();
-		
-		try {
-			//  Lưu thông tin sản phẩm chính ---
-			ProductsEntity product = new ProductsEntity();
-			product.setProductName(productName);
-			product.setPrice(price);
-			product.setDescription(description);
-			
-			CategoriesEntity cate = (CategoriesEntity) session.get(CategoriesEntity.class, categoryId);
-			BrandsEntity brand = (BrandsEntity) session.get(BrandsEntity.class, brandId);
-			product.setBrand_id(brand);
-			product.setCategory_id(cate);
-			
-			// Gán ngày giờ hiện tại cho sản phẩm mới tạo
-			java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			String currentDateTimeString = formatter.format(new java.util.Date());
-			product.setCreateAt(currentDateTimeString);
 
-			// Lưu sản phẩm chính xuống trước để tự động sinh ra Product ID (Khóa chính)
-			session.save(product);
-			
-			// Cấu hình thư mục và chuẩn bị ảnh ---
-			String productSlug = product.covertedToSlug(productName);
-			String uploadFolder = context.getRealPath("/images/products");
-			
-			File directory = new File(uploadFolder);
-			if (!directory.exists()) {
-				directory.mkdirs();
-			}
-			
-			// Vòng lặp xử lý ảnh và gọi AI xóa nền ---
-			MultipartFile[] files = {fileMain, fileRight, fileTop, fileBottom};
-			String[] suffixes = {"main", "right", "top", "bottom"};
-			
-			for (int i = 0; i < files.length; i++) {
-			    MultipartFile file = files[i];
-			    String suffix = suffixes[i];
-			    
-			    // Kiểm tra trống ảnh
-			    if (file == null || file.isEmpty()) {
-			        if ("main".equals(suffix)) {
-			            System.err.println(" Lỗi Back-end: Admin không upload ảnh Main bắt buộc!");
-			            throw new IllegalArgumentException("Ảnh đại diện (Main side) là bắt buộc, không được để trống!");
-			        }
-			        continue; 
-			    }
-			    
-			    String finalFileName = productSlug + "-" + suffix + ".png";
-			    
-			    //  Đường dẫn ảo trong thư mục build của Server Tomcat
-			    String fullPathToSave = uploadFolder + java.io.File.separator + finalFileName;
-			    
-			    // TỰ ĐỘNG LẤY ĐƯỜNG DẪN THẬT ngoài Desktop dựa vào Server ảo (Lùi 4 cấp thư mục để về src gốc)
-			 // XÓA TOÀN BỘ đoạn tính workspaceDir cũ, thay bằng dòng này:
-			    String desktopPathToSave = "C:\\Users\\Administrator\\Documents\\LTW\\Badminton-Sport-Store-WebApp\\src\\main\\webapp\\images\\products\\" + finalFileName;
+    @Autowired
+    private AdminProductDao adminProductDao;
 
-			    // Tạo sẵn file tạm để nhận dữ liệu upload
-			    java.io.File tempFile = java.io.File.createTempFile("upload_", file.getOriginalFilename());
-			    file.transferTo(tempFile);
-			    
-			    try {
-			        // Đảm bảo thư mục Desktop thật sự tồn tại trước khi ghi file
-			        java.io.File desktopFolder = new java.io.File(desktopPathToSave).getParentFile();
-			        if (!desktopFolder.exists()) {
-			            desktopFolder.mkdirs();
-			        }
+    @Autowired
+    private ServletContext context;
 
-			        // Tiến hành gọi AI xử lý xóa nền và lưu thẳng vào Desktop
+    @RequestMapping("/add")
+    public String showAddForm() {
+        return "admin/add_product";
+    }
 
-			        boolean isRemoved = BackgroundRemoverService.removeBackground(tempFile, desktopPathToSave);
-			        if (isRemoved) {
-			            // Nếu AI thành công, copy bản tách nền từ Desktop sang Server tạm của Tomcat để web hiển thị ngay
-			            java.nio.file.Files.copy(
-			                new java.io.File(desktopPathToSave).toPath(), 
-			                new java.io.File(fullPathToSave).toPath(), 
-			                java.nio.file.StandardCopyOption.REPLACE_EXISTING
-			            );
-			            System.out.println("Đã xóa nền và đồng bộ ảnh thành công!");
-			        } else {
-			            // Nếu AI thất bại (hết lượt), tự động copy ảnh gốc của khách vào cả 2 nơi để cứu vãn
-			            java.nio.file.Files.copy(tempFile.toPath(), new java.io.File(desktopPathToSave).toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-			            java.nio.file.Files.copy(tempFile.toPath(), new java.io.File(fullPathToSave).toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-			            System.out.println(" [AI Thất Bại] Hệ thống tự động chuyển hướng lưu giữ lại ảnh gốc!");
-			        }
-			    } catch (Exception e) {
-			        // Phòng hờ lỗi hệ thống, ép buộc lưu ảnh gốc để tránh sập luồng của DB
-			        try {
-			            java.nio.file.Files.copy(tempFile.toPath(), new java.io.File(fullPathToSave).toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-			        } catch (Exception ex) { ex.printStackTrace(); }
-			        System.err.println(" Lỗi ngoại lệ tại luồng AI: " + e.getMessage() + " -> Đã lưu ảnh gốc dự phòng.");
-			    }
+    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    public String saveProduct(
+            @RequestParam("productName") String productName,
+            @RequestParam("categoryId") int categoryId,
+            @RequestParam("brandId") int brandId,
+            @RequestParam("price") Double price,
+            @RequestParam("description") String description,
+            @RequestParam("fileMain") MultipartFile fileMain,
+            @RequestParam("fileRight") MultipartFile fileRight,
+            @RequestParam("fileTop") MultipartFile fileTop,
+            @RequestParam("fileBottom") MultipartFile fileBottom,
+            @RequestParam("variantNames") String[] variantNames,
+            @RequestParam(value = "attrKeys", required = false) String[] attrKeys,
+            @RequestParam(value = "attrValues", required = false) String[] attrValues,
+            @RequestParam("stockQuantities") Integer[] stockQuantities) {
 
-			    // ĐƯA RA NGOÀI ĐIỀU KIỆN IF AI: Đảm bảo bảng ProductImages LUÔN LUÔN ĐƯỢC LƯU
-			    ProductImagesEntity imgEntity = new ProductImagesEntity();
-			    imgEntity.setProduct(product);
-			    imgEntity.setImageUrl(finalFileName);
-			    imgEntity.setIsMain("main".equals(suffix)); 
-			    
-			    session.save(imgEntity);
-			    System.out.println("Đã ghi nhận thông tin ảnh vào bảng ProductImages thành công!");
-			    
-			    
-			    if (tempFile.exists()) {
-			        tempFile.delete();
-			    }
-			}
-			
-			//  Lưu danh sách Biến thể (Size & Số lượng tồn kho) ---
-			if (variantNames != null && stockQuantities != null) {
-				for (int j = 0; j < variantNames.length; j++) {
-					ProductVariantsEntity variant = new ProductVariantsEntity();
-					variant.setProduct(product);                  
-					variant.setVariant_name(variantNames[j]);     
-					variant.setStock_quantity(stockQuantities[j]); 
-					
-					session.save(variant); 
-				}
-			}
-			if (attrKeys != null && attrValues != null) {
-			    for (int k = 0; k < attrKeys.length; k++) {
-			        String key = attrKeys[k];
-			        String value = (k < attrValues.length) ? attrValues[k] : "";
-			        if (key == null || key.trim().isEmpty()) continue;
-			        if (value == null || value.trim().isEmpty()) continue;
-			        session.createSQLQuery(
-			            "INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, :key, :val)"
-			        )
-			        .setParameter("pid", product.getId())
-			        .setParameter("key", key.trim())
-			        .setParameter("val", value.trim())
-			        .executeUpdate();
-			    }
-			}
-			//  Lưu ProductAttributes
-			// ============================================================
-						// XỬ LÝ TỰ ĐỘNG BÓC TÁCH BỘ LỌC (BRAND, SIZE, WEIGHT) CHO DB
-						// ============================================================
-						
-						// 1. Tự động lưu bộ lọc Thương hiệu (brand_filter) dựa trên brandId (Áp dụng cho TẤT CẢ danh mục)
-						String brandNameFilter = "";
-						if (brandId == 1) brandNameFilter = "Yonex";
-						else if (brandId == 2) brandNameFilter = "Victor";
-						else if (brandId == 3) brandNameFilter = "Lining";
+        try {
+            String uploadFolder = context.getRealPath("/images/products");
+            String sourceFolder = "C:\\Users\\Administrator\\Documents\\LTW\\Badminton-Sport-Store-WebApp\\src\\main\\webapp\\images\\products\\";
 
-						if (!brandNameFilter.isEmpty()) {
-							session.createSQLQuery(
-								"INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, 'brand_filter', :val)"
-							)
-							.setParameter("pid", product.getId())
-							.setParameter("val", brandNameFilter)
-							.executeUpdate();
-						}
+            adminProductDao.saveFullProduct(
+                productName, categoryId, brandId, price, description,
+                fileMain, fileRight, fileTop, fileBottom,
+                variantNames, stockQuantities,
+                attrKeys, attrValues,
+                uploadFolder, sourceFolder
+            );
 
-						// 2. Tự động duyệt qua tồn kho để lưu bộ lọc Kích cỡ hoặc Trọng lượng
-						if (variantNames != null) {
-							java.util.Set<String> addedFilters = new java.util.HashSet<>();
-							
-							for (String vName : variantNames) {
-								if (vName == null || vName.trim().isEmpty()) continue;
-								
-								String trimmedName = vName.trim();
-								String upperName = trimmedName.toUpperCase();
-								
-								// THƯỜNG HỢP 1: NẾU LÀ SẢN PHẨM QUẦN ÁO (Biến thể nhập dạng chữ: S, M, L, XL, XXL)
-								if (categoryId == 3 && (upperName.equals("S") || upperName.equals("M") || upperName.equals("L") 
-										|| upperName.equals("XL") || upperName.equals("XXL") || upperName.contains("SIZE"))) {
-									
-									String sizeValue = trimmedName.replaceAll("(?i)Size\\s*", "").toUpperCase().trim();
-									if (!sizeValue.isEmpty() && addedFilters.add("cloth_size_" + sizeValue)) {
-										session.createSQLQuery(
-			                                // Đổi từ 'size_filter' thành 'cloth_size' ở đây
-											"INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, 'cloth_size', :val)"
-										)
-										.setParameter("pid", product.getId())
-										.setParameter("val", sizeValue)
-										.executeUpdate();
-									}
-								}
-								
-								// TRƯỜNG HỢP 2: NẾU LÀ GIÀY CẦU LÔNG (Chuỗi chứa chữ "Size" hoặc chỉ chứa số, ví dụ "40", "41")
-								else if (categoryId == 2 && (trimmedName.toLowerCase().contains("size") || trimmedName.matches("\\d+"))) {
-									String sizeValue = trimmedName.replaceAll("(?i)Size\\s*", "").trim();
-									if (!sizeValue.isEmpty() && addedFilters.add("size_filter_" + sizeValue)) {
-										session.createSQLQuery(
-											"INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, 'size_filter', :val)"
-										)
-										.setParameter("pid", product.getId())
-										.setParameter("val", sizeValue)
-										.executeUpdate();
-									}
-								}
-								
-								// TRƯỜNG HỢP 3: NẾU LÀ VỢT CẦU LÔNG (Chuỗi chứa chữ "U", ví dụ "4U G5" -> bóc lấy "4U")
-								else if (upperName.contains("U")) {
-									String weightValue = "";
-									if (upperName.contains("2U")) weightValue = "2U";
-									else if (upperName.contains("3U")) weightValue = "3U";
-									else if (upperName.contains("4U")) weightValue = "4U";
-									else if (upperName.contains("5U")) weightValue = "5U";
-									
-									if (!weightValue.isEmpty() && addedFilters.add("weight_" + weightValue)) {
-										session.createSQLQuery(
-											"INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, 'weight', :val)"
-										)
-										.setParameter("pid", product.getId())
-										.setParameter("val", weightValue)
-										.executeUpdate();
-									}
-								}
-							}
-						}
-					
-			
-			t.commit();
-			System.out.println("Hoàn tất! Toàn bộ dữ liệu đã được commit thành công xuống Database.");
-			
-		} catch (Exception e) {
-			if (t != null) {
-				t.rollback();
-			}
-			e.printStackTrace();
-			return "admin/add_product"; 
-		} finally {
-			if (session != null) {
-				session.close();
-			}
-		}
-		
-		
-		return "desktop5/product_list"; 
-	}
+            return "redirect:/products/index.htm?id=" + categoryId;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "admin/add_product";
+        }
+    }
+
+    @RequestMapping(value = "/management", method = RequestMethod.GET)
+    public String showManagement(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "categoryId", required = false) Integer categoryId,
+            @RequestParam(value = "brandId", required = false) Integer brandId,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            ModelMap model) {
+
+        int pageSize = 10;
+
+        List<ProductsEntity> products = adminProductDao.getAllProducts(
+            keyword, categoryId, brandId, fromDate, page, pageSize);
+        long total = adminProductDao.countAllProducts(
+            keyword, categoryId, brandId, fromDate);
+  
+        Map<Integer, Integer> stockMap = new HashMap<>();
+        for (ProductsEntity p : products) {
+            int stock = adminProductDao.getTotalStockByProductId(p.getId());
+            stockMap.put(p.getId(), stock);
+        }
+     // Lấy danh sách product ID
+        List<Integer> productIds = new java.util.ArrayList<>();
+        for (ProductsEntity p : products) {
+            productIds.add(p.getId());
+        }
+
+        // Lấy variants theo từng product
+        Map<Integer, List<Map<String, Object>>> variantsMap = 
+            productIds.isEmpty() ? new HashMap<>() : 
+            adminProductDao.getVariantsByProductIds(productIds);
+
+        model.addAttribute("variantsMap", variantsMap);
+        model.addAttribute("stockMap", stockMap);
+        model.addAttribute("products", products);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedCategoryId", categoryId);
+        model.addAttribute("selectedBrandId", brandId);
+        model.addAttribute("fromDate", fromDate);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", (int) Math.ceil((double) total / pageSize));
+        model.addAttribute("totalProducts", total);
+
+        return "admin/product_manage";
+    }
+    @RequestMapping(value = "/edit", method = RequestMethod.GET)
+    public String showEditForm(
+            @RequestParam("id") int productId,
+            @RequestParam(value = "extraRows", defaultValue = "0") int extraRows,
+            ModelMap model) {
+
+        ProductsEntity product = adminProductDao.getProductByIdForEdit(productId);
+        List<ProductVariantsEntity> variants = adminProductDao.getVariantsByProductId(productId);
+        List<ProductAttributeEntity> attrs = adminProductDao.getAttrsByProductId(productId);
+
+        model.addAttribute("product", product);
+        model.addAttribute("variants", variants);
+        model.addAttribute("attrs", attrs);
+        model.addAttribute("extraRows", extraRows);
+        return "admin/edit_product";
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public String updateProduct(
+            @RequestParam("productId") int productId,
+            @RequestParam("productName") String productName,
+            @RequestParam("categoryId") int categoryId,
+            @RequestParam("brandId") int brandId,
+            @RequestParam("price") Double price,
+            @RequestParam("description") String description,
+            @RequestParam(value = "variantIds", required = false) String[] variantIds,
+            @RequestParam(value = "variantNames", required = false) String[] variantNames,
+            @RequestParam(value = "stockQuantities", required = false) Integer[] stockQuantities,
+            @RequestParam(value = "attrKeys", required = false) String[] attrKeys,
+            @RequestParam(value = "attrValues", required = false) String[] attrValues,
+            @RequestParam(value = "fileMain", required = false) MultipartFile fileMain,
+            @RequestParam(value = "fileRight", required = false) MultipartFile fileRight,
+            @RequestParam(value = "fileTop", required = false) MultipartFile fileTop,
+            @RequestParam(value = "fileBottom", required = false) MultipartFile fileBottom) {
+
+        try {
+            String uploadFolder = context.getRealPath("/images/products");
+            String sourceFolder = "C:\\Users\\Administrator\\Documents\\LTW\\Badminton-Sport-Store-WebApp\\src\\main\\webapp\\images\\products\\";
+
+            adminProductDao.updateProduct(
+                productId, productName, categoryId, brandId, price, description,
+                variantIds, variantNames, stockQuantities,
+                attrKeys, attrValues,
+                fileMain, fileRight, fileTop, fileBottom,
+                uploadFolder, sourceFolder
+            );
+
+            return "redirect:/admin/product/management.htm";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/admin/product/edit.htm?id=" + productId;
+        }
+    }
+    @RequestMapping(value = "/delete", method = RequestMethod.GET)
+    public String showDeleteConfirm(
+            @RequestParam("id") int productId,
+            ModelMap model) {
+        ProductsEntity product = adminProductDao.getProductByIdForEdit(productId);
+        model.addAttribute("product", product);
+        return "admin/delete_confirm";
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    public String deleteProduct(@RequestParam("productId") int productId) {
+        try {
+            adminProductDao.deleteProduct(productId);
+            return "redirect:/admin/product/management.htm";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/admin/product/management.htm";
+        }
+    }
 }
