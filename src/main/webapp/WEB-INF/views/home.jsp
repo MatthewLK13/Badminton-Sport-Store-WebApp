@@ -156,23 +156,23 @@
                     <%-- SỬA TẠI ĐÂY: Thẻ <div> bọc ngoài, thẻ <a> nằm trong để ôm lấy <img> chuẩn HTML --%>
                     <div class="image-wrapper">
                         <span class="tag-new">NEW</span>
-                        <a href="${pageContext.request.contextPath}/product/detail.htm?id=${product.id}" style="display: block;">
-                            <img src="${pageContext.request.contextPath}/images/${product.image}" alt="${product.name}">
+                        <a href="${pageContext.request.contextPath}/products/details.htm?id=${product.id}" style="display: block;">
+                            <img src="${pageContext.request.contextPath}/images/${product.avatarName}" alt="${product.productName}">
                         </a>
                     </div>
                     
                     <div class="product-info">
                         <%-- Tiêu đề tên sản phẩm chứa link chi tiết --%>
                         <h3 class="product-name">
-                            <a href="${pageContext.request.contextPath}/product/detail.htm?id=${product.id}">
-                                ${product.name}
+                            <a href="${pageContext.request.contextPath}/products/details.htm?id=${product.id}">
+                                ${product.productName}
                             </a>
                         </h3>
-                        
+
                         <p class="product-cate">
                             <c:choose>
-                                <c:when test="${product.categoryId == 1}">Badminton Racket</c:when>
-                                <c:when test="${product.categoryId == 2}">Badminton Footwear</c:when>
+                                <c:when test="${product.category_id.id == 1}">Badminton Racket</c:when>
+                                <c:when test="${product.category_id.id == 2}">Badminton Footwear</c:when>
                                 <c:otherwise>Badminton Equipment</c:otherwise>
                             </c:choose>
                         </p>

@@ -56,7 +56,7 @@ public class ProductController {
 	    model.addAttribute("maxPrice", maxPrice);
 	    model.addAttribute("inStockOnly", inStock);
 	    model.addAttribute("selectedSortBy", sortBy);
-	    model.addAttribute("selectedBrand", brandName);
+	    model.addAttribute("selectedBrandName", brandName);
 
 	    return "desktop5/product_list";
 	}

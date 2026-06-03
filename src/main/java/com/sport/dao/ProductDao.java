@@ -366,4 +366,13 @@ public class ProductDao {
         List<ProductVariantsEntity> list = query.list();
         return list.isEmpty() ? null : list.get(0);
     }
+
+    public List<ProductsEntity> getNewArrivals(int limit) {
+        Session session = factory.getCurrentSession();
+        Query query = session.createQuery(
+            "FROM ProductsEntity p ORDER BY p.id DESC"
+        );
+        query.setMaxResults(limit);
+        return query.list();
+    }
 }
