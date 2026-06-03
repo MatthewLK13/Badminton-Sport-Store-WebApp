@@ -20,7 +20,7 @@ public class ProductController {
 	@Autowired
 	private ProductDao productDao;
 
-	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public String searchProducts(
 	        @RequestParam(value = "search", required = false) String keyword,
 	        @RequestParam(value = "page", defaultValue = "1") Integer page,

@@ -44,14 +44,12 @@ public class HomeController {
         model.addAttribute("athleteName", "SEO SEUNG JAE & KIM WON HO");
         return "athlete_seo_kim"; // Sẽ mở file /WEB-INF/views/athlete_seo_kim.jsp
     }
-    
+
     @RequestMapping(value = "/logout.htm", method = RequestMethod.GET)
     public String logout(HttpSession session) {
-
         if (session != null) {
-            session.invalidate(); // xóa session
+            session.invalidate();
         }
-
         return "redirect:/login.htm";
     }
 }

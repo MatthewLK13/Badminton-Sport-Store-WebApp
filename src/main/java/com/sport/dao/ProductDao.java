@@ -23,7 +23,7 @@ public class ProductDao {
 
     @Autowired
     private SessionFactory factory;
-    
+
     public BrandsEntity getBrandByName(String brandName) {
         Session session = factory.getCurrentSession();
         String hql = "FROM BrandsEntity b WHERE b.brandName = :brandName";
@@ -39,7 +39,7 @@ public class ProductDao {
         query.setParameter("categoryId", categoryId);
         return (CategoriesEntity) query.uniqueResult();
     }
-    
+
     public List<ProductsEntity> getProductsByCategoryAndBrand(
             Integer categoryId, Integer brandId,
             Double minPrice, Double maxPrice,
@@ -125,22 +125,22 @@ public class ProductDao {
 
         return (Long) query.uniqueResult();
     }
-    
+
     public List<BrandsEntity> getAllBrands() {
         Session session = factory.getCurrentSession();
         return session.createQuery("FROM BrandsEntity ORDER BY brandName").list();
     }
-    
+
     public ProductsEntity getProductById(int productId) {
         Session session = factory.getCurrentSession();
-        
+
         String hql1 = "SELECT DISTINCT p FROM ProductsEntity p " +
                       "LEFT JOIN FETCH p.productVariants " +
                       "WHERE p.id = :productId";
         Query query1 = session.createQuery(hql1);
         query1.setParameter("productId", productId);
         ProductsEntity product = (ProductsEntity) query1.uniqueResult();
-        
+
         String hql2 = "SELECT DISTINCT p FROM ProductsEntity p " +
                       "LEFT JOIN FETCH p.productImages " +
                       "WHERE p.id = :productId";
@@ -148,7 +148,7 @@ public class ProductDao {
         query2.setParameter("productId", productId);
         return (ProductsEntity) query2.uniqueResult();
     }
-    
+
     public List<Object[]> getFilterOptionsByCategoryId(Integer categoryId) {
         String sql = "SELECT fa.attr_key, fa.attr_label, pa.attr_value " +
                      "FROM FilterAttributes fa " +
@@ -157,7 +157,7 @@ public class ProductDao {
                      "WHERE fa.category_id = :catId " +
                      "GROUP BY fa.attr_key, fa.attr_label, pa.attr_value " +
                      "ORDER BY fa.display_order ASC";
-                     
+
         Query query = factory.getCurrentSession().createSQLQuery(sql);
         query.setParameter("catId", categoryId);
         return query.list();
@@ -185,7 +185,7 @@ public class ProductDao {
             Query query = factory.getCurrentSession().createSQLQuery(sql)
                     .addScalar("attr_label", org.hibernate.type.StandardBasicTypes.STRING)
                     .addScalar("attr_value", org.hibernate.type.StandardBasicTypes.STRING);
-                    
+
             query.setParameter("catId", categoryId);
             List<Object[]> rows = query.list();
 
@@ -208,7 +208,7 @@ public class ProductDao {
     }
 
     /**
-     * Hàm truy vấn lọc danh sách sản phẩm theo nhiều tiêu chí động 
+     * Hàm truy vấn lọc danh sách sản phẩm theo nhiều tiêu chí động
      */
     public List<ProductsEntity> getProductsByDynamicFilters(
             Integer categoryId, List<String> attrs, Double minPrice, Double maxPrice,
@@ -216,7 +216,7 @@ public class ProductDao {
 
         try {
             Session session = factory.getCurrentSession();
-            
+
             // Bước 1: Lấy danh sách ID sản phẩm trước
             StringBuilder hqlIds = new StringBuilder(
                 "SELECT p.id FROM ProductsEntity p WHERE p.category_id.id = :catId");
@@ -312,19 +312,19 @@ public class ProductDao {
         query.setParameter("pid", productId);
         return query.list();
     }
-    
+
     public List<ProductsEntity> getRelatedProducts(int categoryId,int excludeProductId){
-    	Session session = factory.getCurrentSession();
-    	Query query = session.createQuery(
-    			"SELECT DISTINCT p FROM ProductsEntity p " +
-    			        "LEFT JOIN FETCH p.productImages " +
-    			        "WHERE p.category_id.id = :catId AND p.id != :excludeId " +
-    			        "ORDER BY p.id DESC"
-    			);
-    	query.setParameter("catId", categoryId);
-    	query.setParameter("excludeId", excludeProductId);
-    	query.setMaxResults(8);
-    	return query.list();
+        Session session = factory.getCurrentSession();
+        Query query = session.createQuery(
+                "SELECT DISTINCT p FROM ProductsEntity p " +
+                            "LEFT JOIN FETCH p.productImages " +
+                            "WHERE p.category_id.id = :catId AND p.id != :excludeId " +
+                            "ORDER BY p.id DESC"
+                );
+        query.setParameter("catId", categoryId);
+        query.setParameter("excludeId", excludeProductId);
+        query.setMaxResults(8);
+        return query.list();
     }
     public List<ProductsEntity> getComplementaryProducts(int categoryId) {
         Session session = factory.getCurrentSession();
