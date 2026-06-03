@@ -17,7 +17,9 @@
 	
 	<!-- Spring MVC Annotation -->
 	<context:annotation-config />
-	<mvc:annotation-driven/>
+	<!-- Thêm vào spring-config-mvc.xml -->
+<context:annotation-config />
+<mvc:annotation-driven />
 	
 	<!-- Cấu hình view -->
 	<bean id="viewResolver" 
@@ -27,5 +29,12 @@
    	<!-- Cấu hình package chứa các controller -->
 	<context:component-scan base-package="com.sport.controller"/>
 	<context:component-scan base-package="com.sport" />
+
+	<!-- Multipart resolver for file uploads (AdminProductController) -->
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="5242880" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
 
 </beans>
