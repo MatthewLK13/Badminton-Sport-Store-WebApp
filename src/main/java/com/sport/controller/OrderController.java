@@ -42,7 +42,7 @@ public class OrderController {
             return "redirect:/login.htm";
         }
 
-        Order order = orderDAO.getOrderById(orderId);
+        Order order = orderDAO.getOrderByIdWithItems(orderId);
         if (order == null || order.getUser() == null || !order.getUser().getId().equals(user.getId())) {
             return "redirect:/order/history.htm";
         }
@@ -59,7 +59,7 @@ public class OrderController {
         }
 
         // Get order and verify ownership
-        Order order = orderDAO.getOrderById(orderId);
+        Order order = orderDAO.getOrderByIdWithItems(orderId);
         if (order == null || order.getUser() == null || !order.getUser().getId().equals(user.getId())) {
             return "redirect:/order/history.htm";
         }

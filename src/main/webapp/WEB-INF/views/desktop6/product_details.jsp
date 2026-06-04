@@ -241,6 +241,7 @@
                         </c:if>
                     </c:forEach>
                 </div>
+            </details>
             </div>
 
             <%-- REVIEWS SECTION --%>

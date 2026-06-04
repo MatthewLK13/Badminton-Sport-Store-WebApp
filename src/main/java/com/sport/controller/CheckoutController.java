@@ -1,8 +1,10 @@
 package com.sport.controller;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -43,6 +45,9 @@ public class CheckoutController {
 			return "redirect:/login.htm";
 		}
 
+		// Add empty checkoutDTO for form binding
+		model.addAttribute("checkoutDTO", new CheckoutDTO());
+
 		// Get cart items with product details
 		List<CartEntity> cartEntities = cartDao.getByUserId(user.getId());
 		List<CartItemDTO> cartItems = new ArrayList<>();
@@ -72,10 +77,40 @@ public class CheckoutController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String processCheckout(@ModelAttribute CheckoutDTO checkoutData, HttpSession session, Model model) {
+	public String processCheckout(@Valid @ModelAttribute CheckoutDTO checkoutData, BindingResult bindingResult,
+			HttpSession session, Model model) {
 		User user = (User) session.getAttribute("user");
 		if (user == null) {
 			return "redirect:/login.htm";
+		}
+
+		// Return with validation errors
+		if (bindingResult.hasErrors()) {
+			// Re-populate cart items for the form
+			List<CartEntity> cartEntities = cartDao.getByUserId(user.getId());
+			List<CartItemDTO> cartItems = new ArrayList<>();
+			double cartTotal = 0;
+			for (CartEntity item : cartEntities) {
+				ProductVariantsEntity variant = productDao.getVariantById(item.getProductVariantId());
+				if (variant != null && variant.getProduct() != null) {
+					ProductsEntity product = variant.getProduct();
+					CartItemDTO dto = new CartItemDTO(
+						item.getId(),
+						item.getProductVariantId(),
+						product.getProductName(),
+						variant.getVariant_name(),
+						product.getPrice(),
+						product.getAvatarName(),
+						item.getQuantity()
+					);
+					cartItems.add(dto);
+					cartTotal += product.getPrice() * item.getQuantity();
+				}
+			}
+			model.addAttribute("cartItems", cartItems);
+			model.addAttribute("cartTotal", String.format("%.2f", cartTotal));
+			model.addAttribute("error", "Vui lòng kiểm tra lại thông tin!");
+			return "checkout";
 		}
 
 		// Get cart items

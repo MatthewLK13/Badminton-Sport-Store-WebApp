@@ -135,14 +135,18 @@
                 <div class="card-icon green"><i class="fa-solid fa-user-check"></i></div>
                 <span class="card-title">Active Users</span>
                 <span class="card-value">
-                    <c:forEach var="u" items="${users}"><c:if test="${u.isActive == true}">${u.id}</c:if></c:forEach>
+                    <c:set var="activeCount" value="0"/>
+                    <c:forEach var="u" items="${users}"><c:if test="${u.isActive == true}"><c:set var="activeCount" value="${activeCount + 1}"/></c:if></c:forEach>
+                    ${activeCount}
                 </span>
             </div>
             <div class="card">
                 <div class="card-icon red"><i class="fa-solid fa-user-lock"></i></div>
                 <span class="card-title">Locked Users</span>
                 <span class="card-value">
-                    <c:forEach var="u" items="${users}"><c:if test="${u.isActive == false}">${u.id}</c:if></c:forEach>
+                    <c:set var="lockedCount" value="0"/>
+                    <c:forEach var="u" items="${users}"><c:if test="${u.isActive == false}"><c:set var="lockedCount" value="${lockedCount + 1}"/></c:if></c:forEach>
+                    ${lockedCount}
                 </span>
             </div>
         </div>

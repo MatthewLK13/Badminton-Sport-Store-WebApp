@@ -1,5 +1,6 @@
 package com.sport.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ThemeController {
 
     @RequestMapping(value = "/theme.htm", method = RequestMethod.GET)
-    public String toggleTheme(HttpSession session) {
+    public String toggleTheme(HttpSession session, HttpServletRequest request) {
         String current = (String) session.getAttribute("theme");
         session.setAttribute("theme", "dark".equals(current) ? "light" : "dark");
-        String referer = "http://localhost:8080";
-        return "redirect:/home.htm";
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/home.htm");
     }
 }
