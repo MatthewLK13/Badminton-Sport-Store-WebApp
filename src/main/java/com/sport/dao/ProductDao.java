@@ -401,4 +401,83 @@ public class ProductDao {
         Query query = session.createQuery("SELECT COUNT(p.id) FROM ProductsEntity p");
         return (Long) query.uniqueResult();
     }
+
+    public Integer getAvailableStock(Integer variantId) {
+        Session session = factory.getCurrentSession();
+        ProductVariantsEntity variant = (ProductVariantsEntity) session.get(ProductVariantsEntity.class, variantId);
+        return variant != null ? variant.getStock_quantity() : 0;
+    }
+
+    @Transactional
+    public boolean decrementStock(Integer variantId, Integer qty) {
+        Session session = factory.getCurrentSession();
+        int updated = session.createQuery(
+            "UPDATE ProductVariantsEntity v SET v.stock_quantity = v.stock_quantity - :qty " +
+            "WHERE v.id = :id AND v.stock_quantity >= :qty")
+            .setParameter("qty", qty)
+            .setParameter("id", variantId)
+            .executeUpdate();
+        return updated > 0;
+    }
+
+    @Transactional
+    public void incrementStock(Integer variantId, Integer qty) {
+        Session session = factory.getCurrentSession();
+        session.createQuery(
+            "UPDATE ProductVariantsEntity v SET v.stock_quantity = v.stock_quantity + :qty " +
+            "WHERE v.id = :id")
+            .setParameter("qty", qty)
+            .setParameter("id", variantId)
+            .executeUpdate();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ProductsEntity> getRecommendedProducts(int userId, int limit) {
+        Session session = factory.getCurrentSession();
+
+        // Get user's recently viewed product IDs
+        Query viewedQuery = session.createQuery(
+            "SELECT v.productId FROM ViewedProductEntity v WHERE v.userId = :uid ORDER BY v.viewedAt DESC");
+        viewedQuery.setParameter("uid", userId);
+        viewedQuery.setMaxResults(10);
+        List<Integer> viewedProductIds = viewedQuery.list();
+
+        if (viewedProductIds == null || viewedProductIds.isEmpty()) {
+            return getNewArrivals(limit);
+        }
+
+        // Get categories from viewed products
+        Query categoryQuery = session.createQuery(
+            "SELECT DISTINCT p.category_id.id FROM ProductsEntity p WHERE p.id IN (:productIds)");
+        categoryQuery.setParameterList("productIds", viewedProductIds);
+        List<Integer> categoryIds = categoryQuery.list();
+
+        if (categoryIds == null || categoryIds.isEmpty()) {
+            return getNewArrivals(limit);
+        }
+
+        // Get products from same categories, excluding already viewed
+        Query recommendQuery = session.createQuery(
+            "SELECT DISTINCT p FROM ProductsEntity p " +
+            "LEFT JOIN FETCH p.productImages " +
+            "WHERE p.category_id.id IN (:catIds) AND p.id NOT IN (:excludeIds) " +
+            "ORDER BY p.id DESC");
+        recommendQuery.setParameterList("catIds", categoryIds);
+        recommendQuery.setParameterList("excludeIds", viewedProductIds);
+        recommendQuery.setMaxResults(limit);
+
+        List<ProductsEntity> results = recommendQuery.list();
+
+        // If not enough, fill with newest products
+        if (results.size() < limit) {
+            List<ProductsEntity> newArrivals = getNewArrivals(limit - results.size());
+            for (ProductsEntity p : newArrivals) {
+                if (!results.contains(p) && results.size() < limit) {
+                    results.add(p);
+                }
+            }
+        }
+
+        return results;
+    }
 }

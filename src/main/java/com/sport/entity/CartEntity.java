@@ -1,6 +1,7 @@
 package com.sport.entity;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "Cart")
@@ -20,8 +21,9 @@ public class CartEntity {
     @Column(name = "quantity")
     private Integer quantity;
 
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "added_at")
-    private String addedAt;
+    private Date addedAt;
 
     public CartEntity() {}
 
@@ -37,6 +39,6 @@ public class CartEntity {
     public Integer getQuantity() { return quantity; }
     public void setQuantity(Integer quantity) { this.quantity = quantity; }
 
-    public String getAddedAt() { return addedAt; }
-    public void setAddedAt(String addedAt) { this.addedAt = addedAt; }
+    public Date getAddedAt() { return addedAt; }
+    public void setAddedAt(Date addedAt) { this.addedAt = addedAt; }
 }

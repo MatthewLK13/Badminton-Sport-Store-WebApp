@@ -17,7 +17,7 @@ import com.sport.entity.CartEntity;
 public class CartDao {
 	@Autowired
 	private SessionFactory factory;
-	
+
 	public List<CartEntity> getByUserId(int userId){
 		Session session = factory.getCurrentSession();
 		Query query = session.createQuery(
@@ -26,7 +26,7 @@ public class CartDao {
 		query.setParameter("uid", userId);
 		return query.list();
 	}
-	
+
 	public Long countByUserId(int userId) {
 		Session session = factory.getCurrentSession();
 		Query query = session.createQuery(
@@ -35,7 +35,8 @@ public class CartDao {
 		query.setParameter("uid", userId);
 		return (Long) query.uniqueResult();
 	}
-	// Kiểm tra variant đã có trong giỏ chưa
+
+	// Kiem tra variant da co trong gio chua
     public CartEntity findByUserAndVariant(int userId, int variantId) {
         Session session = factory.getCurrentSession();
         Query query = session.createQuery(
@@ -47,27 +48,26 @@ public class CartDao {
         return list.isEmpty() ? null : (CartEntity) list.get(0);
     }
 
-    // Thêm vào giỏ
+    // Them vao gio
     public void add(int userId, int variantId, int quantity) {
         Session session = factory.getCurrentSession();
         CartEntity existing = findByUserAndVariant(userId, variantId);
         if (existing != null) {
-            // Đã có → cộng thêm số lượng
+            // Da co -> cong them so luong
             existing.setQuantity(existing.getQuantity() + quantity);
             session.update(existing);
         } else {
-            // Chưa có → thêm mới
+            // Chua co -> them moi
             CartEntity cart = new CartEntity();
             cart.setUserId(userId);
             cart.setProductVariantId(variantId);
             cart.setQuantity(quantity);
-            cart.setAddedAt(new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                .format(new java.util.Date()));
+            cart.setAddedAt(new java.util.Date());
             session.save(cart);
         }
     }
 
-    // Cập nhật số lượng
+    // Cap nhat so luong
     public void updateQuantity(int cartId, int quantity) {
         Session session = factory.getCurrentSession();
         CartEntity cart = (CartEntity) session.get(CartEntity.class, cartId);
@@ -77,7 +77,7 @@ public class CartDao {
         }
     }
 
-    // Xóa item khỏi giỏ
+    // Xoa item khoi gio
     public void remove(int cartId) {
         Session session = factory.getCurrentSession();
         session.createQuery("DELETE FROM CartEntity WHERE id = :id")
@@ -85,11 +85,16 @@ public class CartDao {
             .executeUpdate();
     }
 
-    // Xóa toàn bộ giỏ của user
+    // Xoa toan bo gio cua user
     public void clearCart(int userId) {
         Session session = factory.getCurrentSession();
         session.createQuery("DELETE FROM CartEntity WHERE userId = :uid")
             .setParameter("uid", userId)
             .executeUpdate();
+    }
+
+    public CartEntity getCartById(int cartId) {
+        Session session = factory.getCurrentSession();
+        return (CartEntity) session.get(CartEntity.class, cartId);
     }
 }

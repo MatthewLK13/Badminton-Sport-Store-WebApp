@@ -3,6 +3,7 @@ package com.sport.controller;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 import com.sport.dao.CartDao;
@@ -30,6 +31,42 @@ public class WishlistController {
 
     @Autowired
     private CartDao cartDao;
+
+    // Hiển thị trang wishlist
+    @RequestMapping(value = "/index", method = RequestMethod.GET)
+    public String index(HttpSession session, ModelMap model) {
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return "redirect:/login.htm";
+        }
+
+        List<Map<String, Object>> wishlistItems = new ArrayList<>();
+        List<WishlistEntity> wishlist = wishlistDao.getByUserId(user.getId());
+
+        for (WishlistEntity w : wishlist) {
+            ProductsEntity product = productDao.getProductById(w.getProductId());
+            if (product != null) {
+                ProductVariantsEntity variant = productDao.getDefaultVariantByProductId(product.getId());
+                Map<String, Object> item = new HashMap<>();
+                item.put("id", product.getId());
+                item.put("variantId", variant != null ? variant.getId() : null);
+                item.put("variantName", variant != null ? variant.getVariant_name() : "");
+                item.put("productName", product.getProductName());
+                item.put("price", product.getPrice());
+                item.put("avatarName", product.getAvatarName());
+                wishlistItems.add(item);
+            }
+        }
+
+        model.addAttribute("wishlistItems", wishlistItems);
+        return "wishlist";
+    }
+
+    // Alias cho /wishlist.htm
+    @RequestMapping(value = "/wishlist.htm", method = RequestMethod.GET)
+    public String wishlistPage(HttpSession session, ModelMap model) {
+        return index(session, model);
+    }
 
     @RequestMapping(value = "/toggle", method = RequestMethod.POST)
     public String toggle(

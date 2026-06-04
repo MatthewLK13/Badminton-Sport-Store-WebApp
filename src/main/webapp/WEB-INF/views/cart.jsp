@@ -76,7 +76,7 @@
                         <span style="font-size: 18px; font-weight: 700;">Tổng cộng</span>
                         <span style="font-size: 18px; font-weight: 700;">$${cartTotal}</span>
                     </div>
-                    <button type="button" class="checkout-btn" style="width: 100%; padding: 15px; background: #000; color: #fff; border: none; font-size: 16px; cursor: pointer; margin-top: 20px;">THANH TOÁN</button>
+                    <a href="${pageContext.request.contextPath}/checkout.htm" class="checkout-btn" style="display: block; width: 100%; padding: 15px; background: #000; color: #fff; text-decoration: none; font-size: 16px; text-align: center; margin-top: 20px;">THANH TOÁN</a>
                     <a href="${pageContext.request.contextPath}/home.htm" style="display: block; text-align: center; margin-top: 15px; color: #0077c8; text-decoration: none;">Tiếp tục mua sắm</a>
                 </div>
             </div>

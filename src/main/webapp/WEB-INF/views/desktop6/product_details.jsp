@@ -32,11 +32,12 @@
     <%-- CỘT TRÁI: ẢNH GRID 2x2 --%>
     <div class="detail-images">
         <c:forEach var="img" items="${product.productImages}">
-            <div class="grid-img-wrapper"
-                 onclick="setMain('${pageContext.request.contextPath}/images/products/${img.imageUrl}')">
-                <img src="${pageContext.request.contextPath}/images/products/${img.imageUrl}"
-                     alt="${product.productName}" class="grid-img">
-            </div>
+            <a href="?id=${product.id}&img=${img.imageUrl}">
+                <div class="grid-img-wrapper">
+                    <img src="${pageContext.request.contextPath}/images/products/${img.imageUrl}"
+                         alt="${product.productName}" class="grid-img">
+                </div>
+            </a>
         </c:forEach>
     </div>
 
@@ -66,7 +67,6 @@
         </div>
 
         <%-- THUỘC TÍNH BIẾN THỂ --%>
-<form action="${pageContext.request.contextPath}/cart/add.htm" method="post">
 <div class="detail-section">
     <p class="section-label">
         <c:choose>
@@ -79,14 +79,16 @@
         </c:choose>
     </p>
 
-    <div class="size-picker-grid" style="display:flex; flex-wrap:wrap; gap:10px;">
+    <div class="size-picker-grid">
         <c:forEach var="variant" items="${product.productVariants}">
-            <label class="size-box ${variant.stock_quantity == 0 ? 'out-of-stock' : ''}" style="cursor:pointer; display:flex; align-items:center; gap:5px; padding:10px; border:1px solid #ccc; border-radius:5px;">
-                <input type="radio" name="variantId" value="${variant.id}" required ${variant.stock_quantity == 0 ? 'disabled' : ''}>
+            <label class="size-box ${variant.stock_quantity == 0 ? 'out-of-stock' : ''}">
+                <input type="radio" name="variantId" value="${variant.id}" data-stock="${variant.stock_quantity}" ${variant.stock_quantity == 0 ? 'disabled' : ''} required>
                 ${variant.variant_name}
             </label>
         </c:forEach>
     </div>
+
+    <p id="stock-info" style="margin: 8px 0; font-size: 14px; color: #27ae60;"></p>
 
     <p class="size-hint">
         <c:choose>
@@ -107,29 +109,30 @@
 		<div class="detail-section">
     <p class="section-label">Số lượng</p>
     <div class="quantity-control">
-        <input type="number" name="quantity" value="1" min="1" class="quantity-input" style="width:80px; padding:10px; text-align:center; border:1px solid #ccc; border-radius:5px;">
+        <input type="number" name="quantity" value="1" min="1" class="quantity-input">
     </div>
 </div>
         <%-- NÚT HÀNH ĐỘNG --%>
-        <div class="actions-wrapper">
-            <button type="submit" class="btn-add-to-cart">
-                Thêm vào giỏ hàng
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                </svg>
-            </button>
-            <button type="submit" formaction="${pageContext.request.contextPath}/wishlist/toggle.htm" formnovalidate class="btn-wishlist wishlist-btn">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path class="heart-path" fill-rule="evenodd" clip-rule="evenodd"
-                          d="M19.6431 7.05858C19.6103 4.79858 18.3289 2.57286 16.3617 1.65572C15.3044 1.16162 14.0982 1.09057 12.9903 1.45715C11.9831 1.77715 10.9731 2.43286 10.0003 3.46429C9.02742 2.43286 8.01742 1.77858 7.01028 1.45715C5.90232 1.09057 4.69612 1.16162 3.63885 1.65572C1.67171 2.57286 0.390279 4.79858 0.357422 7.05858V7.07001C0.357422 10.3657 2.31742 13.2857 4.39456 15.3357C5.33754 16.2725 6.38375 17.0992 7.51314 17.8C7.99599 18.0943 8.45171 18.33 8.85599 18.4957C9.24171 18.6529 9.64599 18.7729 10.0003 18.7729C10.3546 18.7729 10.7574 18.6529 11.1431 18.4957C11.5489 18.3314 12.0046 18.0957 12.486 17.8014C13.6159 17.1002 14.6626 16.273 15.606 15.3357C17.6831 13.2857 19.6431 10.3657 19.6431 7.07144V7.05858Z"
-                          fill="transparent" stroke="black" stroke-width="1.2"/>
-                </svg>
-            </button>
-        </div>
-
+        <form action="${pageContext.request.contextPath}/cart/add.htm" method="post">
+            <input type="hidden" name="variantId" id="selectedVariantId" value="">
+            <div class="actions-wrapper">
+                <button type="submit" class="btn-add-to-cart">
+                    Thêm vào giỏ hàng
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                </button>
+                <a href="${pageContext.request.contextPath}/wishlist/toggle.htm?productId=${product.id}" class="btn-wishlist wishlist-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path class="heart-path" fill-rule="evenodd" clip-rule="evenodd"
+                              d="M19.6431 7.05858C19.6103 4.79858 18.3289 2.57286 16.3617 1.65572C15.3044 1.16162 14.0982 1.09057 12.9903 1.45715C11.9831 1.77715 10.9731 2.43286 10.0003 3.46429C9.02742 2.43286 8.01742 1.77858 7.01028 1.45715C5.90232 1.09057 4.69612 1.16162 3.63885 1.65572C1.67171 2.57286 0.390279 4.79858 0.357422 7.05858V7.07001C0.357422 10.3657 2.31742 13.2857 4.39456 15.3357C5.33754 16.2725 6.38375 17.0992 7.51314 17.8C7.99599 18.0943 8.45171 18.33 8.85599 18.4957C9.24171 18.6529 9.64599 18.7729 10.0003 18.7729C10.3546 18.7729 10.7574 18.6529 11.1431 18.4957C11.5489 18.3314 12.0046 18.0957 12.486 17.8014C13.6159 17.1002 14.6626 16.273 15.606 15.3357C17.6831 13.2857 19.6431 10.3657 19.6431 7.07144V7.05858Z"
+                              fill="transparent" stroke="black" stroke-width="1.2"/>
+                    </svg>
+                </a>
+            </div>
+        </form>
     </div>
-</form>
 </div>
  <%-- KIỂU BÀN CHÂN --%>
  <div class = "hihi">
@@ -237,6 +240,70 @@
                     </c:forEach>
                 </div>
             </div>
+
+            <%-- REVIEWS SECTION --%>
+            <div class="reviews-section">
+                <h3 class="reviews-title">Đánh giá sản phẩm</h3>
+
+                <%-- Average Rating Display --%>
+                <div class="rating-summary">
+                    <div class="rating-average">
+                        <span class="big-rating"><fmt:formatNumber value="${avgRating > 0 ? avgRating : 0}" pattern="#.#"/></span>
+                        <div class="stars">
+                            <c:forEach var="i" begin="1" end="5">
+                                <span class="star ${i <= avgRating ? 'filled' : ''}">★</span>
+                            </c:forEach>
+                        </div>
+                        <span class="rating-count">(${reviewCount} đánh giá)</span>
+                    </div>
+                </div>
+
+                <%-- Review List --%>
+                <div class="reviews-list">
+                    <c:forEach var="review" items="${reviews}">
+                        <div class="review-item">
+                            <div class="review-header">
+                                <span class="review-author">${review.user.fullName}</span>
+                                <span class="review-date"><fmt:formatDate value="${review.createdAt}" pattern="dd/MM/yyyy"/></span>
+                            </div>
+                            <div class="review-stars">
+                                <c:forEach var="i" begin="1" end="5">
+                                    <span class="star ${i <= review.rating ? 'filled' : ''}">★</span>
+                                </c:forEach>
+                            </div>
+                            <p class="review-comment">${review.comment}</p>
+                        </div>
+                    </c:forEach>
+                    <c:if test="${empty reviews}">
+                        <p class="no-reviews">Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá!</p>
+                    </c:if>
+                </div>
+
+                <%-- Add Review Form --%>
+                <c:if test="${not empty sessionScope.user}">
+                    <c:if test="${!hasReviewed}">
+                        <div class="add-review-form">
+                            <h4>Thêm đánh giá của bạn</h4>
+                            <form action="${pageContext.request.contextPath}/review/add.htm" method="post">
+                                <input type="hidden" name="productId" value="${product.id}">
+                                <div class="rating-input">
+                                    <label>Rating:</label>
+                                    <div class="star-selector">
+                                        <c:forEach var="i" begin="1" end="5">
+                                            <input type="radio" name="rating" value="${i}" id="rating${i}" required>
+                                            <label for="rating${i}" class="star-label">★</label>
+                                        </c:forEach>
+                                    </div>
+                                </div>
+                                <div class="comment-input">
+                                    <textarea name="comment" placeholder="Nhận xét của bạn..." rows="3" required></textarea>
+                                </div>
+                                <button type="submit" class="btn-submit-review">Gửi đánh giá</button>
+                            </form>
+                        </div>
+                    </c:if>
+                </c:if>
+            </div>
         </div>
 </div>
 
@@ -287,16 +354,20 @@
     </div>
 </div>
 <script>
-function setMain(src) {
-    document.querySelectorAll('.grid-img-wrapper').forEach(w => w.classList.remove('active'));
-    event.currentTarget.classList.add('active');
-}
-
-
-document.querySelectorAll('.color-swatch').forEach(s => {
-    s.addEventListener('click', function() {
-        document.querySelectorAll('.color-swatch').forEach(x => x.classList.remove('active'));
-        this.classList.add('active');
+document.querySelectorAll('input[name="variantId"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        var stock = parseInt(this.getAttribute('data-stock')) || 0;
+        var stockInfo = document.getElementById('stock-info');
+        if (stock === 0) {
+            stockInfo.textContent = 'Hết hàng';
+            stockInfo.style.color = '#e74c3c';
+        } else if (stock < 5) {
+            stockInfo.textContent = 'Chỉ còn ' + stock + ' sản phẩm';
+            stockInfo.style.color = '#e67e22';
+        } else {
+            stockInfo.textContent = 'Còn ' + stock + ' sản phẩm';
+            stockInfo.style.color = '#27ae60';
+        }
     });
 });
 </script>

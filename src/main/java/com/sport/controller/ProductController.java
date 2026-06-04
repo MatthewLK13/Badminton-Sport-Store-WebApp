@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import com.sport.entity.*;
 import com.sport.dao.ProductDao;
+import com.sport.dao.ViewedProductDao;
+import com.sport.dao.ReviewDao;
 
 @Controller
 @RequestMapping("products")
@@ -19,6 +23,12 @@ public class ProductController {
 
 	@Autowired
 	private ProductDao productDao;
+
+	@Autowired
+	private ViewedProductDao viewedProductDao;
+
+	@Autowired
+	private ReviewDao reviewDao;
 
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public String searchProducts(
@@ -90,10 +100,17 @@ public class ProductController {
 	@RequestMapping(value ="details" , method = RequestMethod.GET)
 	public String showProductDetails(
 	        @RequestParam("id") int productId,
+	        HttpSession session,
 	        ModelMap model) {
 
 	    ProductsEntity product = productDao.getProductById(productId);
 	    model.addAttribute("product", product);
+
+	    // Save to viewed products if user is logged in
+	    User user = (User) session.getAttribute("user");
+	    if (user != null) {
+	        viewedProductDao.addViewedProduct(user.getId(), productId);
+	    }
 
 	    List<ProductAttributeEntity> attrs = productDao.getAttributesByProductId(productId);
 	    model.addAttribute("productAttrs", attrs);
@@ -107,6 +124,22 @@ public class ProductController {
 	    List<ProductsEntity> complementary = productDao.getComplementaryProducts(
 	        product.getCategory_id().getId());
 	    model.addAttribute("complementaryProducts", complementary);
+
+	    // Reviews
+	    List<ReviewEntity> reviews = reviewDao.getByProductId(productId);
+	    model.addAttribute("reviews", reviews);
+	    Double avgRating = reviewDao.getAverageRating(productId);
+	    model.addAttribute("avgRating", avgRating);
+	    int reviewCount = reviewDao.countByProductId(productId);
+	    model.addAttribute("reviewCount", reviewCount);
+
+	    // Check if current user has reviewed
+	    if (user != null) {
+	        boolean hasReviewed = reviewDao.hasUserReviewed(user.getId(), productId);
+	        model.addAttribute("hasReviewed", hasReviewed);
+	    } else {
+	        model.addAttribute("hasReviewed", false);
+	    }
 
 	    return "desktop6/product_details";
 	}

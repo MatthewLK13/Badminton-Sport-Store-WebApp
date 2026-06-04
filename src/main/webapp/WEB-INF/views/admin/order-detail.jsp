@@ -258,9 +258,9 @@
         </div>
         <ul class="menu-list">
             <li class="menu-item"><a href="#"><i class="fa-solid fa-chart-simple"></i> Dashboard</a></li>
-            <li class="menu-item"><a href="#"><i class="fa-solid fa-box"></i> Products</a></li>
-            <li class="menu-item"><a href="#"><i class="fa-solid fa-users"></i> Users</a></li>
-            <li class="menu-item active"><a href="#"><i class="fa-solid fa-truck"></i> Orders</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/products.htm"><i class="fa-solid fa-box"></i> Products</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
+            <li class="menu-item active"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
         </ul>
     </div>
 
@@ -308,6 +308,22 @@
                 <p><strong>Địa chỉ:</strong> ${order.address}, ${order.city}</p>
             </div>
 
+            <!-- Order Status Update -->
+            <div style="font-size: 12px; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+                <form action="${pageContext.request.contextPath}/admin/order-status.htm" method="post" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="hidden" name="orderId" value="${order.id}"/>
+                    <strong>Trạng thái:</strong>
+                    <select name="status" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px;">
+                        <option value="0" ${order.status == 0 ? 'selected' : ''}>Chờ xác nhận</option>
+                        <option value="1" ${order.status == 1 ? 'selected' : ''}>Đã xác nhận</option>
+                        <option value="2" ${order.status == 2 ? 'selected' : ''}>Đang giao hàng</option>
+                        <option value="3" ${order.status == 3 ? 'selected' : ''}>Đã giao hàng</option>
+                        <option value="4" ${order.status == 4 ? 'selected' : ''}>Đã hủy</option>
+                    </select>
+                    <button type="submit" style="padding: 6px 16px; background: #4a4a4a; color: #fff; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;">Cập nhật</button>
+                </form>
+            </div>
+
             <!-- Bảng sản phẩm -->
             <table class="invoice-table">
                 <thead>
@@ -320,26 +336,30 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Vì cơ sở dữ liệu hiện tại của bạn không lưu cấu trúc giỏ hàng con, 
-                         chúng ta giả lập hiển thị mặt hàng mẫu giống Figma dựa vào hóa đơn để điểm 10 tuyệt đối -->
+                    <c:forEach var="item" items="${order.orderItems}" varStatus="status">
                     <tr>
-                        <td class="text-center">1</td>
-                        <td>Giày cầu lông Subaxia Pro Edition</td>
-                        <td class="text-center">1</td>
-                        <td class="text-right">$188</td>
-                        <td class="text-right">$188</td>
+                        <td class="text-center">${status.index + 1}</td>
+                        <td>${item.productName} - ${item.variantName}</td>
+                        <td class="text-center">${item.quantity}</td>
+                        <td class="text-right"><fmt:formatNumber value="${item.price}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></td>
+                        <td class="text-right"><fmt:formatNumber value="${item.price * item.quantity}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></td>
                     </tr>
+                    </c:forEach>
                 </tbody>
             </table>
 
             <div class="invoice-summary">
+                <c:set var="totalAmount" value="0"/>
+                <c:forEach var="item" items="${order.orderItems}">
+                    <c:set var="totalAmount" value="${totalAmount + (item.price * item.quantity)}"/>
+                </c:forEach>
                 <div class="summary-row">
                     <span>Tổng cộng:</span>
-                    <span>$188</span>
+                    <span><fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></span>
                 </div>
                 <div class="summary-total">
                     <span>Tổng thanh toán</span>
-                    <span>$188</span>
+                    <span><fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></span>
                 </div>
                 <div class="payment-method">
                     <span>Phương thức thanh toán:</span>

@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -293,7 +295,12 @@
 
         <!-- PANEL PHẢI: Đơn hàng -->
         <div class="orders-panel">
-            <div class="orders-title">ĐƠN HÀNG CỦA BẠN</div>
+            <div class="orders-title" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>ĐƠN HÀNG CỦA BẠN</span>
+                <a href="${pageContext.request.contextPath}/order/history.htm" style="font-size: 12px; font-weight: 600; color: #e36009; text-decoration: none;">
+                    Xem tất cả <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
             <table class="orders-table">
                 <thead>
                     <tr>
@@ -304,15 +311,51 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <%-- Placeholder: Khi có module Orders sẽ dùng JSTL forEach --%>
-                    <tr>
-                        <td colspan="4">
-                            <div class="empty-orders">
-                                <i class="fa-regular fa-folder-open"></i>
-                                Chưa có đơn hàng nào
-                            </div>
-                        </td>
-                    </tr>
+                    <c:choose>
+                        <c:when test="${not empty orders}">
+                            <c:forEach var="order" items="${orders}">
+                                <tr>
+                                    <td>#${order.id}</td>
+                                    <td>
+                                        <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm"/>
+                                    </td>
+                                    <td>${order.address}, ${order.city}</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${order.status == 0}">
+                                                <span class="badge badge-pending">Chờ xác nhận</span>
+                                            </c:when>
+                                            <c:when test="${order.status == 1}">
+                                                <span class="badge badge-pending">Đã xác nhận</span>
+                                            </c:when>
+                                            <c:when test="${order.status == 2}">
+                                                <span class="badge badge-pending">Đang giao</span>
+                                            </c:when>
+                                            <c:when test="${order.status == 3}">
+                                                <span class="badge badge-done">Đã giao</span>
+                                            </c:when>
+                                            <c:when test="${order.status == 4}">
+                                                <span class="badge badge-cancel">Đã hủy</span>
+                                            </c:when>
+                                            <c:when test="${order.status == -1}">
+                                                <span class="badge badge-cancel">Đã hủy</span>
+                                            </c:when>
+                                        </c:choose>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td colspan="4">
+                                    <div class="empty-orders">
+                                        <i class="fa-regular fa-folder-open"></i>
+                                        Chưa có đơn hàng nào
+                                    </div>
+                                </td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
                 </tbody>
             </table>
         </div>

@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.sport.dao.UserDAO;
+import com.sport.dao.OrderDAO;
 import com.sport.entity.User;
 
 @Controller
@@ -15,6 +16,9 @@ public class ProfileController {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private OrderDAO orderDAO;
 
     // GET /profile.htm – Hiển thị trang cá nhân
     @RequestMapping(value = "/profile.htm", method = RequestMethod.GET)
@@ -27,6 +31,7 @@ public class ProfileController {
         }
 
         model.addAttribute("user", user);
+        model.addAttribute("orders", orderDAO.findByUserId(user.getId()));
         return "profile";
     }
 

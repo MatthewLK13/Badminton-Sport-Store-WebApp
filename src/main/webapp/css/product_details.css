@@ -275,6 +275,136 @@
     gap: 80px;
     box-sizing: border-box;
 }
+/* ===== REVIEWS SECTION ===== */
+.reviews-section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+.reviews-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #333;
+}
+.rating-summary {
+    margin-bottom: 20px;
+}
+.rating-average {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.big-rating {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+}
+.stars {
+    display: flex;
+}
+.star {
+    color: #ddd;
+    font-size: 18px;
+}
+.star.filled {
+    color: #ffc107;
+}
+.rating-count {
+    color: #666;
+    font-size: 14px;
+}
+.reviews-list {
+    margin-bottom: 24px;
+}
+.review-item {
+    padding: 16px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.review-author {
+    font-weight: 600;
+    color: #333;
+}
+.review-date {
+    color: #999;
+    font-size: 13px;
+}
+.review-stars {
+    margin-bottom: 6px;
+}
+.review-comment {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+}
+.no-reviews {
+    color: #888;
+    font-style: italic;
+    padding: 10px 0;
+}
+.add-review-form {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+.add-review-form h4 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    color: #333;
+}
+.rating-input {
+    margin-bottom: 12px;
+}
+.rating-input label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+.star-selector {
+    display: flex;
+    gap: 4px;
+}
+.star-selector input {
+    display: none;
+}
+.star-label {
+    font-size: 28px;
+    color: #ddd;
+    cursor: pointer;
+}
+.star-selector input:checked ~ .star-label,
+.star-selector input:hover ~ .star-label {
+    color: #ffc107;
+}
+.comment-input textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+    resize: vertical;
+    box-sizing: border-box;
+}
+.btn-submit-review {
+    margin-top: 12px;
+    padding: 10px 24px;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.btn-submit-review:hover {
+    background: #555;
+}
 /* ===== RELATED SECTIONS ===== */
 .related-section {
     max-width: 1600px;

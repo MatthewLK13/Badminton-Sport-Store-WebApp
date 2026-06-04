@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.sport.dao.ProductDao;
 import com.sport.entity.ProductsEntity;
+import com.sport.entity.User;
 
 @Controller
 public class HomeController {
@@ -20,10 +21,18 @@ public class HomeController {
     private ProductDao productDao;
 
     @RequestMapping(value = "/home.htm", method = RequestMethod.GET)
-    public String home(ModelMap model) {
+    public String home(ModelMap model, HttpSession session) {
         List<ProductsEntity> products = productDao.getNewArrivals(6);
         model.addAttribute("products", products);
-        return "index2";
+
+        // Add personalized recommendations if user is logged in
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            List<ProductsEntity> recommended = productDao.getRecommendedProducts(user.getId(), 8);
+            model.addAttribute("recommendedProducts", recommended);
+        }
+
+        return "home";
     }
     @RequestMapping(value = "/athlete/an-se-young.htm", method = RequestMethod.GET)
     public String showAnSeYoungProfile(ModelMap model) {
@@ -35,14 +44,14 @@ public class HomeController {
     @RequestMapping(value = "/athlete/kento-momota.htm", method = RequestMethod.GET)
     public String showKentoMomotaProfile(ModelMap model) {
         model.addAttribute("athleteName", "KENTO MOMOTA");
-        return "athlete_kento_momota"; // Sẽ mở file /WEB-INF/views/athlete_kento_momota.jsp
+        return "athlete_info/kento_momota";
     }
 
     // Đường dẫn cho cặp đôi Seo Seung-jae / Kim Won Ho
     @RequestMapping(value = "/athlete/seo-chae.htm", method = RequestMethod.GET)
     public String showSeoChaeProfile(ModelMap model) {
         model.addAttribute("athleteName", "SEO SEUNG JAE & KIM WON HO");
-        return "athlete_seo_kim"; // Sẽ mở file /WEB-INF/views/athlete_seo_kim.jsp
+        return "athlete_info/kim_seo";
     }
 
     @RequestMapping(value = "/logout.htm", method = RequestMethod.GET)
@@ -51,25 +60,5 @@ public class HomeController {
             session.invalidate();
         }
         return "redirect:/login.htm";
-    }
-
-    @RequestMapping(value = "/promo.htm", method = RequestMethod.GET)
-    public String promo() {
-        return "promo";
-    }
-
-    @RequestMapping(value = "/stores.htm", method = RequestMethod.GET)
-    public String stores() {
-        return "stores";
-    }
-
-    @RequestMapping(value = "/help.htm", method = RequestMethod.GET)
-    public String help() {
-        return "help";
-    }
-
-    @RequestMapping(value = "/order-tracking.htm", method = RequestMethod.GET)
-    public String orderTracking() {
-        return "order-tracking";
     }
 }

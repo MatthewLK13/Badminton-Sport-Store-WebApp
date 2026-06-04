@@ -78,11 +78,11 @@
         <div class="hero-content">
             <h2>PLACE FOR ALL MEMBERS</h2>
            <div class="figma-banner-buttons">
-        <a href="${pageContext.request.contextPath}/products.htm" class="figma-btn btn-explore">
+        <a href="${pageContext.request.contextPath}/products/index.htm?id=1" class="figma-btn btn-explore">
             KHÁM PHÁ NGAY &nbsp;→
         </a>
-        
-        <a href="${pageContext.request.contextPath}/khuyen-mai.htm" class="figma-btn btn-buy">
+
+        <a href="${pageContext.request.contextPath}/products/search.htm?keyword=sale" class="figma-btn btn-buy">
             MUA NGAY &nbsp;→
         </a>
     </div>
@@ -93,7 +93,7 @@
         <h2 class="banner-title">ASTROX 99 PRO GEN 3 - AVAILABLE NOW</h2>
         <p class="banner-subtitle">Smooth swings, full freedom, pure badminton joy.</p>
         <div class="banner-btn-container">
-           <a href="${pageContext.request.contextPath}/astrox-99.htm" class="btn-learn-more">
+           <a href="${pageContext.request.contextPath}/products/index.htm?id=1" class="btn-learn-more">
         LEARN MORE
     </a>
         </div>
@@ -107,7 +107,7 @@
             <img src="${pageContext.request.contextPath}/images/homepage/image2.png" alt="Isometric">
             <div class="card-content">
                 <h3>ISOMETRIC - BIGGER SWEET SPOT</h3>
-                <a href="${pageContext.request.contextPath}/category/isometric.htm" class="explore-link">Explore now</a>
+                <a href="${pageContext.request.contextPath}/products/index.htm?id=1" class="explore-link">Explore now</a>
             </div>
             <span class="card-sparkle"></span>
         </div>
@@ -116,7 +116,7 @@
             <img src="${pageContext.request.contextPath}/images/homepage/image3.png" alt="From Miles to Match">
             <div class="card-content">
                 <h3>FROM MILES TO MATCH - POINT</h3>
-                <a href="${pageContext.request.contextPath}/category/shoes-point.htm" class="explore-link">Explore now</a>
+                <a href="${pageContext.request.contextPath}/products/index.htm?id=2" class="explore-link">Explore now</a>
             </div>
             <span class="card-sparkle"></span>
         </div>
@@ -125,7 +125,7 @@
             <img src="${pageContext.request.contextPath}/images/homepage/image4.png" alt="Performance Apparel">
             <div class="card-content">
                 <h3>PERFORMANCE APPAREL</h3>
-                <a href="${pageContext.request.contextPath}/category/apparel-dryknit.htm" class="explore-link">Explore now</a>
+                <a href="${pageContext.request.contextPath}/products/index.htm?id=3" class="explore-link">Explore now</a>
             </div>
             <span class="card-sparkle">✦</span>
         </div>
@@ -136,7 +136,7 @@
         <div class="large-banner-content">
             <h2>GEAR UP AND GO</h2>
             <p>Badminton bags designed to fit all your gear, wherever the game takes you.</p>
-            <a href="${pageContext.request.contextPath}/category/bags.htm" class="btn-shop-now">SHOP NOW</a>
+            <a href="${pageContext.request.contextPath}/products/index.htm?id=4" class="btn-shop-now">SHOP NOW</a>
         </div>
         <span class="large-banner-sparkle">✦</span>
     </div>
@@ -199,10 +199,40 @@
                 </div>
             </c:if>
         </div> <%-- Kết thúc thẻ .products-grid --%>
-        
+
     </div> <%-- Kết thúc thẻ .products-container --%>
 </section> <%-- Kết thúc thẻ .products-section --%>
 
+<%-- RECOMMENDED PRODUCTS SECTION --%>
+<c:if test="${not empty recommendedProducts}">
+<section class="products-section">
+    <h2 class="products-header">GỢI Ý CHO BẠN</h2>
+    <div class="products-container">
+        <div class="products-grid">
+            <c:forEach var="product" items="${recommendedProducts}" varStatus="status">
+                <div class="product-card">
+                    <div class="product-img-wrapper">
+                        <a href="${pageContext.request.contextPath}/products/details.htm?id=${product.id}" style="display: block;">
+                            <img src="${pageContext.request.contextPath}/images/products/${product.avatarName}" alt="${product.productName}">
+                        </a>
+                        <button class="wishlist-btn" onclick="location.href='${pageContext.request.contextPath}/wishlist/toggle.htm?productId=${product.id}'">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="product-info">
+                        <a href="${pageContext.request.contextPath}/products/details.htm?id=${product.id}">
+                            <h3 class="product-name">${product.productName}</h3>
+                        </a>
+                        <p class="product-price">
+                            <fmt:formatNumber value="${product.price}" type="currency" currencySymbol="$"/>
+                        </p>
+                    </div>
+                </div>
+            </c:forEach>
+        </div>
+    </div>
+</section>
+</c:if>
 
 <section class="athletes-section">
     <h2 class="athletes-header">FEATURED ATHLETES</h2>

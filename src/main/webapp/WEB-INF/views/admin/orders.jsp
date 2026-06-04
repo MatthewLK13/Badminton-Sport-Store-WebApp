@@ -220,9 +220,9 @@
         </div>
         <ul class="menu-list">
             <li class="menu-item"><a href="#"><i class="fa-solid fa-chart-simple"></i> Dashboard</a></li>
-            <li class="menu-item"><a href="#"><i class="fa-solid fa-box"></i> Products</a></li>
-            <li class="menu-item"><a href="#"><i class="fa-solid fa-users"></i> Users</a></li>
-            <li class="menu-item active"><a href="#"><i class="fa-solid fa-truck"></i> Orders</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/products.htm"><i class="fa-solid fa-box"></i> Products</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
+            <li class="menu-item active"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
         </ul>
     </div>
 
@@ -307,7 +307,14 @@
                             </td>
                             <td><fmt:formatDate value="${item.orderDate}" pattern="dd/MM/yyyy"/></td>
                             <td>
-                                <span class="badge done">Done</span>
+                                <c:choose>
+                                    <c:when test="${item.status == 0}"><span class="badge pending">Chờ xác nhận</span></c:when>
+                                    <c:when test="${item.status == 1}"><span class="badge" style="background: #dbeafe; color: #1d4ed8;">Đã xác nhận</span></c:when>
+                                    <c:when test="${item.status == 2}"><span class="badge" style="background: #fef3c7; color: #d97706;">Đang giao</span></c:when>
+                                    <c:when test="${item.status == 3}"><span class="badge done">Đã giao</span></c:when>
+                                    <c:when test="${item.status == 4}"><span class="badge" style="background: #fee2e2; color: #dc2626;">Đã hủy</span></c:when>
+                                    <c:otherwise><span class="badge pending">Unknown</span></c:otherwise>
+                                </c:choose>
                             </td>
                             <td>
                                 <a href="${pageContext.request.contextPath}/admin/order-detail.htm?id=${item.id}" class="btn-view-detail">

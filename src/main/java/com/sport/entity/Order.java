@@ -1,11 +1,17 @@
 package com.sport.entity;
 
 import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -17,7 +23,11 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Integer id;
-	
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	private User user;
+
 	@Column(name = "email")
 	private String email;
 	
@@ -64,6 +74,12 @@ public class Order {
 	
 	@Column(name = "status")
 	private Integer status;
+
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<OrderItemEntity> orderItems;
+
+	@Column(name = "total_amount")
+	private Double totalAmount;
 
 	public Integer getId() {
 		return id;
@@ -136,6 +152,32 @@ public class Order {
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
-	
-	
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public Integer getUserId() {
+		return user != null ? user.getId() : null;
+	}
+
+	public List<OrderItemEntity> getOrderItems() {
+		return orderItems;
+	}
+
+	public void setOrderItems(List<OrderItemEntity> orderItems) {
+		this.orderItems = orderItems;
+	}
+
+	public Double getTotalAmount() {
+		return totalAmount;
+	}
+
+	public void setTotalAmount(Double totalAmount) {
+		this.totalAmount = totalAmount;
+	}
 }

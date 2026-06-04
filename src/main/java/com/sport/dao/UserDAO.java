@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import com.sport.entity.User;
+import java.util.List;
 
 @Repository
 @Transactional
@@ -49,5 +50,44 @@ public class UserDAO {
     public void updateUser(User user) {
         Session session = sessionFactory.getCurrentSession();
         session.update(user);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<User> getAllUsers() {
+        Session session = sessionFactory.getCurrentSession();
+        String hql = "FROM User u ORDER BY u.id DESC";
+        Query query = session.createQuery(hql);
+        return query.list();
+    }
+
+    public User getUserById(Integer id) {
+        Session session = sessionFactory.getCurrentSession();
+        return (User) session.get(User.class, id);
+    }
+
+    public void deleteUser(Integer id) {
+        Session session = sessionFactory.getCurrentSession();
+        User user = (User) session.get(User.class, id);
+        if (user != null) {
+            session.delete(user);
+        }
+    }
+
+    public void lockUser(Integer id) {
+        Session session = sessionFactory.getCurrentSession();
+        User user = (User) session.get(User.class, id);
+        if (user != null) {
+            user.setIsActive(false);
+            session.update(user);
+        }
+    }
+
+    public void unlockUser(Integer id) {
+        Session session = sessionFactory.getCurrentSession();
+        User user = (User) session.get(User.class, id);
+        if (user != null) {
+            user.setIsActive(true);
+            session.update(user);
+        }
     }
 }
