@@ -59,8 +59,8 @@ public class LoginController {
                     return "redirect:/home.htm";
                 }
             } else {
-                // SHA256 password
-                if (PasswordUtil.verifyPassword(password, storedHash)) {
+                // SHA256 password (registered with email as salt)
+                if (PasswordUtil.verifyPassword(password, storedHash, user.getEmail())) {
                     session.setAttribute("user", user);
                     session.setAttribute("cartCount", cartDao.countByUserId(user.getId()));
                     session.setAttribute("wishlistCount", wishlistDao.countByUserId(user.getId()));
