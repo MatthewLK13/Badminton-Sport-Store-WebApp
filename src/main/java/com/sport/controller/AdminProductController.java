@@ -55,14 +55,13 @@ public class AdminProductController {
 
         try {
             String uploadFolder = context.getRealPath("/images/products");
-            String sourceFolder = "C:\\Users\\Administrator\\Documents\\LTW\\Badminton-Sport-Store-WebApp\\src\\main\\webapp\\images\\products\\";
 
             adminProductDao.saveFullProduct(
                 productName, categoryId, brandId, price, description,
                 fileMain, fileRight, fileTop, fileBottom,
                 variantNames, stockQuantities,
                 attrKeys, attrValues,
-                uploadFolder, sourceFolder
+                uploadFolder, uploadFolder
             );
 
             return "redirect:/products/index.htm?id=" + categoryId;
@@ -155,14 +154,13 @@ public class AdminProductController {
 
         try {
             String uploadFolder = context.getRealPath("/images/products");
-            String sourceFolder = "C:\\Users\\Administrator\\Documents\\LTW\\Badminton-Sport-Store-WebApp\\src\\main\\webapp\\images\\products\\";
 
             adminProductDao.updateProduct(
                 productId, productName, categoryId, brandId, price, description,
                 variantIds, variantNames, stockQuantities,
                 attrKeys, attrValues,
                 fileMain, fileRight, fileTop, fileBottom,
-                uploadFolder, sourceFolder
+                uploadFolder, uploadFolder
             );
 
             return "redirect:/admin/product/management.htm";
