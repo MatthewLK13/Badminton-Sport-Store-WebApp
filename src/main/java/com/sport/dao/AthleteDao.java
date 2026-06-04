@@ -2,7 +2,7 @@ package com.sport.dao;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

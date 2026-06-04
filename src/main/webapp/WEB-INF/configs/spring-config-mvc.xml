@@ -45,6 +45,9 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
+	<!-- Jackson ObjectMapper for JSON serialization -->
+	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+
 	<!-- Hibernate Validator for JSR-303 Bean Validation -->
 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
 		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />

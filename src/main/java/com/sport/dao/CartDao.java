@@ -2,7 +2,7 @@ package com.sport.dao;
 
 import java.util.List;
 
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -43,8 +43,8 @@ public class CartDao {
 	// Kiem tra variant da co trong gio chua
     public CartEntity findByUserAndVariant(int userId, int variantId) {
         Session session = factory.getCurrentSession();
-        Query<CartEntity> query = session.createQuery(
-            "FROM CartEntity WHERE userId = :uid AND productVariantId = :vid", CartEntity.class);
+        Query query = session.createQuery(
+            "FROM CartEntity WHERE userId = :uid AND productVariantId = :vid");
         query.setParameter("uid", userId);
         query.setParameter("vid", variantId);
         query.setMaxResults(1);

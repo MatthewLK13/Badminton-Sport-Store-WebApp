@@ -6,8 +6,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.DispatcherServlet;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
@@ -81,18 +79,19 @@ public class LocaleUtils implements ApplicationContextAware {
         // 2. Use static messageSource if set manually
         // (kept for backward compatibility)
 
-        // 3. Try request attribute set by DispatcherServlet
+        // 3. Try request attribute set by DispatcherServlet (Spring 4.x compatible)
         if (request != null) {
-            MessageSource ms = (MessageSource) request.getAttribute(DispatcherServlet.MESSAGE_SOURCE);
+            MessageSource ms = (MessageSource) request.getAttribute("org.springframework.web.servlet.DispatcherServlet.MESSAGE_SOURCE");
             if (ms != null) {
                 return ms;
             }
         }
 
-        // 4. Fallback: try RequestContextHolder
+        // 4. Fallback: try RequestContextHolder request attributes
         try {
             ServletRequestAttributes attrs = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-            MessageSource ms = attrs.getMessageSource();
+            HttpServletRequest req = attrs.getRequest();
+            MessageSource ms = (MessageSource) req.getAttribute("org.springframework.web.servlet.DispatcherServlet.MESSAGE_SOURCE");
             if (ms != null) {
                 return ms;
             }
