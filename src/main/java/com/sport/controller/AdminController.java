@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sport.dao.OrderDAO;
+import com.sport.dao.UserDAO;
+import com.sport.dao.AdminProductDao;
 import com.sport.entity.Order;
 import com.sport.entity.User;
 
@@ -22,11 +24,42 @@ public class AdminController {
 	@Autowired
 	private OrderDAO orderDAO;
 
+	@Autowired
+	private UserDAO userDAO;
+
+	@Autowired
+	private AdminProductDao adminProductDao;
+
 	private static final int ADMIN_ROLE_ID = 1;
 
 	private boolean isAdmin(HttpSession session) {
 		User user = (User) session.getAttribute("user");
 		return user != null && user.getRole() != null && user.getRole().getId() == ADMIN_ROLE_ID;
+	}
+
+	@RequestMapping(value ="/dashboard.htm", method = RequestMethod.GET)
+	public String showDashboard(Model model, HttpSession session) {
+		if (!isAdmin(session)) {
+			return "redirect:/home.htm?error=access_denied";
+		}
+		
+		List<Order> orders = orderDAO.getAllOrders();
+		double totalSales = 0;
+		for (Order o : orders) {
+			if (o.getTotalAmount() != null && o.getStatus() != 4) { // Ignore cancelled orders (status 4)
+				totalSales += o.getTotalAmount();
+			}
+		}
+		
+		long totalProducts = adminProductDao.countAllProducts(null, null, null, null);
+		int totalUsers = userDAO.getAllUsers().size();
+		
+		model.addAttribute("totalSales", totalSales);
+		model.addAttribute("totalUsers", totalUsers);
+		model.addAttribute("totalProducts", totalProducts);
+		model.addAttribute("totalOrders", orders.size());
+		
+		return "admin/dashboard";
 	}
 
 	@RequestMapping(value ="/orders.htm", method = RequestMethod.GET)

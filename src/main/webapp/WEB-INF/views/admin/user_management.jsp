@@ -98,8 +98,8 @@
             </svg>
         </div>
         <ul class="menu-list">
-            <li class="menu-item"><a href="#"><i class="fa-solid fa-chart-simple"></i> Dashboard</a></li>
-            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/products.htm"><i class="fa-solid fa-box"></i> Products</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/dashboard.htm"><i class="fa-solid fa-chart-simple"></i> Dashboard</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/product/management.htm"><i class="fa-solid fa-box"></i> Products</a></li>
             <li class="menu-item active"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
         </ul>
@@ -119,7 +119,10 @@
         </div>
 
         <div class="title-row">
-            <h2 class="page-title">User Management</h2>
+            <div class="header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 class="page-title" style="margin-bottom: 0;">Users Management</h2>
+            <a href="${pageContext.request.contextPath}/admin/user/add.htm" class="btn-add-user" style="background-color: #000; color: #fff; padding: 12px 25px; border-radius: 20px; text-decoration: none; font-weight: 600; font-size: 14px; transition: 0.3s; margin-left: 20px;">+ Add new user</a>
+        </div>
             <a href="${pageContext.request.contextPath}/home.htm" class="btn-prev">
                 <i class="fa-solid fa-arrow-rotate-left"></i> Back to Shop
             </a>

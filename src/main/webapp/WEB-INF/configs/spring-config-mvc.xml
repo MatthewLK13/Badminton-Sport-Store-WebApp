@@ -51,7 +51,6 @@
 	<!-- Hibernate Validator for JSR-303 Bean Validation -->
 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
 		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
-		<property name="validationMessageSource" ref="messageSource"/>
 	</bean>
 
 	<!-- Message source for validation messages and i18n -->

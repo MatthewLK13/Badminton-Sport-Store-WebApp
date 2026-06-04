@@ -258,7 +258,7 @@
         </div>
         <ul class="menu-list">
             <li class="menu-item"><a href="#"><i class="fa-solid fa-chart-simple"></i> Dashboard</a></li>
-            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/products.htm"><i class="fa-solid fa-box"></i> Products</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/product/management.htm"><i class="fa-solid fa-box"></i> Products</a></li>
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
             <li class="menu-item active"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
         </ul>
@@ -380,9 +380,9 @@
 
         <!-- NÚT IN HÓA ĐƠN -->
         <div class="action-row">
-            <span class="btn-print" title="In hóa đơn (sử dụng Ctrl+P để in)">
+            <button class="btn-print" title="In hóa đơn" onclick="window.print()">
                 <i class="fa-solid fa-print"></i> Print
-            </span>
+            </button>
         </div>
     </div>
 

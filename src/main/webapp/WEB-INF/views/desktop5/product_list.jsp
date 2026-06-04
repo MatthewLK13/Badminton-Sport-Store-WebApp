@@ -135,54 +135,6 @@
             </details>
         </div>
     </div>
-            <input type="hidden" name="id" value="${category.id}">
-
-         
-            <c:forEach var="filter" items="${dynamicFilters}">
-                <div class="filter-section">
-                    <%-- Vẽ tiêu đề: Ví dụ "ĐỘ CỨNG ĐŨA", "KIỂU BÀN CHÂN" --%>
-                    <h4 class="section-title" style="text-transform: uppercase;">${filter.key}</h4>
-                    
-                    <%-- Vòng lặp vẽ các giá trị con bên trong bộ lọc đó --%>
-                    <c:forEach var="value" items="${filter.value}">
-                        <label class="custom-checkbox">
-                            <%-- Gửi mảng tham số tên là 'attrs' lên Controller xử lý --%>
-                            <input type="checkbox" name="attrs" value="${value}"
-                                   ${paramValues.attrs != null && fn:contains(paramValues.attrs, value) ? 'checked' : ''}>
-                            <span class="checkmark"></span> ${value}
-                        </label>
-                    </c:forEach>
-                </div>
-            </c:forEach>
-            
-            <div class="filter-section">
-                <h4 class="section-title">GIÁ (USD)</h4>
-                <div class="price-range">
-                    <input type="number" name="minPrice" value="${minPrice}"
-                           placeholder="Từ" min="0" class="price-input">
-                    <span>—</span>
-                    <input type="number" name="maxPrice" value="${maxPrice}"
-                           placeholder="Đến" min="0" class="price-input">
-                </div>
-            </div>
-			
-        
-            <div class="filter-section">
-                <h4 class="section-title">TÌNH TRẠNG KHO</h4>
-                <label class="custom-checkbox">
-                    <input type="checkbox" name="inStock" value="true"
-                           ${inStockOnly == true ? 'checked' : ''}>
-                    <span class="checkmark"></span> Chỉ hiện sản phẩm còn hàng
-                </label>
-            </div>
-
-            <div class="drawer-footer">
-                <a href="${pageContext.request.contextPath}/products/index.htm?id=${category.id}"
-                   class="btn-clear-all">CLEAR ALL</a>
-                <button type="submit" class="btn-apply-results">KẾT QUẢ</button>
-            </div>
-        </form>
-    </div>
 
     <div class="products-grid-container">
     <c:forEach items="${products}" var="p">

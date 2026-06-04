@@ -89,7 +89,7 @@
             KHÁM PHÁ NGAY &nbsp;→
         </a>
 
-        <a href="${pageContext.request.contextPath}/products/search.htm?keyword=sale" class="figma-btn btn-buy">
+        <a href="${pageContext.request.contextPath}/search.htm?q=sale" class="figma-btn btn-buy">
             MUA NGAY &nbsp;→
         </a>
     </div>

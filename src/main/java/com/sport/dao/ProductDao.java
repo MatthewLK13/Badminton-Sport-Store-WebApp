@@ -142,13 +142,24 @@ public class ProductDao {
     public ProductsEntity getProductById(int productId) {
         Session session = factory.getCurrentSession();
 
-        String hql = "SELECT DISTINCT p FROM ProductsEntity p " +
-                     "LEFT JOIN FETCH p.productVariants " +
-                     "LEFT JOIN FETCH p.productImages " +
-                     "WHERE p.id = :productId";
-        Query query = session.createQuery(hql);
-        query.setParameter("productId", productId);
-        return (ProductsEntity) query.uniqueResult();
+        // 1. Fetch Variants first
+        String hql1 = "SELECT DISTINCT p FROM ProductsEntity p " +
+                      "LEFT JOIN FETCH p.productVariants " +
+                      "WHERE p.id = :productId";
+        Query query1 = session.createQuery(hql1);
+        query1.setParameter("productId", productId);
+        ProductsEntity product = (ProductsEntity) query1.uniqueResult();
+
+        // 2. Fetch Images
+        if (product != null) {
+            String hql2 = "SELECT DISTINCT p FROM ProductsEntity p " +
+                          "LEFT JOIN FETCH p.productImages " +
+                          "WHERE p.id = :productId";
+            Query query2 = session.createQuery(hql2);
+            query2.setParameter("productId", productId);
+            query2.uniqueResult(); // Hibernate will attach it to the existing entity
+        }
+        return product;
     }
 
     public List<Object[]> getFilterOptionsByCategoryId(Integer categoryId) {

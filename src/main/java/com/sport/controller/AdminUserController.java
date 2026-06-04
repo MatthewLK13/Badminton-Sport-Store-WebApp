@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sport.dao.UserDAO;
 import com.sport.entity.User;
+import com.sport.entity.Role;
+import com.sport.util.PasswordUtil;
 
 @Controller
 @RequestMapping("/admin")
@@ -60,6 +62,47 @@ public class AdminUserController {
             return "redirect:/home.htm?error=access_denied";
         }
         userDAO.unlockUser(userId);
+        return "redirect:/admin/users.htm";
+    }
+
+    @RequestMapping(value = "/user/add.htm", method = RequestMethod.GET)
+    public String showAddUser(HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/home.htm?error=access_denied";
+        }
+        return "admin/add_user";
+    }
+
+    @RequestMapping(value = "/user/save.htm", method = RequestMethod.POST)
+    public String saveUser(HttpSession session,
+                           @RequestParam("fullName") String fullName,
+                           @RequestParam("email") String email,
+                           @RequestParam("password") String password,
+                           @RequestParam("roleId") Integer roleId,
+                           @RequestParam("status") Integer status,
+                           Model model) {
+        if (!isAdmin(session)) {
+            return "redirect:/home.htm?error=access_denied";
+        }
+
+        if (userDAO.existsByEmail(email.trim())) {
+            model.addAttribute("error", "Email đã tồn tại!");
+            return "admin/add_user";
+        }
+
+        User newUserEntity = new User();
+        newUserEntity.setFullName(fullName.trim());
+        newUserEntity.setEmail(email.trim());
+        String hashedPassword = PasswordUtil.hashPassword(password, email.trim());
+        newUserEntity.setPasswordHash(hashedPassword);
+
+        Role role = new Role();
+        role.setId(roleId);
+        newUserEntity.setRole(role);
+        newUserEntity.setIsActive(status == 1); // 1 is active, 0 is locked
+
+        userDAO.saveUser(newUserEntity);
+
         return "redirect:/admin/users.htm";
     }
 }

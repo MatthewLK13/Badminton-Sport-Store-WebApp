@@ -4,22 +4,22 @@
 <form:form action="${pageContext.request.contextPath}/register.htm" method="post" modelAttribute="user" style="text-align: left;">
 
     <div class="form-group">
-        <form:input type="text" path="name" class="input-field" placeholder="Họ và tên" />
+        <form:input path="name" class="input-field" placeholder="Nhập tên của bạn (*)" />
         <form:errors path="name" cssClass="field-error" />
     </div>
 
     <div class="form-group">
-        <form:input type="email" path="email" class="input-field" placeholder="Email" />
+        <form:input path="email" class="input-field" placeholder="Nhập email của bạn (*)" />
         <form:errors path="email" cssClass="field-error" />
     </div>
 
     <div class="form-group">
-        <form:input type="text" path="phone" class="input-field" placeholder="Số điện thoại" />
+        <form:input path="phone" class="input-field" placeholder="Số điện thoại" />
         <form:errors path="phone" cssClass="field-error" />
     </div>
 
     <div class="form-group">
-        <form:password type="password" path="password" class="input-field" placeholder="Mật khẩu" />
+        <form:password path="password" class="input-field" placeholder="Mật khẩu" />
         <form:errors path="password" cssClass="field-error" />
     </div>
 
@@ -27,8 +27,8 @@
         <input type="password" name="confirmPassword" class="input-field" placeholder="Nhập lại mật khẩu" required>
     </div>
 
-    <div style="width: 100%; display: flex; justify-content: flex-start; margin-top: 10px;">
-        <button type="submit" class="btn-login" style="width: 100%;">Đăng ký tài khoản</button>
+    <div style="width: 100%; text-align: center; margin-top: 10px;">
+        <button type="submit" class="btn-login" style="width: 100%;">Đăng ký</button>
     </div>
 </form:form>
 
@@ -40,6 +40,6 @@
     display: block;
 }
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 0px;
 }
 </style>

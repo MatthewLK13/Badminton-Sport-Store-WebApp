@@ -4,304 +4,409 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Products Management</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-* { box-sizing: border-box; }
-body { background: #f5f5f5; font-family: 'Segoe UI', sans-serif; margin: 0; }
+    <meta charset="UTF-8">
+    <title>Quản lý sản phẩm - Yonex Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            background-color: #eef2f3;
+            display: flex;
+            min-height: 100vh;
+        }
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 240px;
+            background-color: #b8c9c3;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            position: fixed;
+            height: 100vh;
+        }
+        .logo-area {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .logo-area svg {
+            width: 60px; height: auto;
+            fill: #000;
+        }
+        .menu-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .menu-item a {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            color: #4a4a4a;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 12px 15px;
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        .menu-item a:hover, .menu-item.active a {
+            background-color: #ffffffc9;
+            color: #000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
 
-/* SIDEBAR */
-.sidebar {
-    width: 220px; min-height: 100vh;
-    background: #fff; border-right: 1px solid #e0e0e0;
-    position: fixed; top: 0; left: 0;
-    display: flex; flex-direction: column; padding: 20px 0;
-}
-.sidebar .logo { padding: 0 20px 20px; font-weight: 700; font-size: 18px; }
-.sidebar a {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 20px; color: #555; text-decoration: none; font-size: 14px;
-}
-.sidebar a:hover, .sidebar a.active {
-    background: #f0f4f0; color: #2e7d32; font-weight: 600;
-    border-left: 3px solid #2e7d32;
-}
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            padding: 30px 40px;
+        }
 
-/* MAIN */
-.main-content { margin-left: 220px; padding: 24px; }
+        /* Top Bar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .search-top {
+            background: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            width: 250px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .search-top input {
+            border: none; outline: none; font-size: 13px; width: 100%; margin-left: 10px;
+        }
+        .admin-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .admin-profile i { font-size: 20px; }
 
-/* TOPBAR */
-.topbar {
-    background: #fff; padding: 14px 24px;
-    border-radius: 10px; margin-bottom: 24px;
-    display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
+        /* Dashboard Title & Stats Cards */
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stats-container {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background: #fff;
+            padding: 25px;
+            border-radius: 16px;
+            width: 220px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .card-icon {
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .card-icon.blue { background: #e7f1ff; color: #007aff; }
+        .card-icon.green { background: #e8f8f0; color: #2ecc71; }
+        .card-title { font-size: 12px; color: #8e8e8e; font-weight: 500; }
+        .card-value { font-size: 24px; font-weight: 700; }
+        
+        /* Table section */
+        .orders-list-box {
+            background: #fff;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
+        .filter-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .filter-group label {
+            font-size: 12px; font-weight: 600; color: #4a4a4a;
+        }
+        .filter-input {
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+            min-width: 160px;
+        }
 
-/* STATS */
-.stat-card {
-    background: #fff; border-radius: 10px;
-    padding: 16px 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.stat-card .label { font-size: 12px; color: #888; margin-bottom: 4px; }
-.stat-card .value { font-size: 24px; font-weight: 700; }
+        .orders-list-title {
+            font-size: 16px; font-weight: 700; margin-bottom: 20px;
+        }
 
-/* FILTER BAR */
-.filter-bar {
-    background: #fff; border-radius: 10px;
-    padding: 16px 20px; margin-bottom: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
-}
+        /* Table CSS */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        th {
+            font-size: 12px; font-weight: 600; color: #8e8e8e;
+            padding: 15px 10px;
+            border-bottom: 2px solid #f4f6f8;
+        }
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #f4f6f8;
+            font-size: 14px;
+            font-weight: 500;
+            vertical-align: middle;
+        }
+        
+        .product-img {
+            width: 48px; height: 48px; object-fit: cover;
+            border-radius: 8px; border: 1px solid #e0e0e0;
+        }
+        .badge-cat {
+            background: #e8f5e9; color: #2e7d32;
+            padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600;
+        }
+        
+        .btn-action {
+            background: none; border: none; cursor: pointer; font-size: 16px;
+            padding: 5px; transition: transform 0.2s;
+        }
+        .btn-action:hover { transform: scale(1.2); }
+        .btn-edit { color: #007aff; }
+        .btn-delete { color: #e74c3c; }
 
-/* TABLE */
-.table-card {
-    background: #fff; border-radius: 10px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden;
-}
-.table thead th {
-    background: #f8f9fa; font-size: 13px;
-    color: #666; font-weight: 600; border: none; padding: 12px 16px;
-}
-.table tbody td { padding: 12px 16px; vertical-align: middle; border-color: #f0f0f0; }
-.table tbody tr:hover { background: #fafafa; }
-
-.product-img {
-    width: 48px; height: 48px; object-fit: cover;
-    border-radius: 8px; border: 1px solid #e0e0e0;
-}
-.badge-cat {
-    background: #e8f5e9; color: #2e7d32;
-    padding: 3px 10px; border-radius: 20px; font-size: 12px;
-}
-.btn-action { width: 32px; height: 32px; padding: 0; border-radius: 6px; }
-
-/* PAGINATION */
-.pagination .page-link { border-radius: 6px !important; margin: 0 2px; color: #333; }
-.pagination .page-item.active .page-link { background: #2e7d32; border-color: #2e7d32; }
-</style>
+        .btn-add {
+            background: #000; color: #fff; text-decoration: none;
+            padding: 10px 20px; border-radius: 12px; font-size: 14px; font-weight: 600;
+            display: inline-flex; align-items: center; gap: 8px;
+        }
+        .btn-add:hover { background: #333; }
+        
+        /* Pagination */
+        .pagination {
+            display: flex; list-style: none; gap: 5px; justify-content: center; margin-top: 30px;
+        }
+        .pagination a {
+            padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 8px;
+            text-decoration: none; color: #333; font-size: 13px; font-weight: 500;
+        }
+        .pagination .active a {
+            background: #000; color: #fff; border-color: #000;
+        }
+    </style>
 </head>
 <body>
 
-<%-- SIDEBAR --%>
-<div class="sidebar">
-    <div class="logo">🏸 Sport Admin</div>
-    <a href="${pageContext.request.contextPath}/admin/dashboard.htm">
-        📊 Dashboard
-    </a>
-    <a href="${pageContext.request.contextPath}/admin/product/management.htm" class="active">
-        📦 Products
-    </a>
-    <a href="${pageContext.request.contextPath}/admin/user/management.htm">
-        👤 Users
-    </a>
-    <a href="${pageContext.request.contextPath}/admin/order/management.htm">
-        🚚 Orders
-    </a>
-</div>
-
-<%-- MAIN CONTENT --%>
-<div class="main-content">
-
-    <%-- TOPBAR --%>
-    <div class="topbar">
-        <h5 class="mb-0 fw-bold">Products Management</h5>
-        <div class="d-flex align-items-center gap-2">
-            <span class="text-muted" style="font-size:14px;">Admin</span>
-            <div style="width:36px;height:36px;border-radius:50%;background:#2e7d32;
-                        color:#fff;display:flex;align-items:center;justify-content:center;
-                        font-weight:700;">A</div>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo-area">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 70 L35 25 L50 25 L35 70 Z" />
+                <path d="M50 70 L65 25 L80 25 L65 70 Z" />
+            </svg>
         </div>
+        <ul class="menu-list">
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/dashboard.htm"><i class="fa-solid fa-chart-simple"></i> Dashboard</a></li>
+            <li class="menu-item active"><a href="${pageContext.request.contextPath}/admin/product/management.htm"><i class="fa-solid fa-box"></i> Products</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
+        </ul>
     </div>
 
-    <%-- STATS --%>
-    <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div class="label">Total Products</div>
-                <div class="value">${totalProducts}</div>
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="topbar">
+            <div class="search-top">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Tìm kiếm...">
+            </div>
+            <div class="admin-profile">
+                <span>Admin</span>
+                <i class="fa-solid fa-circle-user"></i>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card">
-                <div class="label">Current Page</div>
-                <div class="value">${currentPage} / ${totalPages}</div>
+
+        <div class="page-title">
+            <span>Products Management</span>
+            <a href="${pageContext.request.contextPath}/admin/product/add.htm" class="btn-add"><i class="fa-solid fa-plus"></i> Add New Product</a>
+        </div>
+
+        <div class="stats-container">
+            <div class="card">
+                <div class="card-icon blue"><i class="fa-solid fa-box-open"></i></div>
+                <span class="card-title">Total Products</span>
+                <span class="card-value">${totalProducts}</span>
+            </div>
+            <div class="card">
+                <div class="card-icon green"><i class="fa-solid fa-layer-group"></i></div>
+                <span class="card-title">Current Page</span>
+                <span class="card-value">${currentPage} / ${totalPages}</span>
             </div>
         </div>
-        <div class="col-md-6 d-flex align-items-center justify-content-end">
-            <a href="${pageContext.request.contextPath}/admin/product/add.htm"
-               class="btn btn-success px-4">
-                + Add New Product
-            </a>
-        </div>
-    </div>
 
-    <%-- FILTER BAR --%>
-    <form method="GET" 
-          action="${pageContext.request.contextPath}/admin/product/management.htm"
-          class="filter-bar">
+        <div class="orders-list-box">
+            <!-- Filter panel -->
+            <form action="${pageContext.request.contextPath}/admin/product/management.htm" method="GET">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Search Keyword</label>
+                    <input type="text" name="keyword" class="filter-input" placeholder="Search by name..." value="${keyword}">
+                </div>
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select name="categoryId" class="filter-input">
+                        <option value="">All Categories</option>
+                        <option value="1" ${selectedCategoryId == 1 ? 'selected' : ''}>Vợt cầu lông</option>
+                        <option value="2" ${selectedCategoryId == 2 ? 'selected' : ''}>Giày cầu lông</option>
+                        <option value="3" ${selectedCategoryId == 3 ? 'selected' : ''}>Quần áo</option>
+                        <option value="4" ${selectedCategoryId == 4 ? 'selected' : ''}>Túi vợt</option>
+                        <option value="5" ${selectedCategoryId == 5 ? 'selected' : ''}>Phụ kiện</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Brand</label>
+                    <select name="brandId" class="filter-input">
+                        <option value="">All Brands</option>
+                        <option value="1" ${selectedBrandId == 1 ? 'selected' : ''}>Yonex</option>
+                        <option value="2" ${selectedBrandId == 2 ? 'selected' : ''}>Victor</option>
+                        <option value="3" ${selectedBrandId == 3 ? 'selected' : ''}>Lining</option>
+                        <option value="4" ${selectedBrandId == 4 ? 'selected' : ''}>Mizuno</option>
+                        <option value="5" ${selectedBrandId == 5 ? 'selected' : ''}>Kawasaki</option>
+                        <option value="6" ${selectedBrandId == 6 ? 'selected' : ''}>Venson</option>
+                    </select>
+                </div>
+                <div class="filter-group" style="justify-content: flex-end;">
+                    <button type="submit" class="btn-add" style="height: 35px; border-radius: 10px; border: none; cursor: pointer;">Filter</button>
+                </div>
+            </div>
+            </form>
 
-        <input type="text" name="keyword" value="${keyword}"
-               class="form-control" style="max-width:220px;"
-               placeholder="🔍 Search by name...">
-
-        <select name="categoryId" class="form-select" style="max-width:160px;">
-            <option value="">All Categories</option>
-            <option value="1" ${selectedCategoryId == 1 ? 'selected' : ''}>Vợt cầu lông</option>
-            <option value="2" ${selectedCategoryId == 2 ? 'selected' : ''}>Giày cầu lông</option>
-            <option value="3" ${selectedCategoryId == 3 ? 'selected' : ''}>Quần áo</option>
-            <option value="4" ${selectedCategoryId == 4 ? 'selected' : ''}>Túi vợt</option>
-            <option value="5" ${selectedCategoryId == 5 ? 'selected' : ''}>Phụ kiện</option>
-        </select>
-
-        <select name="brandId" class="form-select" style="max-width:140px;">
-            <option value="">All Brands</option>
-            <option value="1" ${selectedBrandId == 1 ? 'selected' : ''}>Yonex</option>
-            <option value="2" ${selectedBrandId == 2 ? 'selected' : ''}>Victor</option>
-            <option value="3" ${selectedBrandId == 3 ? 'selected' : ''}>Lining</option>
-            <option value="4" ${selectedBrandId == 4 ? 'selected' : ''}>Mizuno</option>
-            <option value="5" ${selectedBrandId == 5 ? 'selected' : ''}>Kawasaki</option>
-            <option value="6" ${selectedBrandId == 6 ? 'selected' : ''}>Venson</option>
-        </select>
-
-        <input type="date" name="fromDate" value="${fromDate}"
-               class="form-control" style="max-width:160px;">
-
-        <button type="submit" class="btn btn-dark px-4">Search</button>
-
-        <a href="${pageContext.request.contextPath}/admin/product/management.htm"
-           class="btn btn-outline-secondary">Reset</a>
-    </form>
-
-    <%-- TABLE --%>
-    <div class="table-card">
-        <table class="table mb-0">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Brand</th>
-                    <th>Price</th>
-                    <th>Stock</th> 
-                    <th>Created At</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:forEach var="p" items="${products}">
+            <h3 class="orders-list-title">Products list</h3>
+            <table>
+                <thead>
                     <tr>
-                        <td style="color:#888;font-size:13px;">#${p.id}</td>
-                        <td>
-                            <c:set var="mainImg" value=""/>
-                            <c:forEach var="img" items="${p.productImages}">
-                                <c:if test="${img.isMain && mainImg == ''}">
-                                    <c:set var="mainImg" value="${img.imageUrl}"/>
-                                </c:if>
-                            </c:forEach>
-                            <c:choose>
-                                <c:when test="${mainImg != ''}">
-                                    <img src="${pageContext.request.contextPath}/images/products/${mainImg}"
-                                         class="product-img" alt="${p.productName}">
-                                </c:when>
-                                <c:otherwise>
-                                    <div class="product-img d-flex align-items-center 
-                                                justify-content-center bg-light text-muted"
-                                         style="font-size:10px;">No img</div>
-                                </c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td><strong style="font-size:14px;">${p.productName}</strong></td>
-                        <td><span class="badge-cat">${p.category_id.categoryName}</span></td>
-                        <td style="font-size:14px;">${p.brand_id.brandName}</td>
-                        <td style="font-weight:600;">
-                            $<fmt:formatNumber value="${p.price}" pattern="#,##0.00"/>
-                        </td>
-                        
-                        <%-- Xóa <th>Stock</th> trong tbody đi --%>
-<%-- Sửa lại cột Stock trong tbody thành: --%>
-
-
-<%-- Trong tbody --%>
-<td>
-    <c:set var="pid" value="${p.id}"/>
-    <c:choose>
-        <c:when test="${not empty variantsMap[pid]}">
-            <select class="form-select form-select-sm" style="min-width:140px;">
-                <c:forEach var="v" items="${variantsMap[pid]}">
-                    <option>
-                        ${v.name} — SL: ${v.stock}
-                    </option>
-                </c:forEach>
-            </select>
-        </c:when>
-        <c:otherwise>
-            <span class="badge bg-secondary">--</span>
-        </c:otherwise>
-    </c:choose>
-</td>
-                        
-                        <td style="font-size:13px;color:#888;">${p.createAt}</td>
-                        <td>
-                            <a href="${pageContext.request.contextPath}/admin/product/edit.htm?id=${p.id}"
-                               class="btn btn-outline-primary btn-action me-1" title="Edit">✏</a>
-                            <form action="${pageContext.request.contextPath}/admin/product/delete.htm" method="post" style="display:inline;">
-                                <input type="hidden" name="productId" value="${p.id}">
-                                <button type="submit" class="btn btn-outline-danger btn-action" title="Delete">🗑</button>
-                            </form>
-                        </td>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Brand</th>
+                        <th>Price</th>
+                        <th>Stock Variants</th>
+                        <th>Created At</th>
+                        <th>Actions</th>
                     </tr>
-                    
-                </c:forEach>
+                </thead>
+                <tbody>
+                    <c:forEach var="p" items="${products}">
+                        <tr>
+                            <td>#${p.id}</td>
+                            <td>
+                                <c:set var="mainImg" value=""/>
+                                <c:forEach var="img" items="${p.productImages}">
+                                    <c:if test="${img.isMain && mainImg == ''}">
+                                        <c:set var="mainImg" value="${img.imageUrl}"/>
+                                    </c:if>
+                                </c:forEach>
+                                <c:choose>
+                                    <c:when test="${mainImg != ''}">
+                                        <img src="${pageContext.request.contextPath}/images/products/${mainImg}"
+                                             class="product-img" alt="${p.productName}">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div class="product-img d-flex align-items-center justify-content-center" style="background:#eee; font-size:10px; text-align:center;">No img</div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td><strong>${p.productName}</strong></td>
+                            <td><span class="badge-cat">${p.category_id.categoryName}</span></td>
+                            <td>${p.brand_id.brandName}</td>
+                            <td style="font-weight:600;">$<fmt:formatNumber value="${p.price}" pattern="#,##0.00"/></td>
+                            <td>
+                                <c:set var="pid" value="${p.id}"/>
+                                <c:choose>
+                                    <c:when test="${not empty variantsMap[pid]}">
+                                        <select class="filter-input" style="padding: 5px; min-width: 140px;">
+                                            <c:forEach var="v" items="${variantsMap[pid]}">
+                                                <option>${v.name} — SL: ${v.stock}</option>
+                                            </c:forEach>
+                                        </select>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span style="color:#999;">--</span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td style="color:#888;">${p.createAt}</td>
+                            <td>
+                                <a href="${pageContext.request.contextPath}/admin/product/edit.htm?id=${p.id}" class="btn-action btn-edit" title="Edit">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <form action="${pageContext.request.contextPath}/admin/product/delete.htm" method="post" style="display:inline;">
+                                    <input type="hidden" name="productId" value="${p.id}">
+                                    <button type="submit" class="btn-action btn-delete" title="Delete" onclick="return confirm('Are you sure you want to delete this product?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    <c:if test="${empty products}">
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 40px; color: #8e8e8e;">Không tìm thấy sản phẩm nào!</td>
+                        </tr>
+                    </c:if>
+                </tbody>
+            </table>
 
-                <c:if test="${empty products}">
-                    <tr>
-                        <td colspan="9" class="text-center text-muted py-5"> <%-- Tăng colspan từ 8 lên 9 vì đã thêm 1 cột --%>
-                            Không tìm thấy sản phẩm nào.
-                        </td>
-                    </tr>
-                </c:if>
-                
-            </tbody>
-        </table>
-
-        <%-- PAGINATION --%>
-        <c:if test="${totalPages > 1}">
-            <div class="d-flex justify-content-center py-3">
-                <ul class="pagination mb-0">
+            <%-- PAGINATION --%>
+            <c:if test="${totalPages > 1}">
+                <ul class="pagination">
                     <c:if test="${currentPage > 1}">
-                        <li class="page-item">
-                            <a class="page-link" 
-                               href="?page=${currentPage-1}&keyword=${keyword}&categoryId=${selectedCategoryId}&brandId=${selectedBrandId}&fromDate=${fromDate}">
-                                &laquo;
-                            </a>
-                        </li>
+                        <li><a href="?page=${currentPage-1}&keyword=${keyword}&categoryId=${selectedCategoryId}&brandId=${selectedBrandId}">&laquo;</a></li>
                     </c:if>
 
                     <c:forEach begin="1" end="${totalPages}" var="i">
-                        <li class="page-item ${currentPage == i ? 'active' : ''}">
-                            <a class="page-link"
-                               href="?page=${i}&keyword=${keyword}&categoryId=${selectedCategoryId}&brandId=${selectedBrandId}&fromDate=${fromDate}">
-                                ${i}
-                            </a>
+                        <li class="${currentPage == i ? 'active' : ''}">
+                            <a href="?page=${i}&keyword=${keyword}&categoryId=${selectedCategoryId}&brandId=${selectedBrandId}">${i}</a>
                         </li>
                     </c:forEach>
 
                     <c:if test="${currentPage < totalPages}">
-                        <li class="page-item">
-                            <a class="page-link"
-                               href="?page=${currentPage+1}&keyword=${keyword}&categoryId=${selectedCategoryId}&brandId=${selectedBrandId}&fromDate=${fromDate}">
-                                &raquo;
-                            </a>
-                        </li>
+                        <li><a href="?page=${currentPage+1}&keyword=${keyword}&categoryId=${selectedCategoryId}&brandId=${selectedBrandId}">&raquo;</a></li>
                     </c:if>
                 </ul>
-            </div>
-        </c:if>
+            </c:if>
+        </div>
     </div>
 
-</div>
 </body>
 </html>

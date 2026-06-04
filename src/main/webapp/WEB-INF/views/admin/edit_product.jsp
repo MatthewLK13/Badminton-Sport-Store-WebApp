@@ -4,278 +4,260 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Edit Product - ${product.productName}</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-* { box-sizing: border-box; }
-body { background: #f5f5f5; font-family: 'Segoe UI', sans-serif; margin: 0; }
+    <meta charset="UTF-8">
+    <title>Sửa sản phẩm - Yonex Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: #eef2f3; display: flex; min-height: 100vh; }
+        
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px; background-color: #b8c9c3; padding: 30px 20px;
+            display: flex; flex-direction: column; border-right: 1px solid rgba(0,0,0,0.05);
+            position: fixed; height: 100vh;
+        }
+        .logo-area { text-align: center; margin-bottom: 50px; }
+        .logo-area svg { width: 60px; height: auto; fill: #000; }
+        .menu-list { list-style: none; display: flex; flex-direction: column; gap: 15px; }
+        .menu-item a {
+            display: flex; align-items: center; gap: 15px; text-decoration: none;
+            color: #4a4a4a; font-size: 14px; font-weight: 600; padding: 12px 15px;
+            border-radius: 20px; transition: all 0.3s;
+        }
+        .menu-item a:hover, .menu-item.active a {
+            background-color: #ffffffc9; color: #000; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
 
-.sidebar {
-    width: 220px; min-height: 100vh;
-    background: #fff; border-right: 1px solid #e0e0e0;
-    position: fixed; top: 0; left: 0;
-    display: flex; flex-direction: column; padding: 20px 0;
-}
-.sidebar .logo { padding: 0 20px 20px; font-weight: 700; font-size: 18px; }
-.sidebar a {
-    display: flex; align-items: center; gap: 10px;
-    padding: 12px 20px; color: #555; text-decoration: none; font-size: 14px;
-}
-.sidebar a:hover, .sidebar a.active {
-    background: #f0f4f0; color: #2e7d32; font-weight: 600;
-    border-left: 3px solid #2e7d32;
-}
+        /* MAIN CONTENT */
+        .main-content { margin-left: 240px; flex: 1; padding: 30px 40px; }
+        
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .btn-back {
+            text-decoration: none; color: #000; font-weight: 600; font-size: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .admin-profile { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 14px; }
+        
+        .page-title { font-size: 24px; font-weight: 700; margin-bottom: 25px; }
 
-.main-content { margin-left: 220px; padding: 24px; }
+        .form-container {
+            background: #fff; padding: 40px; border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+        }
 
-.topbar {
-    background: #fff; padding: 14px 24px;
-    border-radius: 10px; margin-bottom: 24px;
-    display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
+        .section-title { font-size: 14px; font-weight: 700; color: #8e8e8e; text-transform: uppercase; margin-bottom: 15px; margin-top: 30px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .section-title:first-child { margin-top: 0; }
 
-.form-card {
-    background: #fff; border-radius: 10px;
-    padding: 28px; box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-    margin-bottom: 20px;
-}
-.form-card h6 {
-    font-weight: 700; color: #334155;
-    margin-bottom: 20px; padding-bottom: 10px;
-    border-bottom: 1px solid #f0f0f0;
-    text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px;
-}
+        .form-group { margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .form-row { display: flex; gap: 20px; }
+        .form-row .form-group { flex: 1; }
+        
+        label { font-size: 13px; font-weight: 600; color: #333; }
+        .form-control, .form-select {
+            padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 12px;
+            font-size: 14px; outline: none; background: #fafafa; transition: 0.3s;
+        }
+        .form-control:focus, .form-select:focus { border-color: #000; background: #fff; }
+        .form-control[readonly] { background: #eee; cursor: not-allowed; }
 
-.image-preview {
-    width: 100%; height: 120px; object-fit: cover;
-    border-radius: 8px; border: 1px solid #e0e0e0;
-    margin-bottom: 8px;
-}
-.image-upload-card {
-    border: 1px dashed #cbd5e1; padding: 12px;
-    border-radius: 10px; background: #f8fafc; text-align: center;
-}
-.image-upload-card label {
-    font-size: 13px; font-weight: 600; color: #475569;
-    display: block; margin-bottom: 6px;
-}
+        .images-grid { display: flex; gap: 15px; margin-bottom: 20px; }
+        .image-upload-card {
+            border: 1px dashed #cbd5e1; padding: 15px; border-radius: 12px;
+            background: #f8fafc; text-align: center; flex: 1; display: flex; flex-direction: column; gap: 10px;
+        }
+        .image-preview {
+            width: 100%; height: 120px; object-fit: cover;
+            border-radius: 8px; border: 1px solid #e0e0e0;
+            margin-bottom: 8px;
+        }
+        .image-upload-card label { font-size: 13px; color: #475569; }
+        .image-upload-card label.main-img { color: #e74c3c; font-weight: 700; }
+        .image-upload-card input[type="file"] { font-size: 12px; }
 
-.variant-row { background: #f8fafc; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
-.attr-row { background: #f8fafc; border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+        .attr-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 25px; margin-top: 20px; }
+        
+        .variant-row { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; gap: 15px; align-items: center; }
+        .variant-row .badge { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; }
+        .badge.bg-success { background: #e8f8f0; color: #2ecc71; }
+        .badge.bg-danger { background: #ffebeb; color: #e74c3c; }
+        .badge.bg-secondary { background: #f0f0f0; color: #666; }
 
-.btn-save { background: #000; color: #fff; border-radius: 10px; padding: 12px 32px; font-weight: 600; border: none; }
-.btn-save:hover { background: #1e293b; color: #fff; }
-</style>
+        .btn-add-variant { background: none; border: 1px dashed #000; padding: 8px 15px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-block; margin-top: 10px; text-decoration: none; color: #000; }
+        .btn-add-variant:hover { background: #000; color: #fff; }
+
+        .btn-save {
+            background: #000; color: #fff; border-radius: 12px; padding: 15px 30px;
+            font-weight: 600; font-size: 15px; border: none; cursor: pointer; margin-top: 30px; transition: 0.3s;
+        }
+        .btn-save:hover { background: #333; }
+    </style>
 </head>
 <body>
 
-<%-- SIDEBAR --%>
-<div class="sidebar">
-    <div class="logo">🏸 Sport Admin</div>
-    <a href="${pageContext.request.contextPath}/admin/dashboard.htm">📊 Dashboard</a>
-    <a href="${pageContext.request.contextPath}/admin/product/management.htm" class="active">📦 Products</a>
-    <a href="${pageContext.request.contextPath}/admin/user/management.htm">👤 Users</a>
-    <a href="${pageContext.request.contextPath}/admin/order/management.htm">🚚 Orders</a>
-</div>
-
-<div class="main-content">
-
-    <%-- TOPBAR --%>
-    <div class="topbar">
-        <div class="d-flex align-items-center gap-3">
-            <a href="${pageContext.request.contextPath}/admin/product/management.htm"
-               class="btn btn-outline-secondary btn-sm">← Back</a>
-            <h5 class="mb-0 fw-bold">Edit Product #${product.id}</h5>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo-area">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 70 L35 25 L50 25 L35 70 Z" />
+                <path d="M50 70 L65 25 L80 25 L65 70 Z" />
+            </svg>
         </div>
-        <div class="d-flex align-items-center gap-2">
-            <span class="text-muted" style="font-size:14px;">Admin</span>
-            <div style="width:36px;height:36px;border-radius:50%;background:#2e7d32;
-                        color:#fff;display:flex;align-items:center;justify-content:center;
-                        font-weight:700;">A</div>
-        </div>
+        <ul class="menu-list">
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/dashboard.htm"><i class="fa-solid fa-chart-simple"></i> Dashboard</a></li>
+            <li class="menu-item active"><a href="${pageContext.request.contextPath}/admin/product/management.htm"><i class="fa-solid fa-box"></i> Products</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
+            <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
+        </ul>
     </div>
 
-    <form action="${pageContext.request.contextPath}/admin/product/update.htm"
-          method="POST" enctype="multipart/form-data">
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="topbar">
+            <a href="${pageContext.request.contextPath}/admin/product/management.htm" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Products</a>
+            <div class="admin-profile">
+                <span>Admin</span>
+                <i class="fa-solid fa-circle-user" style="font-size: 20px;"></i>
+            </div>
+        </div>
 
-        <input type="hidden" name="productId" value="${product.id}">
+        <h2 class="page-title">Edit Product #${product.id}</h2>
 
-        <%-- ẢNH --%>
-        <div class="form-card">
-            <h6>📷 Product Images</h6>
-            <div class="row g-3">
-                <c:forEach var="img" items="${product.productImages}">
-                    <div class="col-md-3">
+        <div class="form-container">
+            <form action="${pageContext.request.contextPath}/admin/product/update.htm" method="POST" enctype="multipart/form-data">
+                
+                <input type="hidden" name="productId" value="${product.id}">
+
+                <h3 class="section-title">Product Images</h3>
+                <div class="images-grid">
+                    <c:forEach var="img" items="${product.productImages}">
                         <div class="image-upload-card">
-                            <label class="${img.isMain ? 'text-danger' : ''}">
+                            <label class="${img.isMain ? 'main-img' : ''}">
                                 ${img.isMain ? '★ Main side' : 'Side image'}
                             </label>
-                            <img src="${pageContext.request.contextPath}/images/products/${img.imageUrl}"
-                                 class="image-preview" alt="${img.imageUrl}">
-                            <input type="file"
-                                   name="${img.isMain ? 'fileMain' : img.imageUrl.contains('right') ? 'fileRight' : img.imageUrl.contains('top') ? 'fileTop' : 'fileBottom'}"
-                                   class="form-control form-control-sm" accept="image/*">
-                            <small class="text-muted d-block mt-1">Để trống nếu không đổi ảnh</small>
+                            <img src="${pageContext.request.contextPath}/images/products/${img.imageUrl}" class="image-preview" alt="image">
+                            <input type="file" name="${img.isMain ? 'fileMain' : img.imageUrl.contains('right') ? 'fileRight' : img.imageUrl.contains('top') ? 'fileTop' : 'fileBottom'}" class="form-control" accept="image/*">
+                            <small style="font-size:11px; color:#999;">Để trống nếu không đổi ảnh</small>
                         </div>
-                    </div>
-                </c:forEach>
-
-                <%-- Nếu chưa đủ 4 ảnh thì hiện placeholder --%>
-                <c:if test="${product.productImages.size() < 2}">
-                    <div class="col-md-3">
+                    </c:forEach>
+                    <c:if test="${product.productImages.size() < 2}">
                         <div class="image-upload-card">
                             <label>Right side</label>
-                            <div class="image-preview d-flex align-items-center justify-content-center bg-light text-muted">No image</div>
-                            <input type="file" name="fileRight" class="form-control form-control-sm" accept="image/*">
-                        </div>
-                    </div>
-                </c:if>
-            </div>
-        </div>
-
-        <%-- THÔNG TIN CƠ BẢN --%>
-        <div class="form-card">
-            <h6>📝 Basic Information</h6>
-            <div class="row g-3">
-                <div class="col-md-12">
-                    <label class="form-label fw-semibold">Tên sản phẩm</label>
-                    <input type="text" name="productName" class="form-control"
-                           value="${product.productName}" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Danh mục</label>
-                    <select name="categoryId" class="form-select" required>
-                        <option value="1" ${product.category_id.id == 1 ? 'selected' : ''}>Vợt cầu lông</option>
-                        <option value="2" ${product.category_id.id == 2 ? 'selected' : ''}>Giày cầu lông</option>
-                        <option value="3" ${product.category_id.id == 3 ? 'selected' : ''}>Quần áo cầu lông</option>
-                        <option value="4" ${product.category_id.id == 4 ? 'selected' : ''}>Túi vợt cầu lông</option>
-                        <option value="5" ${product.category_id.id == 5 ? 'selected' : ''}>Phụ kiện cầu lông</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Thương hiệu</label>
-                    <select name="brandId" class="form-select" required>
-                        <option value="1" ${product.brand_id.id == 1 ? 'selected' : ''}>Yonex</option>
-                        <option value="2" ${product.brand_id.id == 2 ? 'selected' : ''}>Victor</option>
-                        <option value="3" ${product.brand_id.id == 3 ? 'selected' : ''}>Lining</option>
-                        <option value="4" ${product.brand_id.id == 4 ? 'selected' : ''}>Mizuno</option>
-                        <option value="5" ${product.brand_id.id == 5 ? 'selected' : ''}>Kawasaki</option>
-                        <option value="6" ${product.brand_id.id == 6 ? 'selected' : ''}>Venson</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Giá (USD)</label>
-                    <input type="number" step="0.01" name="price" class="form-control"
-                           value="${product.price}" required>
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">Mô tả ngắn</label>
-                    <input type="text" name="description" class="form-control"
-                           value="${product.description}">
-                </div>
-            </div>
-        </div>
-
-        <%-- VARIANTS --%>
-        
-<div class="form-card">
-    <h6>📦 Kích cỡ & Số lượng tồn kho</h6>
-    
-    <%-- Variants hiện có --%>
-    <c:forEach var="v" items="${variants}">
-        <div class="variant-row">
-            <div class="row g-2 align-items-center">
-                <input type="hidden" name="variantIds" value="${v.id}">
-                <div class="col-md-5">
-                    <label class="form-label fw-semibold mb-1" style="font-size:12px;">Tên size/khối lượng</label>
-                    <input type="text" name="variantNames" class="form-control"
-                           value="${v.variant_name}" required>
-                </div>
-                <div class="col-md-5">
-                    <label class="form-label fw-semibold mb-1" style="font-size:12px;">Số lượng tồn kho</label>
-                    <input type="number" name="stockQuantities" class="form-control"
-                           value="${v.stock_quantity}" required>
-                </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <span class="badge ${v.stock_quantity > 0 ? 'bg-success' : 'bg-danger'} w-100 py-2">
-                        ${v.stock_quantity > 0 ? 'Còn hàng' : 'Hết hàng'}
-                    </span>
-                </div>
-            </div>
-        </div>
-    </c:forEach>
-
-    <%-- Divider --%>
-    <hr class="my-3">
-    <p class="text-muted mb-2" style="font-size:13px;">➕ Thêm size mới (để trống nếu không thêm)</p>
-
-    <%-- New variant rows - để trống id nghĩa là INSERT mới --%>
-    <%-- Nút + Thêm size --%>
-<a href="?id=${product.id}&extraRows=${extraRows + 1}"
-   class="btn btn-outline-primary btn-sm mt-2">+ Thêm size</a>
-
-<%-- Render số ô trống theo extraRows --%>
-<c:forEach begin="1" end="${extraRows}" var="i">
-    <div class="variant-row border border-dashed border-success mt-2">
-        <div class="row g-2 align-items-center">
-            <input type="hidden" name="variantIds" value="">
-            <div class="col-md-5">
-                <label class="form-label fw-semibold mb-1" style="font-size:12px;">
-                    Tên size mới #${i}
-                </label>
-                <input type="text" name="variantNames" class="form-control"
-                       placeholder="Ví dụ: Size 43, 4U G5...">
-            </div>
-            <div class="col-md-5">
-                <label class="form-label fw-semibold mb-1" style="font-size:12px;">Số lượng</label>
-                <input type="number" name="stockQuantities" class="form-control"
-                       placeholder="0" min="0">
-            </div>
-            <div class="col-md-2 d-flex align-items-end">
-                <span class="badge bg-secondary w-100 py-2">Mới</span>
-            </div>
-        </div>
-    </div>
-</c:forEach>
-
-</div>
-
-        <%-- ATTRIBUTES --%>
-        <c:if test="${not empty attrs}">
-            <div class="form-card">
-                <h6>🏷 Thông tin chi tiết</h6>
-                <c:forEach var="attr" items="${attrs}">
-                    <c:if test="${attr.attrKey != 'brand_filter' and attr.attrKey != 'weight'
-                                  and attr.attrKey != 'size_filter' and attr.attrKey != 'cloth_size'}">
-                        <div class="attr-row">
-                            <div class="row g-2 align-items-center">
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold mb-1" style="font-size:12px;">Thuộc tính</label>
-                                    <input type="text" name="attrKeys" class="form-control form-control-sm"
-                                           value="${attr.attrKey}" readonly>
-                                </div>
-                                <div class="col-md-8">
-                                    <label class="form-label fw-semibold mb-1" style="font-size:12px;">Giá trị</label>
-                                    <input type="text" name="attrValues" class="form-control form-control-sm"
-                                           value="${attr.attrValue}">
-                                </div>
-                            </div>
+                            <div class="image-preview" style="display:flex;align-items:center;justify-content:center;background:#eee;color:#999;font-size:12px;">No image</div>
+                            <input type="file" name="fileRight" class="form-control" accept="image/*">
                         </div>
                     </c:if>
-                </c:forEach>
-            </div>
-        </c:if>
+                </div>
 
-        <%-- SUBMIT --%>
-        <div class="d-flex gap-3 justify-content-end">
-            <a href="${pageContext.request.contextPath}/admin/product/management.htm"
-               class="btn btn-outline-secondary px-4">Hủy</a>
-            <button type="submit" class="btn btn-save">💾 Lưu thay đổi</button>
+                <h3 class="section-title">Basic Information</h3>
+                <div class="form-group">
+                    <label>Tên sản phẩm</label>
+                    <input type="text" name="productName" class="form-control" value="${product.productName}" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Danh mục</label>
+                        <select name="categoryId" class="form-select" required>
+                            <option value="1" ${product.category_id.id == 1 ? 'selected' : ''}>Vợt cầu lông</option>
+                            <option value="2" ${product.category_id.id == 2 ? 'selected' : ''}>Giày cầu lông</option>
+                            <option value="3" ${product.category_id.id == 3 ? 'selected' : ''}>Quần áo cầu lông</option>
+                            <option value="4" ${product.category_id.id == 4 ? 'selected' : ''}>Túi vợt cầu lông</option>
+                            <option value="5" ${product.category_id.id == 5 ? 'selected' : ''}>Phụ kiện cầu lông</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Thương hiệu</label>
+                        <select name="brandId" class="form-select" required>
+                            <option value="1" ${product.brand_id.id == 1 ? 'selected' : ''}>Yonex</option>
+                            <option value="2" ${product.brand_id.id == 2 ? 'selected' : ''}>Victor</option>
+                            <option value="3" ${product.brand_id.id == 3 ? 'selected' : ''}>Lining</option>
+                            <option value="4" ${product.brand_id.id == 4 ? 'selected' : ''}>Mizuno</option>
+                            <option value="5" ${product.brand_id.id == 5 ? 'selected' : ''}>Kawasaki</option>
+                            <option value="6" ${product.brand_id.id == 6 ? 'selected' : ''}>Venson</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Giá (USD)</label>
+                        <input type="number" step="0.01" name="price" class="form-control" value="${product.price}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mô tả ngắn</label>
+                        <input type="text" name="description" class="form-control" value="${product.description}">
+                    </div>
+                </div>
+
+                <div class="attr-section">
+                    <h3 class="section-title" style="margin-top: 0; border: none; color: #333;"><i class="fa-solid fa-layer-group"></i> KÍCH CỠ & TỒN KHO</h3>
+                    
+                    <c:forEach var="v" items="${variants}">
+                        <div class="variant-row">
+                            <input type="hidden" name="variantIds" value="${v.id}">
+                            <div class="form-group" style="flex:2; margin-bottom:0;">
+                                <label>Tên size/khối lượng</label>
+                                <input type="text" name="variantNames" class="form-control" value="${v.variant_name}" required>
+                            </div>
+                            <div class="form-group" style="flex:1; margin-bottom:0;">
+                                <label>Số lượng tồn kho</label>
+                                <input type="number" name="stockQuantities" class="form-control" value="${v.stock_quantity}" required>
+                            </div>
+                            <div style="flex:1; text-align:right; margin-top:20px;">
+                                <span class="badge ${v.stock_quantity > 0 ? 'bg-success' : 'bg-danger'}">
+                                    ${v.stock_quantity > 0 ? 'Còn hàng' : 'Hết hàng'}
+                                </span>
+                            </div>
+                        </div>
+                    </c:forEach>
+
+                    <a href="?id=${product.id}&extraRows=${extraRows + 1}" class="btn-add-variant"><i class="fa-solid fa-plus"></i> Thêm size mới</a>
+
+                    <c:forEach begin="1" end="${extraRows}" var="i">
+                        <div class="variant-row" style="border: 1px dashed #2ecc71; margin-top: 15px;">
+                            <input type="hidden" name="variantIds" value="">
+                            <div class="form-group" style="flex:2; margin-bottom:0;">
+                                <label>Tên size mới #${i}</label>
+                                <input type="text" name="variantNames" class="form-control" placeholder="Ví dụ: Size 43, 4U G5...">
+                            </div>
+                            <div class="form-group" style="flex:1; margin-bottom:0;">
+                                <label>Số lượng</label>
+                                <input type="number" name="stockQuantities" class="form-control" placeholder="0" min="0">
+                            </div>
+                            <div style="flex:1; text-align:right; margin-top:20px;">
+                                <span class="badge bg-secondary">Mới</span>
+                            </div>
+                        </div>
+                    </c:forEach>
+                </div>
+
+                <c:if test="${not empty attrs}">
+                    <div class="attr-section">
+                        <h3 class="section-title" style="margin-top: 0; border: none; color: #333;"><i class="fa-solid fa-tags"></i> THÔNG TIN CHI TIẾT (ATTRIBUTES)</h3>
+                        <c:forEach var="attr" items="${attrs}">
+                            <c:if test="${attr.attrKey != 'brand_filter' and attr.attrKey != 'weight' and attr.attrKey != 'size_filter' and attr.attrKey != 'cloth_size'}">
+                                <div class="form-row mb-3">
+                                    <div class="form-group" style="flex:1;">
+                                        <label>Thuộc tính</label>
+                                        <input type="text" name="attrKeys" class="form-control" value="${attr.attrKey}" readonly>
+                                    </div>
+                                    <div class="form-group" style="flex:2;">
+                                        <label>Giá trị</label>
+                                        <input type="text" name="attrValues" class="form-control" value="${attr.attrValue}">
+                                    </div>
+                                </div>
+                            </c:if>
+                        </c:forEach>
+                    </div>
+                </c:if>
+
+                <div style="text-align: right;">
+                    <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> LƯU THAY ĐỔI</button>
+                </div>
+            </form>
         </div>
-
-    </form>
-</div>
+    </div>
 </body>
 </html>
