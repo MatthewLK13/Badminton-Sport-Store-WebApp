@@ -21,7 +21,7 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
 
-        String roleName = user.getRole().getName();
+        String roleName = user.getRole().getRoleName();
         if (!"ADMIN".equalsIgnoreCase(roleName)) {
             if (isAjaxRequest(request)) {
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);

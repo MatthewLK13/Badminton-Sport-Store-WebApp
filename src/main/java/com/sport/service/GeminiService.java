@@ -76,6 +76,18 @@ public class GeminiService {
         public boolean shouldRecommendProducts() { return shouldRecommendProducts; }
     }
 
+    // New method that accepts List<Map<String,String>> from controller
+    public String getChatbotResponse(String userMessage, List<java.util.Map<String, String>> chatHistory) {
+        List<ChatMessage> history = new ArrayList<>();
+        if (chatHistory != null) {
+            for (java.util.Map<String, String> msg : chatHistory) {
+                history.add(new ChatMessage(msg.get("role"), msg.get("content")));
+            }
+        }
+        GeminiResponse response = generateResponse(userMessage, history);
+        return response.getReply();
+    }
+
     public GeminiResponse generateResponse(String userMessage, List<ChatMessage> history) {
         if (API_KEY == null || API_KEY.isBlank()) {
             return new GeminiResponse(

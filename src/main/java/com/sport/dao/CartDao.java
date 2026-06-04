@@ -27,6 +27,10 @@ public class CartDao {
 		return query.list();
 	}
 
+	public List<CartEntity> getCartByUserId(int userId) {
+		return getByUserId(userId);
+	}
+
 	public Long countByUserId(int userId) {
 		Session session = factory.getCurrentSession();
 		Query query = session.createQuery(
