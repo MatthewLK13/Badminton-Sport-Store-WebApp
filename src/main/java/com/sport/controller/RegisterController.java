@@ -3,6 +3,7 @@ package com.sport.controller;
 import com.sport.dao.UserDAO;
 import com.sport.entity.Role;
 import com.sport.entity.User;
+import com.sport.util.PasswordUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -88,7 +89,8 @@ public class RegisterController {
         newUser.setFullName(fullname);
         newUser.setEmail(email);
         newUser.setPhone(phone);
-        String hashedPassword = org.springframework.util.DigestUtils.md5DigestAsHex(pass.getBytes());
+        // Use SHA-256 with email as salt for new registrations
+        String hashedPassword = PasswordUtil.hashPassword(pass, email);
         newUser.setPasswordHash(hashedPassword);
 
         // Gán role mặc định là User (role_id = 2)

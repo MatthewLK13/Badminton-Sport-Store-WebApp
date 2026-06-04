@@ -11,6 +11,7 @@ import com.sport.dao.CartDao;
 import com.sport.dao.UserDAO;
 import com.sport.dao.WishlistDao;
 import com.sport.entity.User;
+import com.sport.util.PasswordUtil;
 
 @Controller
 public class LoginController {
@@ -42,12 +43,29 @@ public class LoginController {
         User user = userDAO.findByEmailOrPhone(username);
 
         if (user != null) {
-            String hashedInputPassword = org.springframework.util.DigestUtils.md5DigestAsHex(password.getBytes());
-            if (user.getPasswordHash().equals(hashedInputPassword)) {
-                session.setAttribute("user", user);
-                session.setAttribute("cartCount", cartDao.countByUserId(user.getId()));
-                session.setAttribute("wishlistCount", wishlistDao.countByUserId(user.getId()));
-                return "redirect:/home.htm";
+            String storedHash = user.getPasswordHash();
+
+            // Legacy MD5 password (32 hex chars)
+            if (PasswordUtil.isLegacyMd5Hash(storedHash)) {
+                if (PasswordUtil.verifyPassword(password, storedHash)) {
+                    // Upgrade to SHA256
+                    String newHash = PasswordUtil.hashPassword(password);
+                    user.setPasswordHash(newHash);
+                    userDAO.updateUser(user);
+
+                    session.setAttribute("user", user);
+                    session.setAttribute("cartCount", cartDao.countByUserId(user.getId()));
+                    session.setAttribute("wishlistCount", wishlistDao.countByUserId(user.getId()));
+                    return "redirect:/home.htm";
+                }
+            } else {
+                // SHA256 password
+                if (PasswordUtil.verifyPassword(password, storedHash)) {
+                    session.setAttribute("user", user);
+                    session.setAttribute("cartCount", cartDao.countByUserId(user.getId()));
+                    session.setAttribute("wishlistCount", wishlistDao.countByUserId(user.getId()));
+                    return "redirect:/home.htm";
+                }
             }
         }
 

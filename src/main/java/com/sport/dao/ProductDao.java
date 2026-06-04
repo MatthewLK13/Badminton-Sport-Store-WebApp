@@ -24,6 +24,8 @@ public class ProductDao {
     @Autowired
     private SessionFactory factory;
 
+    private static final int MAX_STOCK = 9999;
+
     public BrandsEntity getBrandByName(String brandName) {
         Session session = factory.getCurrentSession();
         String hql = "FROM BrandsEntity b WHERE b.brandName = :brandName";
@@ -422,12 +424,17 @@ public class ProductDao {
 
     @Transactional
     public void incrementStock(Integer variantId, Integer qty) {
+        if (qty == null || qty <= 0) {
+            return;
+        }
         Session session = factory.getCurrentSession();
+        // Only increment if result won't exceed MAX_STOCK
         session.createQuery(
             "UPDATE ProductVariantsEntity v SET v.stock_quantity = v.stock_quantity + :qty " +
-            "WHERE v.id = :id")
+            "WHERE v.id = :id AND (v.stock_quantity + :qty) <= :maxStock")
             .setParameter("qty", qty)
             .setParameter("id", variantId)
+            .setParameter("maxStock", MAX_STOCK)
             .executeUpdate();
     }
 

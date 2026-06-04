@@ -71,7 +71,15 @@ public class OrderController {
             return "order-history";
         }
 
-        // Restore stock for each order item before cancelling
+        // Cancel the order first
+        boolean success = orderDAO.cancelOrder(orderId, user.getId());
+        if (!success) {
+            model.addAttribute("error", "Không thể hủy đơn hàng. Vui lòng thử lại!");
+            model.addAttribute("orders", orderDAO.findByUserId(user.getId()));
+            return "order-history";
+        }
+
+        // Only restore stock AFTER successful cancel
         List<OrderItemEntity> orderItems = order.getOrderItems();
         if (orderItems != null && !orderItems.isEmpty()) {
             for (OrderItemEntity item : orderItems) {
@@ -79,14 +87,7 @@ public class OrderController {
             }
         }
 
-        // Cancel the order
-        boolean success = orderDAO.cancelOrder(orderId, user.getId());
-        if (success) {
-            model.addAttribute("success", "Đơn hàng đã được hủy thành công!");
-        } else {
-            model.addAttribute("error", "Không thể hủy đơn hàng. Vui lòng thử lại!");
-        }
-
+        model.addAttribute("success", "Đơn hàng đã được hủy thành công!");
         model.addAttribute("orders", orderDAO.findByUserId(user.getId()));
         return "order-history";
     }

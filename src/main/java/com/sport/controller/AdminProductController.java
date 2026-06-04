@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import com.sport.dao.AdminProductDao;
 import com.sport.entity.ProductAttributeEntity;
 import com.sport.entity.ProductVariantsEntity;
 import com.sport.entity.ProductsEntity;
+import com.sport.entity.User;
 
 @Controller
 @RequestMapping("/admin/product")
@@ -32,13 +34,24 @@ public class AdminProductController {
     @Autowired
     private ServletContext context;
 
+    private static final int ADMIN_ROLE_ID = 1;
+
+    private boolean isAdmin(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        return user != null && user.getRole() != null && user.getRole().getId() == ADMIN_ROLE_ID;
+    }
+
     @RequestMapping("/add")
-    public String showAddForm() {
+    public String showAddForm(HttpSession session) {
+        if (!isAdmin(session)) {
+            return "redirect:/home.htm?error=access_denied";
+        }
         return "admin/add_product";
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     public String saveProduct(
+            HttpSession session,
             @RequestParam("productName") String productName,
             @RequestParam("categoryId") int categoryId,
             @RequestParam("brandId") int brandId,
@@ -52,6 +65,10 @@ public class AdminProductController {
             @RequestParam(value = "attrKeys", required = false) String[] attrKeys,
             @RequestParam(value = "attrValues", required = false) String[] attrValues,
             @RequestParam("stockQuantities") Integer[] stockQuantities) {
+
+        if (!isAdmin(session)) {
+            return "redirect:/home.htm?error=access_denied";
+        }
 
         try {
             String uploadFolder = context.getRealPath("/images/products");
@@ -74,6 +91,7 @@ public class AdminProductController {
 
     @RequestMapping(value = "/management", method = RequestMethod.GET)
     public String showManagement(
+            HttpSession session,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "categoryId", required = false) Integer categoryId,
             @RequestParam(value = "brandId", required = false) Integer brandId,
@@ -81,13 +99,17 @@ public class AdminProductController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             ModelMap model) {
 
+        if (!isAdmin(session)) {
+            return "redirect:/home.htm?error=access_denied";
+        }
+
         int pageSize = 10;
 
         List<ProductsEntity> products = adminProductDao.getAllProducts(
             keyword, categoryId, brandId, fromDate, page, pageSize);
         long total = adminProductDao.countAllProducts(
             keyword, categoryId, brandId, fromDate);
-  
+
         Map<Integer, Integer> stockMap = new HashMap<>();
         for (ProductsEntity p : products) {
             int stock = adminProductDao.getTotalStockByProductId(p.getId());
@@ -100,8 +122,8 @@ public class AdminProductController {
         }
 
         // Lấy variants theo từng product
-        Map<Integer, List<Map<String, Object>>> variantsMap = 
-            productIds.isEmpty() ? new HashMap<>() : 
+        Map<Integer, List<Map<String, Object>>> variantsMap =
+            productIds.isEmpty() ? new HashMap<>() :
             adminProductDao.getVariantsByProductIds(productIds);
 
         model.addAttribute("variantsMap", variantsMap);
@@ -119,9 +141,14 @@ public class AdminProductController {
     }
     @RequestMapping(value = "/edit", method = RequestMethod.GET)
     public String showEditForm(
+            HttpSession session,
             @RequestParam("id") int productId,
             @RequestParam(value = "extraRows", defaultValue = "0") int extraRows,
             ModelMap model) {
+
+        if (!isAdmin(session)) {
+            return "redirect:/home.htm?error=access_denied";
+        }
 
         ProductsEntity product = adminProductDao.getProductByIdForEdit(productId);
         List<ProductVariantsEntity> variants = adminProductDao.getVariantsByProductId(productId);
@@ -136,6 +163,7 @@ public class AdminProductController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String updateProduct(
+            HttpSession session,
             @RequestParam("productId") int productId,
             @RequestParam("productName") String productName,
             @RequestParam("categoryId") int categoryId,
@@ -151,6 +179,10 @@ public class AdminProductController {
             @RequestParam(value = "fileRight", required = false) MultipartFile fileRight,
             @RequestParam(value = "fileTop", required = false) MultipartFile fileTop,
             @RequestParam(value = "fileBottom", required = false) MultipartFile fileBottom) {
+
+        if (!isAdmin(session)) {
+            return "redirect:/home.htm?error=access_denied";
+        }
 
         try {
             String uploadFolder = context.getRealPath("/images/products");
@@ -171,15 +203,22 @@ public class AdminProductController {
     }
     @RequestMapping(value = "/delete", method = RequestMethod.GET)
     public String showDeleteConfirm(
+            HttpSession session,
             @RequestParam("id") int productId,
             ModelMap model) {
+        if (!isAdmin(session)) {
+            return "redirect:/home.htm?error=access_denied";
+        }
         ProductsEntity product = adminProductDao.getProductByIdForEdit(productId);
         model.addAttribute("product", product);
         return "admin/delete_confirm";
     }
 
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
-    public String deleteProduct(@RequestParam("productId") int productId) {
+    public String deleteProduct(HttpSession session, @RequestParam("productId") int productId) {
+        if (!isAdmin(session)) {
+            return "redirect:/home.htm?error=access_denied";
+        }
         try {
             adminProductDao.deleteProduct(productId);
             return "redirect:/admin/product/management.htm";

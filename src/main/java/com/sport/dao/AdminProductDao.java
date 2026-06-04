@@ -227,21 +227,14 @@ public class AdminProductDao {
     private void saveAutoAttributes(Session session, ProductsEntity product,
             int brandId, int categoryId, String[] variantNames) {
 
-        // Brand filter
-        String brandName = "";
-        if (brandId == 1) brandName = "Yonex";
-        else if (brandId == 2) brandName = "Victor";
-        else if (brandId == 3) brandName = "Lining";
-        else if (brandId == 4) brandName = "Mizuno";
-        else if (brandId == 5) brandName = "Kawasaki";
-        else if (brandId == 6) brandName = "Venson";
-
-        if (!brandName.isEmpty()) {
+        // Brand filter - get from DB using brand entity instead of hardcoding
+        BrandsEntity brand = (BrandsEntity) session.get(BrandsEntity.class, brandId);
+        if (brand != null && brand.getBrandName() != null) {
             session.createSQLQuery(
                 "INSERT INTO ProductAttributes (product_id, attr_key, attr_value) VALUES (:pid, 'brand_filter', :val)"
             )
             .setParameter("pid", product.getId())
-            .setParameter("val", brandName)
+            .setParameter("val", brand.getBrandName())
             .executeUpdate();
         }
 
