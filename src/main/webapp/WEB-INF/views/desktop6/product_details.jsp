@@ -88,7 +88,7 @@
         </c:forEach>
     </div>
 
-    <p id="stock-info" style="margin: 8px 0; font-size: 14px; color: #27ae60;"></p>
+    <p id="stock-info" style="margin: 8px 0; font-size: 14px; color: #27ae60;">Vui lòng chọn biến thể để xem số lượng tồn kho.</p>
 
     <p class="size-hint">
         <c:choose>
@@ -113,9 +113,8 @@
     </div>
 </div>
         <%-- NÚT HÀNH ĐỘNG --%>
-        <form action="${pageContext.request.contextPath}/cart/add.htm" method="post">
-            <input type="hidden" name="variantId" id="selectedVariantId" value="">
-            <div class="actions-wrapper">
+        <div class="actions-wrapper">
+            <form action="${pageContext.request.contextPath}/cart/add.htm" method="post" style="display:inline;">
                 <button type="submit" class="btn-add-to-cart">
                     Thêm vào giỏ hàng
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -123,15 +122,18 @@
                         <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
                     </svg>
                 </button>
-                <a href="${pageContext.request.contextPath}/wishlist/toggle.htm?productId=${product.id}" class="btn-wishlist wishlist-btn">
+            </form>
+            <form action="${pageContext.request.contextPath}/wishlist/toggle.htm" method="post" style="display:inline;">
+                <input type="hidden" name="productId" value="${product.id}">
+                <button type="submit" class="btn-wishlist wishlist-btn">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path class="heart-path" fill-rule="evenodd" clip-rule="evenodd"
                               d="M19.6431 7.05858C19.6103 4.79858 18.3289 2.57286 16.3617 1.65572C15.3044 1.16162 14.0982 1.09057 12.9903 1.45715C11.9831 1.77715 10.9731 2.43286 10.0003 3.46429C9.02742 2.43286 8.01742 1.77858 7.01028 1.45715C5.90232 1.09057 4.69612 1.16162 3.63885 1.65572C1.67171 2.57286 0.390279 4.79858 0.357422 7.05858V7.07001C0.357422 10.3657 2.31742 13.2857 4.39456 15.3357C5.33754 16.2725 6.38375 17.0992 7.51314 17.8C7.99599 18.0943 8.45171 18.33 8.85599 18.4957C9.24171 18.6529 9.64599 18.7729 10.0003 18.7729C10.3546 18.7729 10.7574 18.6529 11.1431 18.4957C11.5489 18.3314 12.0046 18.0957 12.486 17.8014C13.6159 17.1002 14.6626 16.273 15.606 15.3357C17.6831 13.2857 19.6431 10.3657 19.6431 7.07144V7.05858Z"
                               fill="transparent" stroke="black" stroke-width="1.2"/>
                     </svg>
-                </a>
-            </div>
-        </form>
+                </button>
+            </form>
+        </div>
     </div>
 </div>
  <%-- KIỂU BÀN CHÂN --%>
@@ -180,34 +182,34 @@
 	
         <%-- ACCORDION --%>
         <div class="accordion">
-            <div class="accordion-item">
-                <button class="accordion-btn" onclick="toggleAccordion(this)">
+            <details class="accordion-item">
+                <summary class="accordion-btn">
                     Đánh giá <span class="accordion-icon">▼</span>
-                </button>
+                </summary>
                 <div class="accordion-body">
                     <p>Chưa có đánh giá nào.</p>
                 </div>
-            </div>
-            <div class="accordion-item">
-                <button class="accordion-btn" onclick="toggleAccordion(this)">
+            </details>
+            <details class="accordion-item">
+                <summary class="accordion-btn">
                     Kích cỡ và độ vừa vặn <span class="accordion-icon">▼</span>
-                </button>
+                </summary>
                 <div class="accordion-body">
                     <p>Vui lòng chọn đúng kích cỡ của bạn.</p>
                 </div>
-            </div>
-            <div class="accordion-item">
-                <button class="accordion-btn" onclick="toggleAccordion(this)">
+            </details>
+            <details class="accordion-item">
+                <summary class="accordion-btn">
                     Mô tả <span class="accordion-icon">▼</span>
-                </button>
+                </summary>
                 <div class="accordion-body">
                     <p>${product.description}</p>
                 </div>
-            </div>
-            <div class="accordion-item">
-                <button class="accordion-btn" onclick="toggleAccordion(this)">
+            </details>
+            <details class="accordion-item">
+                <summary class="accordion-btn">
                     Thông tin chi tiết <span class="accordion-icon">▼</span>
-                </button>
+                </summary>
                 <div class="accordion-body">
                     <c:forEach var="attr" items="${productAttrs}">
                         <c:if test="${attr.attrKey != 'brand_filter'}">
@@ -353,24 +355,6 @@
         </c:forEach>
     </div>
 </div>
-<script>
-document.querySelectorAll('input[name="variantId"]').forEach(function(radio) {
-    radio.addEventListener('change', function() {
-        var stock = parseInt(this.getAttribute('data-stock')) || 0;
-        var stockInfo = document.getElementById('stock-info');
-        if (stock === 0) {
-            stockInfo.textContent = 'Hết hàng';
-            stockInfo.style.color = '#e74c3c';
-        } else if (stock < 5) {
-            stockInfo.textContent = 'Chỉ còn ' + stock + ' sản phẩm';
-            stockInfo.style.color = '#e67e22';
-        } else {
-            stockInfo.textContent = 'Còn ' + stock + ' sản phẩm';
-            stockInfo.style.color = '#27ae60';
-        }
-    });
-});
-</script>
 
 </body>
 </html>

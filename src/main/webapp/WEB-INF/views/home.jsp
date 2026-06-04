@@ -215,9 +215,12 @@
                         <a href="${pageContext.request.contextPath}/products/details.htm?id=${product.id}" style="display: block;">
                             <img src="${pageContext.request.contextPath}/images/products/${product.avatarName}" alt="${product.productName}">
                         </a>
-                        <button class="wishlist-btn" onclick="location.href='${pageContext.request.contextPath}/wishlist/toggle.htm?productId=${product.id}'">
-                            <i class="far fa-heart"></i>
-                        </button>
+                        <form action="${pageContext.request.contextPath}/wishlist/toggle.htm" method="post" style="display:inline;">
+                            <input type="hidden" name="productId" value="${product.id}">
+                            <button type="submit" class="wishlist-btn">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </form>
                     </div>
                     <div class="product-info">
                         <a href="${pageContext.request.contextPath}/products/details.htm?id=${product.id}">

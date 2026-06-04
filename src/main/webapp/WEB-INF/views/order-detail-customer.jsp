@@ -242,8 +242,7 @@
                                 <td>
                                     <img src="${pageContext.request.contextPath}/images/products/${item.imageUrl}"
                                          alt="${item.productName}"
-                                         class="item-image"
-                                         onerror="this.src='${pageContext.request.contextPath}/images/products/placeholder.jpg'">
+                                         class="item-image">
                                 </td>
                                 <td>
                                     <div class="item-name">${item.productName}</div>

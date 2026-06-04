@@ -27,7 +27,7 @@ public class ReviewDao {
     @SuppressWarnings("unchecked")
     public List<ReviewEntity> getByProductId(int productId) {
         Session session = sessionFactory.getCurrentSession();
-        String hql = "FROM ReviewEntity WHERE product.id = :pid ORDER BY createdAt DESC";
+        String hql = "SELECT DISTINCT r FROM ReviewEntity r LEFT JOIN FETCH r.user LEFT JOIN FETCH r.product WHERE r.product.id = :pid ORDER BY r.createdAt DESC";
         Query query = session.createQuery(hql);
         query.setParameter("pid", productId);
         return query.list();
@@ -37,7 +37,7 @@ public class ReviewDao {
     @SuppressWarnings("unchecked")
     public List<ReviewEntity> getByUserId(int userId) {
         Session session = sessionFactory.getCurrentSession();
-        String hql = "FROM ReviewEntity WHERE user.id = :uid ORDER BY createdAt DESC";
+        String hql = "SELECT DISTINCT r FROM ReviewEntity r LEFT JOIN FETCH r.user LEFT JOIN FETCH r.product WHERE r.user.id = :uid ORDER BY r.createdAt DESC";
         Query query = session.createQuery(hql);
         query.setParameter("uid", userId);
         return query.list();

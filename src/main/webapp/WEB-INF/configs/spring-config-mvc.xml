@@ -47,4 +47,9 @@
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 
+	<!-- Hibernate Validator for JSR-303 Bean Validation -->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+	</bean>
+
 </beans>

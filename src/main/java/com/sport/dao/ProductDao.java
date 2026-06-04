@@ -410,7 +410,6 @@ public class ProductDao {
         return variant != null ? variant.getStock_quantity() : 0;
     }
 
-    @Transactional
     public boolean decrementStock(Integer variantId, Integer qty) {
         Session session = factory.getCurrentSession();
         int updated = session.createQuery(
@@ -422,7 +421,6 @@ public class ProductDao {
         return updated > 0;
     }
 
-    @Transactional
     public void incrementStock(Integer variantId, Integer qty) {
         if (qty == null || qty <= 0) {
             return;

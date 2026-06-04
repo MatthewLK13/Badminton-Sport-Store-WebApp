@@ -643,6 +643,14 @@ body { top: 0px !important; }
     visibility: hidden;
     transform: translateY(12px);
     transition: opacity 0.25s ease-in-out, visibility 0.25s ease-in-out, transform 0.25s ease-in-out;
+    pointer-events: none;
+}
+
+.dropdown-mega:hover .mega-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 .dropdown-mega:hover .mega-menu {
@@ -919,4 +927,265 @@ body { top: 0px !important; }
 .explore-now-btn:hover {
     transform: translateY(-6px) !important;
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* ========================================
+   DARK MODE STYLES
+   ======================================== */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+body.dark-mode header {
+    background: #111;
+    border-color: #333;
+}
+
+body.dark-mode .top-links a,
+body.dark-mode .navbar,
+body.dark-mode .nav-center a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .nav-center a.nav-gray {
+    color: #888 !important;
+}
+
+body.dark-mode .mega-menu {
+    background: #1a1a1a;
+    border-color: #333;
+}
+
+body.dark-mode .mega-column h3,
+body.dark-mode .mega-column ul li a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .mega-column ul li a:hover {
+    color: #fff;
+}
+
+body.dark-mode .mega-full-width-top,
+body.dark-mode .view-all-link {
+    color: #888;
+}
+
+body.dark-mode .view-all-link:hover {
+    color: #fff;
+}
+
+body.dark-mode .search-container {
+    background-color: #2a2a2a;
+    border-color: #444;
+}
+
+body.dark-mode .search-container input {
+    color: #e0e0e0;
+}
+
+body.dark-mode .action-icons a {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .action-icons .fa-bag-shopping {
+    -webkit-text-stroke: 1.5px #e0e0e0;
+}
+
+body.dark-mode .logo-text {
+    color: #e0e0e0;
+}
+
+body.dark-mode .dark-mode-toggle {
+    color: #ffd700;
+}
+
+body.dark-mode .dark-mode-toggle:hover {
+    color: #ffed4a;
+}
+
+/* ========================================
+   DETAILS/SUMMARY STYLES (for accordion & dropdown)
+   ======================================== */
+
+/* Filter Dropdown */
+.filter-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-dropdown summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-dropdown summary::-webkit-details-marker {
+    display: none;
+}
+
+.filter-dropdown[open] .filter-drawer-content {
+    display: block;
+}
+
+.filter-drawer-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 320px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    z-index: 1000;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+body.dark-mode .filter-drawer-content {
+    background: #222;
+    border-color: #444;
+}
+
+/* Sort Dropdown */
+.sort-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.sort-dropdown-wrapper summary {
+    list-style: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-dropdown-wrapper summary::-webkit-details-marker {
+    display: none;
+}
+
+.sort-dropdown-wrapper[open] .sort-menu {
+    display: block;
+}
+
+.sort-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
+    min-width: 180px;
+}
+
+body.dark-mode .sort-menu {
+    background: #222;
+    border-color: #444;
+}
+
+.sort-menu a {
+    display: block;
+    padding: 10px 16px;
+    color: #333;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.sort-menu a:hover {
+    background: #f5f5f5;
+}
+
+body.dark-mode .sort-menu a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .sort-menu a:hover {
+    background: #333;
+}
+
+/* ========================================
+   ACCORDION (using details/summary)
+   ======================================== */
+.accordion-item {
+    border-bottom: 1px solid #eee;
+}
+
+body.dark-mode .accordion-item {
+    border-color: #333;
+}
+
+.accordion-item summary {
+    padding: 16px 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: #333;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.accordion-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.accordion-item summary:hover {
+    color: #E60012;
+}
+
+body.dark-mode .accordion-item summary {
+    color: #e0e0e0;
+}
+
+body.dark-mode .accordion-item summary:hover {
+    color: #ff6b6b;
+}
+
+.accordion-body {
+    padding: 0 0 16px 0;
+    color: #666;
+    line-height: 1.6;
+}
+
+body.dark-mode .accordion-body {
+    color: #aaa;
+}
+
+.accordion-icon {
+    font-size: 12px;
+    transition: transform 0.2s;
+}
+
+details[open] .accordion-icon {
+    transform: rotate(180deg);
+}
+
+/* ========================================
+   DARK MODE TOGGLE LINK STYLE
+   ======================================== */
+.dark-mode-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.2s ease;
+    text-decoration: none;
+}
+
+.dark-mode-toggle:hover {
+    transform: scale(1.1);
+}
+
+.dark-mode-toggle i {
+    font-size: 18px;
 }

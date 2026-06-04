@@ -97,8 +97,7 @@
                         <div class="product-card">
                             <img src="${pageContext.request.contextPath}/images/products/${product.avatarName}"
                                  alt="${product.productName}"
-                                 class="product-image"
-                                 onerror="this.src='${pageContext.request.contextPath}/images/products/placeholder.jpg'">
+                                 class="product-image">
                             <div class="product-info">
                                 <h3 class="product-name">${product.productName}</h3>
                                 <p class="product-price">

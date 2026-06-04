@@ -20,12 +20,18 @@ public class SearchController {
     @RequestMapping(value = "/search.htm", method = RequestMethod.GET)
     public String search(
             @RequestParam("q") String query,
+            @RequestParam(value = "page", defaultValue = "1") int page,
             ModelMap model) {
 
+        int pageSize = 20;
         model.addAttribute("query", query);
 
-        List<ProductsEntity> results = productDao.searchProducts(query);
+        List<ProductsEntity> results = productDao.searchProducts(query, page, pageSize);
+        long totalProducts = productDao.countSearchProducts(query);
+
         model.addAttribute("searchResults", results);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", (int) Math.ceil((double) totalProducts / pageSize));
 
         return "search";
     }

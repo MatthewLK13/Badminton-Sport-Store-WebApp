@@ -224,9 +224,9 @@
 
             <div class="action-icons">
                 <%-- Dark mode toggle --%>
-                <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Chế độ tối" aria-label="Toggle dark mode">
-                    <i class="fa-solid fa-moon" id="darkModeIcon"></i>
-                </button>
+                <a href="${pageContext.request.contextPath}/theme.htm" class="dark-mode-toggle" title="Chế độ tối" aria-label="Toggle dark mode">
+                    <i class="fa-solid fa-moon"></i>
+                </a>
 
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">
@@ -264,38 +264,13 @@
                         </span>
                     </c:if>
                 </a>
+
+                <%-- Chatbot link --%>
+                <a href="${pageContext.request.contextPath}/chatbot.htm" title="Tư vấn vợt cầu lông">
+                    <i class="fa-solid fa-comments"></i>
+                </a>
             </div>
         </div>
     </div>
-
-    <script>
-    // Dark mode toggle
-    function toggleDarkMode() {
-        document.body.classList.toggle('dark-mode');
-        const isDark = document.body.classList.contains('dark-mode');
-        localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-        updateDarkModeIcon();
-    }
-
-    function updateDarkModeIcon() {
-        const icon = document.getElementById('darkModeIcon');
-        const isDark = document.body.classList.contains('dark-mode');
-        if (isDark) {
-            icon.className = 'fa-solid fa-sun';
-        } else {
-            icon.className = 'fa-solid fa-moon';
-        }
-    }
-
-    // Apply saved dark mode preference on page load
-    (function() {
-        const savedDarkMode = localStorage.getItem('darkMode');
-        if (savedDarkMode === 'true') {
-            document.body.classList.add('dark-mode');
-        }
-        updateDarkModeIcon();
-    })();
-    </script>
 </header>
 
-<%@include file="/WEB-INF/views/includes/chatbot.jsp" %>

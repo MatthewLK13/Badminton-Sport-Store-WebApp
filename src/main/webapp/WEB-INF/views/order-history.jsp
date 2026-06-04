@@ -208,7 +208,7 @@
                                     <c:if test="${order.status == 0}">
                                         <form action="${pageContext.request.contextPath}/order/cancel.htm" method="post" style="display:inline;">
                                             <input type="hidden" name="id" value="${order.id}">
-                                            <button type="submit" class="btn-cancel" onclick="return confirm('Bạn có chắc muốn hủy đơn hàng này?');">
+                                            <button type="submit" class="btn-cancel">
                                                 <i class="fa-solid fa-times"></i> Hủy
                                             </button>
                                         </form>

@@ -205,8 +205,7 @@
                                         </button>
                                     </form>
                                 </c:if>
-                                <form action="${pageContext.request.contextPath}/admin/user/delete.htm" method="post" style="display:inline;"
-                                      onsubmit="return confirm('Bạn có chắc muốn xóa người dùng này?');">
+                                <form action="${pageContext.request.contextPath}/admin/user/delete.htm" method="post" style="display:inline;">
                                     <input type="hidden" name="userId" value="${user.id}"/>
                                     <button type="submit" class="btn-action btn-delete" title="Xóa">
                                         <i class="fa-solid fa-trash"></i>

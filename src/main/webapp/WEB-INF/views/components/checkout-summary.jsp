@@ -13,8 +13,7 @@
                     <div class="item-details">
                         <div class="item-img">
                             <img src="${pageContext.request.contextPath}/images/products/${item.avatarName}"
-                                 alt="${item.productName}"
-                                 onerror="this.style.display='none'">
+                                 alt="${item.productName}">
                         </div>
                         <div class="item-info">
                             <div class="item-name">${item.productName}</div>

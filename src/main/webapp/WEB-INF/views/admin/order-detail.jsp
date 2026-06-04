@@ -380,9 +380,9 @@
 
         <!-- NÚT IN HÓA ĐƠN -->
         <div class="action-row">
-            <button class="btn-print" onclick="window.print()">
+            <span class="btn-print" title="In hóa đơn (sử dụng Ctrl+P để in)">
                 <i class="fa-solid fa-print"></i> Print
-            </button>
+            </span>
         </div>
     </div>
 
