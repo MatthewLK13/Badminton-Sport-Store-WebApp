@@ -6,12 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,62 +35,52 @@ public class AdminProductDao {
             String uploadFolder, String sourceFolder) throws Exception {
 
         Session session = factory.getCurrentSession();
-        Transaction t = session.beginTransaction();
 
-        try {
-            // ==========================================
-            // 1. LƯU SẢN PHẨM CHÍNH
-            // ==========================================
-            ProductsEntity product = new ProductsEntity();
-            product.setProductName(productName);
-            product.setPrice(price);
-            product.setDescription(description);
+        // ==========================================
+        // 1. LƯU SẢN PHẨM CHÍNH
+        // ==========================================
+        ProductsEntity product = new ProductsEntity();
+        product.setProductName(productName);
+        product.setPrice(price);
+        product.setDescription(description);
 
-            CategoriesEntity cate = (CategoriesEntity) session.get(CategoriesEntity.class, categoryId);
-            BrandsEntity brand = (BrandsEntity) session.get(BrandsEntity.class, brandId);
-            product.setCategory_id(cate);
-            product.setBrand_id(brand);
+        CategoriesEntity cate = (CategoriesEntity) session.get(CategoriesEntity.class, categoryId);
+        BrandsEntity brand = (BrandsEntity) session.get(BrandsEntity.class, brandId);
+        product.setCategory_id(cate);
+        product.setBrand_id(brand);
 
-            String currentDateTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                    .format(new java.util.Date());
-            product.setCreateAt(currentDateTime);
+        String currentDateTime = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                .format(new java.util.Date());
+        product.setCreateAt(currentDateTime);
 
-            session.save(product);
-            System.out.println("✔ Lưu sản phẩm thành công! ID = " + product.getId());
+        session.save(product);
+        System.out.println("Luu san pham thanh cong! ID = " + product.getId());
 
-        
-            // 2. LƯU ẢNH + XÓA NỀN AI
-   
-            saveImages(session, product, productName,
-                    fileMain, fileRight, fileTop, fileBottom,
-                    uploadFolder, sourceFolder);
 
-  
-            // 3. LƯU BIẾN THỂ (SIZE & SỐ LƯỢNG)
+        // 2. LƯU ẢNH + XÓA NỀN AI
 
-            saveVariants(session, product, variantNames, stockQuantities);
+        saveImages(session, product, productName,
+                fileMain, fileRight, fileTop, fileBottom,
+                uploadFolder, sourceFolder);
 
-    
-            // 4. LƯU ATTRIBUTES TỪ FORM ĐỘNG
-       
-            saveFormAttributes(session, product, attrKeys, attrValues);
 
-            
-            // 5. LƯU ATTRIBUTES TỰ ĐỘNG (BRAND, SIZE, WEIGHT)
-            
-            saveAutoAttributes(session, product, brandId, categoryId, variantNames);
+        // 3. LƯU BIẾN THỂ (SIZE & SỐ LƯỢNG)
 
-            t.commit();
-            System.out.println("✔ Commit toàn bộ dữ liệu thành công!");
+        saveVariants(session, product, variantNames, stockQuantities);
 
-        } catch (Exception e) {
-            if (t != null) t.rollback();
-            System.err.println("✘ Lỗi, đã rollback: " + e.getMessage());
-            throw e;
-        } finally {
-            if (session != null) session.close();
-        }
+
+        // 4. LƯU ATTRIBUTES TỪ FORM ĐỘNG
+
+        saveFormAttributes(session, product, attrKeys, attrValues);
+
+
+        // 5. LƯU ATTRIBUTES TỰ ĐỘNG (BRAND, SIZE, WEIGHT)
+
+        saveAutoAttributes(session, product, brandId, categoryId, variantNames);
+
+        System.out.println("Luu toan bo du lieu thanh cong!");
     }
+
 
 
     // PRIVATE: Lưu ảnh
@@ -445,6 +434,9 @@ public class AdminProductDao {
 
         // 1. Update thông tin cơ bản
         ProductsEntity product = (ProductsEntity) session.get(ProductsEntity.class, productId);
+        if (product == null) {
+            throw new IllegalArgumentException("Product not found with id: " + productId);
+        }
         product.setProductName(productName);
         product.setPrice(price);
         product.setDescription(description);

@@ -142,6 +142,6 @@ public class WishlistController {
         if (user != null) {
             cartDao.add(user.getId(), variantId, quantity);
         }
-        return "redirect:/wishlist.htm";
+        return "redirect:/wishlist/index.htm";
     }
 }

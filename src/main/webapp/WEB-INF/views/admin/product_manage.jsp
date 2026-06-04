@@ -248,7 +248,7 @@ body { background: #f5f5f5; font-family: 'Segoe UI', sans-serif; margin: 0; }
                             <a href="${pageContext.request.contextPath}/admin/product/edit.htm?id=${p.id}"
                                class="btn btn-outline-primary btn-action me-1" title="Edit">✏</a>
                             <form action="${pageContext.request.contextPath}/admin/product/delete.htm" method="post" style="display:inline;">
-                                <input type="hidden" name="id" value="${p.id}">
+                                <input type="hidden" name="productId" value="${p.id}">
                                 <button type="submit" class="btn btn-outline-danger btn-action" title="Delete">🗑</button>
                             </form>
                         </td>

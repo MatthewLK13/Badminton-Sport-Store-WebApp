@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <title>Admin - Add New Product</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 body { background-color: #f3f5f4; padding: 40px 0; font-family: 'Segoe UI', sans-serif; }
 .form-container { background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
@@ -99,34 +100,102 @@ body { background-color: #f3f5f4; padding: 40px 0; font-family: 'Segoe UI', sans
             </div>
         </div>
 
-        <%-- ATTRIBUTES (TĨNH) --%>
-        <div class="mb-4 mt-4">
-            <label class="form-label fw-bold">Thuộc tính chi tiết (Điền nếu cần)</label>
-            <c:forEach begin="1" end="5" var="i">
-                <div class="row g-2 mb-2">
-                    <div class="col-md-6">
-                        <input type="text" name="attrKeys" class="form-control" placeholder="Tên thuộc tính (VD: Độ cứng)">
-                    </div>
-                    <div class="col-md-6">
-                        <input type="text" name="attrValues" class="form-control" placeholder="Giá trị (VD: Cứng)">
-                    </div>
+        <%-- THUỘC TÍNH CỤ THỂ CHO VỢT CẦU LÔNG --%>
+        <div class="attr-section">
+            <h6><i class="fa-solid fa-table-cells"></i> THÔNG SỐ VỢT CẦU LÔNG</h6>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Trọng lượng (U)</label>
+                    <select name="attrValues" class="form-select">
+                        <option value="">-- Chọn --</option>
+                        <option value="2U (90-94g)">2U (90-94g)</option>
+                        <option value="3U (85-89g)">3U (85-89g)</option>
+                        <option value="4U (80-84g)">4U (80-84g)</option>
+                        <option value="5U (75-79g)">5U (75-79g)</option>
+                    </select>
                 </div>
-            </c:forEach>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Mức căng tối đa</label>
+                    <select name="attrKeys" class="form-select">
+                        <option value="">-- Chọn --</option>
+                        <option value="15-16kg">15-16kg</option>
+                        <option value="17-18kg">17-18kg</option>
+                        <option value="19-20kg">19-20kg</option>
+                        <option value="21-22kg">21-22kg</option>
+                        <option value="23-24kg">23-24kg</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Độ cứng</label>
+                    <select class="form-select">
+                        <option value="">-- Chọn --</option>
+                        <option value="Cứng">Cứng</option>
+                        <option value="Trung bình">Trung bình</option>
+                        <option value="Mềm">Mềm</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Điểm cân bằng</label>
+                    <select class="form-select">
+                        <option value="">-- Chọn --</option>
+                        <option value="Ngọt (Head Heavy)">Ngọt (Head Heavy)</option>
+                        <option value="Cân bằng">Cân bằng (Even)</option>
+                        <option value="Đầu nhẹ (Head Light)">Đầu nhẹ (Head Light)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Màu sắc</label>
+                    <input type="text" name="attrValues" class="form-control" placeholder="VD: Xanh dương">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-semibold">Chất liệu</label>
+                    <input type="text" class="form-control" placeholder="VD: Carbon">
+                </div>
+            </div>
         </div>
 
-        <%-- VARIANTS (TĨNH) --%>
-        <div class="mb-4 mt-4">
-            <label class="form-label fw-bold">Kích cỡ & Số lượng tồn kho</label>
-            <c:forEach begin="1" end="5" var="i">
-                <div class="row g-2 mb-2">
-                    <div class="col-md-6">
-                        <input type="text" name="variantNames" class="form-control" placeholder="Tên biến thể (VD: Size 40)">
+        <%-- KÍCH CỠ GIÀY (NẾU LÀ GIÀY) --%>
+        <div class="attr-section mt-3">
+            <h6><i class="fa-solid fa-shoe-prints"></i> KÍCH CỠ GIÀY CẦU LÔNG</h6>
+            <div class="row g-2">
+                <c:forEach begin="0" end="7" var="i">
+                    <div class="col-md-3">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text">Size ${38 + i}</span>
+                            <input type="number" name="shoeQuantity" class="form-control" placeholder="SL" min="0">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <input type="number" name="stockQuantities" class="form-control" placeholder="Số lượng tồn kho (VD: 10)">
-                    </div>
+                </c:forEach>
+            </div>
+        </div>
+
+        <%-- KÍCH CỠ VỢT (BIẾN THỂ) --%>
+        <div class="attr-section mt-3">
+            <h6><i class="fa-solid fa-layer-group"></i> KÍCH CỠ / PHÂN LOẠI BIẾN THỂ</h6>
+            <div class="row g-2 mb-2">
+                <div class="col-md-6">
+                    <input type="text" name="variantNames" class="form-control" placeholder="Tên biến thể (VD: Yonex Astrox 88D Pro)">
                 </div>
-            </c:forEach>
+                <div class="col-md-6">
+                    <input type="number" name="variantStocks" class="form-control" placeholder="Số lượng tồn kho" min="0">
+                </div>
+            </div>
+            <div class="row g-2 mb-2">
+                <div class="col-md-6">
+                    <input type="text" name="variantNames" class="form-control" placeholder="Tên biến thể (VD: Yonex Astrox 88D)">
+                </div>
+                <div class="col-md-6">
+                    <input type="number" name="variantStocks" class="form-control" placeholder="Số lượng tồn kho" min="0">
+                </div>
+            </div>
+            <div class="row g-2">
+                <div class="col-md-6">
+                    <input type="text" name="variantNames" class="form-control" placeholder="Tên biến thể (VD: Yonex Astrox 88S)">
+                </div>
+                <div class="col-md-6">
+                    <input type="number" name="variantStocks" class="form-control" placeholder="Số lượng tồn kho" min="0">
+                </div>
+            </div>
         </div>
 
         <div class="d-grid mt-4">

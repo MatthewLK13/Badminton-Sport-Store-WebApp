@@ -68,7 +68,7 @@ public class OrderDAO {
 	@SuppressWarnings("unchecked")
 	public List<Order> findByUserId(Integer userId) {
 		Session session = sessionFactory.getCurrentSession();
-		String hql = "FROM Order WHERE user.id = :uid ORDER BY orderDate DESC";
+		String hql = "SELECT DISTINCT o FROM Order o LEFT JOIN FETCH o.orderItems WHERE o.user.id = :uid ORDER BY o.orderDate DESC";
 		Query query = session.createQuery(hql);
 		query.setParameter("uid", userId);
 		return query.list();

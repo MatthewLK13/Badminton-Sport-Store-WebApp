@@ -39,6 +39,7 @@ public class RegisterController {
             Model model) {
 
         if (result.hasErrors()) {
+            model.addAttribute("user", user);
             return "register";
         }
 
@@ -91,6 +92,6 @@ public class RegisterController {
         }
 
         model.addAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
-        return "login";
+        return "redirect:/login.htm";
     }
 }

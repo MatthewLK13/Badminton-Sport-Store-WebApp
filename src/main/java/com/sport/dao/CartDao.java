@@ -43,13 +43,13 @@ public class CartDao {
 	// Kiem tra variant da co trong gio chua
     public CartEntity findByUserAndVariant(int userId, int variantId) {
         Session session = factory.getCurrentSession();
-        Query query = session.createQuery(
-            "FROM CartEntity WHERE userId = :uid AND productVariantId = :vid");
+        Query<CartEntity> query = session.createQuery(
+            "FROM CartEntity WHERE userId = :uid AND productVariantId = :vid", CartEntity.class);
         query.setParameter("uid", userId);
         query.setParameter("vid", variantId);
         query.setMaxResults(1);
-        List list = query.list();
-        return list.isEmpty() ? null : (CartEntity) list.get(0);
+        List<CartEntity> list = query.list();
+        return list.isEmpty() ? null : list.get(0);
     }
 
     // Them vao gio

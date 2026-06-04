@@ -114,7 +114,8 @@
 </div>
         <%-- NÚT HÀNH ĐỘNG --%>
         <div class="actions-wrapper">
-            <form action="${pageContext.request.contextPath}/cart/add.htm" method="post" style="display:inline;">
+            <form id="addToCartForm" action="${pageContext.request.contextPath}/cart/add.htm" method="post" style="display:inline;">
+                <input type="hidden" name="variantId" id="selectedVariantId" value="">
                 <button type="submit" class="btn-add-to-cart">
                     Thêm vào giỏ hàng
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -356,6 +357,14 @@
         </c:forEach>
     </div>
 </div>
+
+<script>
+document.querySelectorAll('input[name="variantId"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        document.getElementById('selectedVariantId').value = this.value;
+    });
+});
+</script>
 
 </body>
 </html>

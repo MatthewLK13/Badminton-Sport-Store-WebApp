@@ -122,25 +122,23 @@ public class CheckoutController {
 
 		// Check stock for all items first
 		for (CartEntity item : cartItems) {
-			int available = productDao.getAvailableStock(item.getProductVariantId());
-			if (available < item.getQuantity()) {
+			if (item.getProductVariantId() == null) continue;
+			Integer available = productDao.getAvailableStock(item.getProductVariantId());
+			if (available == null || available < item.getQuantity()) {
 				model.addAttribute("error", "Sản phẩm không đủ số lượng trong kho!");
 				return "checkout";
 			}
 		}
 
-		// Decrement stock for each item
-		for (CartEntity item : cartItems) {
-			productDao.decrementStock(item.getProductVariantId(), item.getQuantity());
-		}
-
-		// Create order first
+		// Create order first (before decrementing stock to avoid inventory loss on failure)
 		Order order = new Order();
 		order.setUser(user);
 		order.setEmail(checkoutData.getEmail());
 		order.setFirstName(checkoutData.getFirstName());
 		order.setLastName(checkoutData.getLastName());
 		order.setAddress(checkoutData.getAddress());
+		order.setCity(checkoutData.getCity());
+		order.setState(checkoutData.getState());
 		order.setPhone(checkoutData.getPhone());
 		order.setCardNumber(checkoutData.getCardNumber());
 		order.setOrderDate(new Date());
@@ -166,6 +164,9 @@ public class CheckoutController {
 			OrderItemEntity orderItem = new OrderItemEntity();
 			orderItem.setOrder(order);
 			orderItem.setVariantId(item.getProductVariantId());
+			if (variant.getProduct() != null) {
+			    orderItem.setProductId(variant.getProduct().getId());
+			}
 			orderItem.setProductName(productName);
 			orderItem.setVariantName(variantName);
 			orderItem.setPrice(price);
@@ -178,8 +179,15 @@ public class CheckoutController {
 		order.setOrderItems(orderItems);
 		orderDAO.saveOrder(order);
 
+		// Decrement stock after order is saved (order of operations: validate -> create order -> decrement stock)
+		for (CartEntity item : cartItems) {
+			productDao.decrementStock(item.getProductVariantId(), item.getQuantity());
+		}
+
 		// Clear cart after successful checkout
 		cartDao.clearCart(user.getId());
+		session.setAttribute("cartCount", 0);
+		session.setAttribute("checkoutSuccess", "Đặt hàng thành công! Cảm ơn bạn đã đặt hàng.");
 
 		System.out.println("LƯU ĐƠN HÀNG THÀNH CÔNG VỚI USER_ID: " + user.getId());
 		return "redirect:/home.htm";

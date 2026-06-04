@@ -68,7 +68,14 @@
 <body>
     <div class="black-top-bar"></div>
 
-   <%@include file="/WEB-INF/views/includes/header.jsp" %>	
+   <%@include file="/WEB-INF/views/includes/header.jsp" %>
+
+    <c:if test="${not empty sessionScope.checkoutSuccess}">
+        <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px 40px; text-align: center;">
+            <i class="fa-solid fa-check-circle"></i> ${sessionScope.checkoutSuccess}
+        </div>
+        <% session.removeAttribute("checkoutSuccess"); %>
+    </c:if>
 
     <div class="top-banner">
         Đơn hàng có thể giao chậm trong các dịp lễ Tết. Mong quý khách thông cảm. Hân hạnh được phục vụ quý khách

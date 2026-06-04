@@ -84,8 +84,11 @@ public class ProductDao {
         if (brandId != null)    query.setParameter("brandId", brandId);
         if (minPrice != null)   query.setParameter("minPrice", minPrice);
         if (maxPrice != null)   query.setParameter("maxPrice", maxPrice);
-        if (footType != null && !footType.isEmpty() && !footType.equals("normal"))
-            query.setParameter("footType", "%" + footType.toLowerCase() + "%");
+        if (footType != null && !footType.isEmpty() && !footType.equals("normal")) {
+            // Escape SQL LIKE wildcards to treat them as literal characters
+            String escaped = footType.toLowerCase().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+            query.setParameter("footType", "%" + escaped + "%");
+        }
 
         query.setFirstResult((page - 1) * pageSize);
         query.setMaxResults(pageSize);
@@ -122,8 +125,11 @@ public class ProductDao {
         if (brandId != null)    query.setParameter("brandId", brandId);
         if (minPrice != null)   query.setParameter("minPrice", minPrice);
         if (maxPrice != null)   query.setParameter("maxPrice", maxPrice);
-        if (footType != null && !footType.isEmpty() && !footType.equals("normal"))
-            query.setParameter("footType", "%" + footType.toLowerCase() + "%");
+        if (footType != null && !footType.isEmpty() && !footType.equals("normal")) {
+            // Escape SQL LIKE wildcards to treat them as literal characters
+            String escaped = footType.toLowerCase().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
+            query.setParameter("footType", "%" + escaped + "%");
+        }
 
         return (Long) query.uniqueResult();
     }
@@ -136,19 +142,13 @@ public class ProductDao {
     public ProductsEntity getProductById(int productId) {
         Session session = factory.getCurrentSession();
 
-        String hql1 = "SELECT DISTINCT p FROM ProductsEntity p " +
-                      "LEFT JOIN FETCH p.productVariants " +
-                      "WHERE p.id = :productId";
-        Query query1 = session.createQuery(hql1);
-        query1.setParameter("productId", productId);
-        ProductsEntity product = (ProductsEntity) query1.uniqueResult();
-
-        String hql2 = "SELECT DISTINCT p FROM ProductsEntity p " +
-                      "LEFT JOIN FETCH p.productImages " +
-                      "WHERE p.id = :productId";
-        Query query2 = session.createQuery(hql2);
-        query2.setParameter("productId", productId);
-        return (ProductsEntity) query2.uniqueResult();
+        String hql = "SELECT DISTINCT p FROM ProductsEntity p " +
+                     "LEFT JOIN FETCH p.productVariants " +
+                     "LEFT JOIN FETCH p.productImages " +
+                     "WHERE p.id = :productId";
+        Query query = session.createQuery(hql);
+        query.setParameter("productId", productId);
+        return (ProductsEntity) query.uniqueResult();
     }
 
     public List<Object[]> getFilterOptionsByCategoryId(Integer categoryId) {
@@ -320,6 +320,7 @@ public class ProductDao {
         Query query = session.createQuery(
                 "SELECT DISTINCT p FROM ProductsEntity p " +
                             "LEFT JOIN FETCH p.productImages " +
+                            "LEFT JOIN FETCH p.category_id " +
                             "WHERE p.category_id.id = :catId AND p.id != :excludeId " +
                             "ORDER BY p.id DESC"
                 );
@@ -333,6 +334,7 @@ public class ProductDao {
         Query query = session.createQuery(
             "SELECT DISTINCT p FROM ProductsEntity p " +
             "LEFT JOIN FETCH p.productImages " +
+            "LEFT JOIN FETCH p.category_id " +
             "WHERE p.category_id.id != :catId " +
             "ORDER BY p.id DESC");
         query.setParameter("catId", categoryId);
@@ -372,7 +374,7 @@ public class ProductDao {
     public List<ProductsEntity> getNewArrivals(int limit) {
         Session session = factory.getCurrentSession();
         Query query = session.createQuery(
-            "FROM ProductsEntity p ORDER BY p.id DESC"
+            "SELECT DISTINCT p FROM ProductsEntity p LEFT JOIN FETCH p.category_id LEFT JOIN FETCH p.productImages ORDER BY p.id DESC"
         );
         query.setMaxResults(limit);
         return query.list();
@@ -411,6 +413,9 @@ public class ProductDao {
     }
 
     public boolean decrementStock(Integer variantId, Integer qty) {
+        if (variantId == null || qty == null || qty <= 0) {
+            return false;
+        }
         Session session = factory.getCurrentSession();
         int updated = session.createQuery(
             "UPDATE ProductVariantsEntity v SET v.stock_quantity = v.stock_quantity - :qty " +

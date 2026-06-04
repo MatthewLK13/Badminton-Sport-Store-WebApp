@@ -61,10 +61,14 @@ public class AdminProductController {
             @RequestParam("fileRight") MultipartFile fileRight,
             @RequestParam("fileTop") MultipartFile fileTop,
             @RequestParam("fileBottom") MultipartFile fileBottom,
-            @RequestParam("variantNames") String[] variantNames,
+            // Racket attributes
             @RequestParam(value = "attrKeys", required = false) String[] attrKeys,
             @RequestParam(value = "attrValues", required = false) String[] attrValues,
-            @RequestParam("stockQuantities") Integer[] stockQuantities) {
+            // Shoe sizes
+            @RequestParam(value = "shoeQuantity", required = false) Integer[] shoeQuantities,
+            // Variants
+            @RequestParam(value = "variantNames", required = false) String[] variantNames,
+            @RequestParam(value = "variantStocks", required = false) Integer[] variantStocks) {
 
         if (!isAdmin(session)) {
             return "redirect:/home.htm?error=access_denied";
@@ -73,10 +77,46 @@ public class AdminProductController {
         try {
             String uploadFolder = context.getRealPath("/images/products");
 
+            // Merge shoe quantities into variant arrays for unified handling
+            // If shoe sizes are provided, create variants for each size
+            String[] allVariantNames = variantNames;
+            Integer[] allVariantStocks = variantStocks;
+
+            if (shoeQuantities != null && shoeQuantities.length > 0) {
+                int shoeCount = 0;
+                for (Integer sq : shoeQuantities) {
+                    if (sq != null && sq > 0) shoeCount++;
+                }
+                if (shoeCount > 0) {
+                    int variantCount = (variantNames != null ? variantNames.length : 0);
+                    int totalCount = variantCount + shoeCount;
+                    allVariantNames = new String[totalCount];
+                    allVariantStocks = new Integer[totalCount];
+
+                    // Copy existing variants
+                    if (variantNames != null && variantStocks != null) {
+                        for (int i = 0; i < variantCount; i++) {
+                            allVariantNames[i] = variantNames[i];
+                            allVariantStocks[i] = variantStocks[i] != null ? variantStocks[i] : 0;
+                        }
+                    }
+
+                    // Add shoe sizes as variants
+                    int idx = variantCount;
+                    for (int i = 0; i < shoeQuantities.length; i++) {
+                        if (shoeQuantities[i] != null && shoeQuantities[i] > 0) {
+                            allVariantNames[idx] = "Size " + (38 + i);
+                            allVariantStocks[idx] = shoeQuantities[i];
+                            idx++;
+                        }
+                    }
+                }
+            }
+
             adminProductDao.saveFullProduct(
                 productName, categoryId, brandId, price, description,
                 fileMain, fileRight, fileTop, fileBottom,
-                variantNames, stockQuantities,
+                allVariantNames, allVariantStocks,
                 attrKeys, attrValues,
                 uploadFolder, uploadFolder
             );

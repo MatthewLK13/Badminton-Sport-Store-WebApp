@@ -104,6 +104,9 @@ public class ProductController {
 	        ModelMap model) {
 
 	    ProductsEntity product = productDao.getProductById(productId);
+	    if (product == null) {
+	        return "redirect:/home.htm";
+	    }
 	    model.addAttribute("product", product);
 
 	    // Save to viewed products if user is logged in

@@ -13,6 +13,7 @@ import com.sport.entity.ProductsEntity;
 import com.sport.entity.ProductVariantsEntity;
 import com.sport.entity.User;
 import com.sport.model.CartItemDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.*;
 
@@ -25,6 +26,9 @@ public class CartController {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     // Thêm vào giỏ
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -70,32 +74,31 @@ public class CartController {
         if (user == null) return "[]";
 
         List<CartEntity> cartItems = cartDao.getByUserId(user.getId());
-        StringBuilder sb = new StringBuilder("[");
-        boolean first = true;
+        List<Map<String, Object>> result = new ArrayList<>();
 
         for (CartEntity item : cartItems) {
-            // Lấy thông tin variant và product
             ProductVariantsEntity variant = productDao.getVariantById(item.getProductVariantId());
             if (variant == null) continue;
 
             ProductsEntity product = variant.getProduct();
             if (product == null) continue;
 
-            if (!first) sb.append(",");
-            first = false;
-
-            sb.append("{");
-            sb.append("\"cartId\":").append(item.getId()).append(",");
-            sb.append("\"variantId\":").append(item.getProductVariantId()).append(",");
-            sb.append("\"variantName\":\"").append(variant.getVariant_name().replace("\"","\\\"")).append("\",");
-            sb.append("\"productName\":\"").append(product.getProductName().replace("\"","\\\"")).append("\",");
-            sb.append("\"price\":").append(product.getPrice()).append(",");
-            sb.append("\"quantity\":").append(item.getQuantity()).append(",");
-            sb.append("\"avatarName\":\"").append(product.getAvatarName()).append("\"");
-            sb.append("}");
+            Map<String, Object> itemMap = new LinkedHashMap<>();
+            itemMap.put("cartId", item.getId());
+            itemMap.put("variantId", item.getProductVariantId());
+            itemMap.put("variantName", variant.getVariant_name());
+            itemMap.put("productName", product.getProductName());
+            itemMap.put("price", product.getPrice());
+            itemMap.put("quantity", item.getQuantity());
+            itemMap.put("avatarName", product.getAvatarName());
+            result.add(itemMap);
         }
-        sb.append("]");
-        return sb.toString();
+
+        try {
+            return objectMapper.writeValueAsString(result);
+        } catch (Exception e) {
+            return "[]";
+        }
     }
 
     // Cập nhật số lượng
