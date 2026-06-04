@@ -1,20 +1,33 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <header>
-    <div class="top-links">
-        <a href="${pageContext.request.contextPath}/home.htm">Trang chủ</a>
-        <a href="${pageContext.request.contextPath}/order/history.htm">Theo dõi đơn hàng</a>
+    <div class="top-links" style="padding-bottom: 5px;">
+        <span style="color:#999; margin: 0 10px;">|</span>
+        <a href="${pageContext.request.contextPath}/home.htm"><spring:message code="nav.home" text="Trang chủ" /></a>
+        <a href="${pageContext.request.contextPath}/order/history.htm"><spring:message code="nav.track_order" text="Theo dõi đơn hàng" /></a>
 
         <c:choose>
             <c:when test="${not empty sessionScope.user}">
-                <a href="${pageContext.request.contextPath}/logout.htm">Đăng xuất</a>
+                <a href="${pageContext.request.contextPath}/logout.htm"><spring:message code="common.logout" text="Đăng xuất" /></a>
             </c:when>
             <c:otherwise>
-                <a href="${pageContext.request.contextPath}/login.htm">Đăng nhập</a>
+                <a href="${pageContext.request.contextPath}/login.htm"><spring:message code="common.login" text="Đăng nhập" /></a>
             </c:otherwise>
         </c:choose>
+        <span style="color:#999; margin: 0 10px;">|</span>
+        <div class="lang-dropdown" style="position: relative; display: inline-block; margin-left: 5px;">
+            <a href="javascript:void(0)" class="lang-current" onclick="document.getElementById('langList').classList.toggle('show')">
+                <span>${pageContext.response.locale.language == 'en' ? 'EN' : 'VI'}</span>
+                <i class="fa-solid fa-chevron-down" style="font-size: 8px; margin-left: 3px;"></i>
+            </a>
+            <ul class="lang-list" id="langList">
+                <li><a href="${pageContext.request.contextPath}/changeLocale.htm?lang=vi">Tiếng Việt (VI)</a></li>
+                <li><a href="${pageContext.request.contextPath}/changeLocale.htm?lang=en">English (EN)</a></li>
+            </ul>
+        </div>
     </div>
 
     <div class="navbar">
@@ -24,10 +37,10 @@
         </div>
 
         <ul class="nav-center">
-            <li><a href="${pageContext.request.contextPath}/home.htm">TRANG CHỦ</a></li>
+            <li><a href="${pageContext.request.contextPath}/home.htm"><spring:message code="nav.home" text="TRANG CHỦ" /></a></li>
 
             <li class="dropdown-mega">
-                <a href="#">SẢN PHẨM</a>
+                <a href="#"><spring:message code="nav.product" text="SẢN PHẨM" /></a>
 
                 <div class="mega-menu">
                     <div class="mega-menu-container">
@@ -78,7 +91,7 @@
             </li>
 
             <li class="dropdown-mega">
-                <a href="#">ATHLETE INSPIRED</a>
+                <a href="#"><spring:message code="nav.athlete" text="ATHLETE INSPIRED" /></a>
 
                 <div class="mega-menu">
                     <div class="mega-menu-container">
@@ -132,7 +145,7 @@
             </li>
 
             <li class="dropdown-mega">
-                <a href="#" class="nav-gray">CÁC THƯƠNG HIỆU</a>
+                <a href="#" class="nav-gray"><spring:message code="nav.brand" text="CÁC THƯƠNG HIỆU" /></a>
                 <div class="mega-menu">
                     <div class="mega-menu-container">
                         <div class="mega-column">
@@ -175,7 +188,7 @@
             </li>
 
             <li class="dropdown-mega">
-                <a href="#" class="nav-gray sales-highlight">SALES</a>
+                <a href="#" class="nav-gray sales-highlight"><spring:message code="nav.sales" text="SALES" /></a>
                 <div class="mega-menu">
                     <div class="mega-menu-container sale-menu-layout">
                         <div class="sale-links-grid">
@@ -217,7 +230,7 @@
         <div class="nav-right">
             <div class="search-container">
                 <form action="${pageContext.request.contextPath}/search.htm" method="get">
-                    <input type="text" name="q" placeholder="Tìm kiếm" required>
+                    <input type="text" name="q" placeholder="<spring:message code='nav.search' text='Tìm kiếm' />" required>
                     <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </form>
             </div>

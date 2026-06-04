@@ -47,11 +47,10 @@ public class OrderDAO {
 	@Transactional
 	public Order getOrderByIdWithItems(Integer id) {
 		Session session = sessionFactory.getCurrentSession();
-		Order order = (Order) session.get(Order.class, id);
-		if (order != null && order.getOrderItems() != null) {
-			order.getOrderItems().size(); // Force lazy load
-		}
-		return order;
+		String hql = "SELECT o FROM Order o LEFT JOIN FETCH o.orderItems LEFT JOIN FETCH o.user WHERE o.id = :id";
+		Query query = session.createQuery(hql);
+		query.setParameter("id", id);
+		return (Order) query.uniqueResult();
 	}
 
 	@Transactional

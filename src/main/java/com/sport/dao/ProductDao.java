@@ -265,10 +265,17 @@ public class ProductDao {
             if (ids == null || ids.isEmpty()) return new ArrayList<>();
 
             // Bước 2: Fetch đầy đủ với ảnh theo ID
-            Query queryFull = session.createQuery(
+            StringBuilder fullHql = new StringBuilder(
                 "SELECT DISTINCT p FROM ProductsEntity p " +
                 "LEFT JOIN FETCH p.productImages " +
                 "WHERE p.id IN (:ids)");
+            
+            if ("priceAsc".equals(sortBy))       fullHql.append(" ORDER BY p.price ASC");
+            else if ("priceDesc".equals(sortBy)) fullHql.append(" ORDER BY p.price DESC");
+            else if ("oldest".equals(sortBy))    fullHql.append(" ORDER BY p.id ASC");
+            else                                 fullHql.append(" ORDER BY p.id DESC");
+
+            Query queryFull = session.createQuery(fullHql.toString());
             queryFull.setParameterList("ids", ids);
             return queryFull.list();
 
@@ -384,21 +391,55 @@ public class ProductDao {
 
     public List<ProductsEntity> getNewArrivals(int limit) {
         Session session = factory.getCurrentSession();
+        
+        // 1. Fetch IDs first to avoid in-memory pagination with JOIN FETCH
+        Query idQuery = session.createQuery("SELECT p.id FROM ProductsEntity p ORDER BY p.id DESC");
+        idQuery.setMaxResults(limit);
+        List<Integer> ids = idQuery.list();
+        
+        if (ids == null || ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        // 2. Fetch full entities
         Query query = session.createQuery(
-            "SELECT DISTINCT p FROM ProductsEntity p LEFT JOIN FETCH p.category_id LEFT JOIN FETCH p.productImages ORDER BY p.id DESC"
+            "SELECT DISTINCT p FROM ProductsEntity p " +
+            "LEFT JOIN FETCH p.category_id " +
+            "LEFT JOIN FETCH p.productImages " +
+            "WHERE p.id IN (:ids) " +
+            "ORDER BY p.id DESC"
         );
-        query.setMaxResults(limit);
+        query.setParameterList("ids", ids);
+        
         return query.list();
     }
 
     public List<ProductsEntity> searchProducts(String keyword, int page, int pageSize) {
         Session session = factory.getCurrentSession();
-        Query query = session.createQuery(
-            "FROM ProductsEntity p WHERE p.productName LIKE :keyword OR p.description LIKE :keyword ORDER BY p.id DESC"
+        
+        // 1. Fetch IDs first to avoid in-memory pagination
+        Query idQuery = session.createQuery(
+            "SELECT p.id FROM ProductsEntity p WHERE p.productName LIKE :keyword OR p.description LIKE :keyword ORDER BY p.id DESC"
         );
-        query.setParameter("keyword", "%" + keyword + "%");
-        query.setFirstResult((page - 1) * pageSize);
-        query.setMaxResults(pageSize);
+        idQuery.setParameter("keyword", "%" + keyword + "%");
+        idQuery.setFirstResult((page - 1) * pageSize);
+        idQuery.setMaxResults(pageSize);
+        List<Integer> ids = idQuery.list();
+        
+        if (ids == null || ids.isEmpty()) {
+            return new java.util.ArrayList<>();
+        }
+        
+        // 2. Fetch full entities
+        Query query = session.createQuery(
+            "SELECT DISTINCT p FROM ProductsEntity p " +
+            "LEFT JOIN FETCH p.category_id " +
+            "LEFT JOIN FETCH p.productImages " +
+            "WHERE p.id IN (:ids) " +
+            "ORDER BY p.id DESC"
+        );
+        query.setParameterList("ids", ids);
+        
         return query.list();
     }
 

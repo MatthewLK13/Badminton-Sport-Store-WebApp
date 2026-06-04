@@ -77,7 +77,7 @@ public class CheckoutController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String processCheckout(@Valid @ModelAttribute CheckoutDTO checkoutData, BindingResult bindingResult,
+	public String processCheckout(@Valid @ModelAttribute("checkoutDTO") CheckoutDTO checkoutData, BindingResult bindingResult,
 			HttpSession session, Model model) {
 		User user = (User) session.getAttribute("user");
 		if (user == null) {

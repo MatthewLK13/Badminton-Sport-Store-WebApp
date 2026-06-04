@@ -116,6 +116,7 @@
         <div class="actions-wrapper">
             <form id="addToCartForm" action="${pageContext.request.contextPath}/cart/add.htm" method="post" style="display:inline;">
                 <input type="hidden" name="variantId" id="selectedVariantId" value="">
+                <input type="hidden" name="quantity" id="selectedQuantity" value="1">
                 <button type="submit" class="btn-add-to-cart">
                     Thêm vào giỏ hàng
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -294,8 +295,9 @@
                                     <label>Rating:</label>
                                     <div class="star-selector">
                                         <c:forEach var="i" begin="1" end="5">
-                                            <input type="radio" name="rating" value="${i}" id="rating${i}" required>
-                                            <label for="rating${i}" class="star-label">★</label>
+                                            <c:set var="starVal" value="${6 - i}" />
+                                            <input type="radio" name="rating" value="${starVal}" id="rating${starVal}" required>
+                                            <label for="rating${starVal}" class="star-label">★</label>
                                         </c:forEach>
                                     </div>
                                 </div>
@@ -363,6 +365,23 @@ document.querySelectorAll('input[name="variantId"]').forEach(function(radio) {
     radio.addEventListener('change', function() {
         document.getElementById('selectedVariantId').value = this.value;
     });
+});
+
+var quantityInput = document.querySelector('input.quantity-input');
+if(quantityInput) {
+    quantityInput.addEventListener('change', function() {
+        document.getElementById('selectedQuantity').value = this.value;
+    });
+    quantityInput.addEventListener('keyup', function() {
+        document.getElementById('selectedQuantity').value = this.value;
+    });
+}
+
+document.getElementById('addToCartForm').addEventListener('submit', function(e) {
+    if (!document.getElementById('selectedVariantId').value) {
+        e.preventDefault();
+        alert('Vui lòng chọn Kích cỡ / Phiên bản trước khi thêm vào giỏ hàng!');
+    }
 });
 </script>
 

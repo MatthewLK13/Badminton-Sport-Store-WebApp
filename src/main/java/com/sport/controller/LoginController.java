@@ -56,6 +56,9 @@ public class LoginController {
                     session.setAttribute("user", user);
                     session.setAttribute("cartCount", cartDao.countByUserId(user.getId()));
                     session.setAttribute("wishlistCount", wishlistDao.countByUserId(user.getId()));
+                    if (user.getRole() != null && user.getRole().getId() == 1) {
+                        return "redirect:/admin/dashboard.htm";
+                    }
                     return "redirect:/home.htm";
                 }
             } else {
@@ -64,6 +67,9 @@ public class LoginController {
                     session.setAttribute("user", user);
                     session.setAttribute("cartCount", cartDao.countByUserId(user.getId()));
                     session.setAttribute("wishlistCount", wishlistDao.countByUserId(user.getId()));
+                    if (user.getRole() != null && user.getRole().getId() == 1) {
+                        return "redirect:/admin/dashboard.htm";
+                    }
                     return "redirect:/home.htm";
                 }
             }

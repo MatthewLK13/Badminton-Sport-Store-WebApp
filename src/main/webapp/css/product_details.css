@@ -369,6 +369,8 @@
 }
 .star-selector {
     display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
     gap: 4px;
 }
 .star-selector input {
@@ -380,8 +382,12 @@
     cursor: pointer;
 }
 .star-selector input:checked ~ .star-label,
-.star-selector input:hover ~ .star-label {
+.star-selector input:checked + .star-label {
     color: #ffc107;
+}
+.star-selector .star-label:hover,
+.star-selector .star-label:hover ~ .star-label {
+    color: #ffc107 !important;
 }
 .comment-input textarea {
     width: 100%;

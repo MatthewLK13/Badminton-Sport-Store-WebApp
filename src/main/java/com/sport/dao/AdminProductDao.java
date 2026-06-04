@@ -291,38 +291,49 @@ public class AdminProductDao {
         
         Session session = factory.getCurrentSession();
         
-        StringBuilder hql = new StringBuilder(
-            "SELECT DISTINCT p FROM ProductsEntity p " +
-            "LEFT JOIN FETCH p.productImages " +
-            	
-            "WHERE 1=1");
+        // 1. Fetch IDs first to avoid in-memory pagination
+        StringBuilder hqlIds = new StringBuilder(
+            "SELECT p.id FROM ProductsEntity p WHERE 1=1");
         
         if (keyword != null && !keyword.trim().isEmpty())
-            hql.append(" AND LOWER(p.productName) LIKE :keyword");
+            hqlIds.append(" AND LOWER(p.productName) LIKE :keyword");
         if (categoryId != null && categoryId > 0)
-            hql.append(" AND p.category_id.id = :categoryId");
+            hqlIds.append(" AND p.category_id.id = :categoryId");
         if (brandId != null && brandId > 0)
-            hql.append(" AND p.brand_id.id = :brandId");
+            hqlIds.append(" AND p.brand_id.id = :brandId");
         if (fromDate != null && !fromDate.trim().isEmpty())
-            hql.append(" AND p.createAt >= :fromDate");
+            hqlIds.append(" AND p.createAt >= :fromDate");
 
-        hql.append(" ORDER BY p.id DESC");
+        hqlIds.append(" ORDER BY p.id DESC");
 
-        Query query = session.createQuery(hql.toString());
+        Query queryIds = session.createQuery(hqlIds.toString());
 
         if (keyword != null && !keyword.trim().isEmpty())
-            query.setParameter("keyword", "%" + keyword.toLowerCase() + "%");
+            queryIds.setParameter("keyword", "%" + keyword.toLowerCase() + "%");
         if (categoryId != null && categoryId > 0)
-            query.setParameter("categoryId", categoryId);
+            queryIds.setParameter("categoryId", categoryId);
         if (brandId != null && brandId > 0)
-            query.setParameter("brandId", brandId);
+            queryIds.setParameter("brandId", brandId);
         if (fromDate != null && !fromDate.trim().isEmpty())
-            query.setParameter("fromDate", fromDate);
+            queryIds.setParameter("fromDate", fromDate);
 
-        query.setFirstResult((page - 1) * pageSize);
-        query.setMaxResults(pageSize);
+        queryIds.setFirstResult((page - 1) * pageSize);
+        queryIds.setMaxResults(pageSize);
 
-        return query.list(); // ← không cần try/finally, không close session
+        List<Integer> ids = queryIds.list();
+        if (ids == null || ids.isEmpty()) {
+            return new java.util.ArrayList<>();
+        }
+
+        // 2. Fetch full entities
+        Query queryFull = session.createQuery(
+            "SELECT DISTINCT p FROM ProductsEntity p " +
+            "LEFT JOIN FETCH p.productImages " +
+            "WHERE p.id IN (:ids) " +
+            "ORDER BY p.id DESC");
+        queryFull.setParameterList("ids", ids);
+
+        return queryFull.list();
     }
     public long countAllProducts(String keyword, Integer categoryId, 
             Integer brandId, String fromDate) {

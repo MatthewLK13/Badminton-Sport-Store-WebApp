@@ -1,21 +1,27 @@
 package com.sport.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.LocaleResolver;
 
 import java.util.Locale;
 
 @Controller
 public class LocaleController {
 
+    @Autowired
+    private LocaleResolver localeResolver;
+
     @RequestMapping(value = "/changeLocale.htm", method = RequestMethod.GET)
     public String changeLocale(@RequestParam("lang") String lang,
                                HttpServletRequest request,
+                               HttpServletResponse response,
                                @RequestParam(value = "redirect", required = false) String redirect) {
         Locale locale;
 
@@ -25,8 +31,7 @@ public class LocaleController {
             locale = new Locale("en");
         }
 
-        HttpSession session = request.getSession();
-        session.setAttribute("locale", locale);
+        localeResolver.setLocale(request, response, locale);
 
         if (redirect != null && !redirect.isEmpty()) {
             return "redirect:" + redirect;

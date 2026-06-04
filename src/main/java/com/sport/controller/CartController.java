@@ -103,14 +103,13 @@ public class CartController {
 
     // Cập nhật số lượng
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    @ResponseBody
     public String update(
             @RequestParam("cartId") int cartId,
             @RequestParam("quantity") int quantity,
             HttpSession session) {
 
         User user = (User) session.getAttribute("user");
-        if (user == null) return "{\"status\":\"error\"}";
+        if (user == null) return "redirect:/login.htm";
 
         // Lay cart item de kiem tra variant
         CartEntity cartItem = cartDao.getCartById(cartId);
@@ -132,22 +131,22 @@ public class CartController {
             cartDao.updateQuantity(cartId, quantity);
         }
         long count = cartDao.countByUserId(user.getId());
-        return "{\"status\":\"updated\",\"count\":" + count + "}";
+        session.setAttribute("cartCount", count);
+        return "redirect:/cart/index.htm";
     }
 
-    // Xóa item
     @RequestMapping(value = "/remove", method = RequestMethod.POST)
-    @ResponseBody
     public String remove(
             @RequestParam("cartId") int cartId,
             HttpSession session) {
 
         User user = (User) session.getAttribute("user");
-        if (user == null) return "{\"status\":\"error\",\"count\":0}";
+        if (user == null) return "redirect:/login.htm";
 
         cartDao.remove(cartId);
         long count = cartDao.countByUserId(user.getId());
-        return "{\"status\":\"removed\",\"count\":" + count + "}";
+        session.setAttribute("cartCount", count);
+        return "redirect:/cart/index.htm";
     }
 
     @RequestMapping(value = "/index", method = RequestMethod.GET)

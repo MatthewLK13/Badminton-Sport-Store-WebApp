@@ -24,11 +24,15 @@ public class GeminiService {
 
     private static final String API_KEY = System.getenv("GEMINI_API_KEY");
     private static final String API_URL =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent";
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    private final OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient client = new OkHttpClient.Builder()
+        .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .readTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+        .build();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
@@ -36,7 +40,7 @@ public class GeminiService {
 
     // System prompt for badminton racket consultation
     private static final String SYSTEM_PROMPT =
-        "Ban la tro ly tu van chon vot cau long chuyen nghiep cua shop Yonex Viet Nam. " +
+        "Ban la tro ly tu Tu van chon vot cau long chuyen nghiep cua shop Yonex Viet Nam. " +
         "Cac thuong hieu co san: Yonex, Victor, Lining, Adidas. " +
         "Ban hay hoi khach hang ve: " +
         "- Level choi: moi choi, choi binh thuong, choi gioi (thi dau) " +
@@ -81,7 +85,11 @@ public class GeminiService {
         List<ChatMessage> history = new ArrayList<>();
         if (chatHistory != null) {
             for (java.util.Map<String, String> msg : chatHistory) {
-                history.add(new ChatMessage(msg.get("role"), msg.get("content")));
+                String role = msg.get("role");
+                if ("bot".equals(role)) {
+                    role = "model";
+                }
+                history.add(new ChatMessage(role, msg.get("content")));
             }
         }
         GeminiResponse response = generateResponse(userMessage, history);
@@ -107,6 +115,8 @@ public class GeminiService {
 
             try (Response response = client.newCall(request).execute()) {
                 if (!response.isSuccessful()) {
+                    String errorBody = response.body() != null ? response.body().string() : "No body";
+                    System.out.println("GEMINI API ERROR: " + response.code() + " - " + errorBody);
                     return new GeminiResponse(
                         "Xin loi, da co loi xay ra. Vui long thu lai sau.",
                         null, false);
@@ -134,31 +144,25 @@ public class GeminiService {
         }
     }
 
-    private String buildRequestBody(String userMessage, List<ChatMessage> history) throws IOException {
-        StringBuilder contentsBuilder = new StringBuilder();
-        contentsBuilder.append("[");
+    private String buildRequestBody(String userMessage, List<ChatMessage> history) throws Exception {
+        com.fasterxml.jackson.databind.node.ObjectNode root = objectMapper.createObjectNode();
 
-        // Add history messages
-        for (int i = 0; i < history.size(); i++) {
-            ChatMessage msg = history.get(i);
-            String escapedText = escapeJson(msg.getText());
-            contentsBuilder.append("{\"role\":\"").append(msg.getRole())
-                    .append("\",\"parts\":[{\"text\":\"").append(escapedText).append("\"}]}");
-            if (i < history.size() - 1) {
-                contentsBuilder.append(",");
-            }
+        com.fasterxml.jackson.databind.node.ObjectNode sysInstruct = root.putObject("system_instruction");
+        sysInstruct.putArray("parts").addObject().put("text", SYSTEM_PROMPT);
+
+        com.fasterxml.jackson.databind.node.ArrayNode contents = root.putArray("contents");
+
+        for (ChatMessage msg : history) {
+            com.fasterxml.jackson.databind.node.ObjectNode content = contents.addObject();
+            content.put("role", msg.getRole());
+            content.putArray("parts").addObject().put("text", msg.getText());
         }
 
-        // Add current user message
-        if (!history.isEmpty()) {
-            contentsBuilder.append(",");
-        }
-        contentsBuilder.append("{\"role\":\"user\",\"parts\":[{\"text\":\"")
-                .append(escapeJson(userMessage)).append("\"}]}]");
+        com.fasterxml.jackson.databind.node.ObjectNode userContent = contents.addObject();
+        userContent.put("role", "user");
+        userContent.putArray("parts").addObject().put("text", userMessage);
 
-        // Build full request with system instruction
-        String escapedSystemPrompt = escapeJson(SYSTEM_PROMPT);
-        return "{\"system_instruction\":{\"parts\":[{\"text\":\"" + escapedSystemPrompt + "\"]},\"contents\":" + contentsBuilder.toString() + "}";
+        return objectMapper.writeValueAsString(root);
     }
 
     private String escapeJson(String text) {

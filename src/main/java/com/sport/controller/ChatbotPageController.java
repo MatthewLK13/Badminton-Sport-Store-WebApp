@@ -37,16 +37,16 @@ public class ChatbotPageController {
             chatHistory = new java.util.ArrayList<>();
         }
 
-        // Add user message
+        // Get bot response (pass history BEFORE adding current user message)
+        String botReply = geminiService.getChatbotResponse(message, chatHistory);
+
+        // Add user message to history
         java.util.Map<String, String> userMsg = new java.util.HashMap<>();
         userMsg.put("role", "user");
         userMsg.put("content", message);
         chatHistory.add(userMsg);
 
-        // Get bot response
-        String botReply = geminiService.getChatbotResponse(message, chatHistory);
-
-        // Add bot message
+        // Add bot message to history
         java.util.Map<String, String> botMsg = new java.util.HashMap<>();
         botMsg.put("role", "bot");
         botMsg.put("content", botReply);

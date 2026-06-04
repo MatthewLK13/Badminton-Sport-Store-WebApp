@@ -35,21 +35,19 @@ public class ChatbotController {
             history = new ArrayList<>();
         }
 
-        // Add user message to history
-        history.add(new GeminiService.ChatMessage("user", message));
-
-        // Trim history if too long
-        while (history.size() > MAX_HISTORY) {
-            history.remove(0);
-        }
-
         // Call Gemini API
         GeminiService.GeminiResponse geminiResponse = geminiService.generateResponse(message, history);
 
         String reply = geminiResponse.getReply();
 
-        // Add model response to history
+        // Add user and model message to history
+        history.add(new GeminiService.ChatMessage("user", message));
         history.add(new GeminiService.ChatMessage("model", reply));
+
+        // Trim history if too long
+        while (history.size() > MAX_HISTORY) {
+            history.remove(0);
+        }
 
         // Save updated history
         session.setAttribute(CHAT_HISTORY, history);
