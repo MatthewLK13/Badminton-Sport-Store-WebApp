@@ -113,10 +113,7 @@
     <!-- MAIN CONTENT -->
     <div class="main-content">
         <div class="topbar">
-            <div class="search-top">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Tìm kiếm...">
-            </div>
+            
             <div class="admin-profile">
                 <span>${sessionScope.user.fullName}</span>
                 <i class="fa-solid fa-circle-user"></i>
@@ -160,6 +157,20 @@
         </div>
 
         <div class="users-list-box">
+            <!-- Filter panel -->
+            <form action="${pageContext.request.contextPath}/admin/users.htm" method="GET">
+            <div class="filter-row" style="display: flex; gap: 20px; margin-bottom: 30px;">
+                <div class="filter-group" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 12px; font-weight: 600; color: #4a4a4a;">Search</label>
+                    <input type="text" name="keyword" style="padding: 8px 16px; border: 1px solid #e0e0e0; border-radius: 10px; font-size: 13px; outline: none; min-width: 220px;" placeholder="Search by name/email/phone/ID" value="${param.keyword}">
+                </div>
+                <div class="filter-group" style="display: flex; flex-direction: column; justify-content: flex-end;">
+                    <label>&nbsp;</label>
+                    <button type="submit" class="btn btn-outline-secondary" style="height: 36px; padding: 0 20px; border-radius: 10px; cursor: pointer; border: 1px solid #ccc; background: white;">Filter</button>
+                </div>
+            </div>
+            </form>
+
             <h3 class="users-list-title">Users list</h3>
             <table>
                 <thead>
@@ -238,3 +249,4 @@
 
 </body>
 </html>
+

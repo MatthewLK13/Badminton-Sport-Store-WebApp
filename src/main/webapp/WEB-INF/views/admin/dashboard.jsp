@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
@@ -108,10 +108,7 @@
     <!-- MAIN CONTENT -->
     <div class="main-content">
         <div class="topbar">
-            <div class="search-top">
-                <i class="fa-solid fa-magnifying-glass" style="color:#aaa;"></i>
-                <input type="text" placeholder="Tìm kiếm">
-            </div>
+            
             <div class="admin-profile">
                 <span>${sessionScope.user.fullName}</span>
                 <i class="fa-regular fa-circle-user" style="font-size: 24px;"></i>
@@ -199,3 +196,4 @@
     </script>
 </body>
 </html>
+

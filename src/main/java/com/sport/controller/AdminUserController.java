@@ -1,4 +1,4 @@
-﻿package com.sport.controller;
+package com.sport.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpSession;
@@ -22,9 +22,34 @@ public class AdminUserController {
     private UserDAO userDAO;
 
     @RequestMapping(value = "/users.htm", method = RequestMethod.GET)
-    public String listUsers(Model model, HttpSession session) {
-        List<User> users = userDAO.getAllUsers();
-        model.addAttribute("users", users);
+    public String listUsers(
+            @RequestParam(value = "keyword", required = false) String keyword,
+            Model model, HttpSession session) {
+        List<User> allUsers = userDAO.getAllUsers();
+        
+        List<User> filteredUsers = new java.util.ArrayList<>();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            String kw = keyword.trim().toLowerCase();
+            boolean isIdSearch = kw.matches("\\d+") && kw.length() <= 5;
+            for (User u : allUsers) {
+                String fullName = (u.getFullName() != null ? u.getFullName() : "").toLowerCase();
+                String email = (u.getEmail() != null ? u.getEmail() : "").toLowerCase();
+                String phone = (u.getPhone() != null ? u.getPhone() : "").toLowerCase();
+                String idStr = u.getId() != null ? u.getId().toString() : "";
+                
+                if (isIdSearch) {
+                    if (idStr.equals(kw)) filteredUsers.add(u);
+                } else {
+                    if (fullName.contains(kw) || email.contains(kw) || phone.contains(kw) || idStr.equals(kw)) {
+                        filteredUsers.add(u);
+                    }
+                }
+            }
+        } else {
+            filteredUsers.addAll(allUsers);
+        }
+
+        model.addAttribute("users", filteredUsers);
         return "admin/user_management";
     }
 
