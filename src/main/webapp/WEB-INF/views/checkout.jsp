@@ -67,7 +67,7 @@
         }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
     <!-- Dùng Header dùng chung (Component) -->
     <jsp:include page="includes/header.jsp" />

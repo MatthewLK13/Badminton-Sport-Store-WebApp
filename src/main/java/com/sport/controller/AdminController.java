@@ -1,4 +1,4 @@
-﻿package com.sport.controller;
+package com.sport.controller;
 
 import java.util.List;
 import java.util.Calendar;
@@ -11,11 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.sport.dao.OrderDAO;
-import com.sport.dao.UserDAO;
 import com.sport.dao.AdminProductDao;
+import com.sport.dao.OrderDAO;
+import com.sport.dao.ProductDao;
+import com.sport.dao.UserDAO;
 import com.sport.entity.Order;
 import com.sport.entity.User;
+import com.sport.service.OrderService;
 
 @Controller
 @RequestMapping("/admin")
@@ -25,7 +27,7 @@ public class AdminController {
 	private OrderDAO orderDAO;
 
 	@Autowired
-	private com.sport.service.OrderService orderService;
+	private OrderService orderService;
 
 	@Autowired
 	private UserDAO userDAO;
@@ -57,8 +59,8 @@ public class AdminController {
 
 	@RequestMapping(value ="/orders.htm", method = RequestMethod.GET)
 	public String listOrders(
-			@RequestParam(value="keyword", required=false) String keyword,
-			@RequestParam(value="orderDate", required=false) String orderDateStr,
+			@RequestParam(value = "keyword", required = false) String keyword,
+			@RequestParam(value = "orderDate", required = false) String orderDate,
 			Model model, HttpSession session) {
 		List<Order> allOrders = orderDAO.getAllOrders();
 
@@ -78,38 +80,33 @@ public class AdminController {
 			}
 		}
 
-		List<Order> filteredOrders = new java.util.ArrayList<Order>();
+		// Filter orders
+		List<Order> filteredOrders = new java.util.ArrayList<>();
 		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
 		
-		for (Order order : allOrders) {
+		for (Order o : allOrders) {
 			boolean matchKeyword = true;
-			boolean matchDate = true;
-
 			if (keyword != null && !keyword.trim().isEmpty()) {
 				String kw = keyword.trim().toLowerCase();
-				String fullName = (order.getFirstName() + " " + order.getLastName()).toLowerCase();
-				String email = order.getEmail() != null ? order.getEmail().toLowerCase() : "";
-				String idStr = String.valueOf(order.getId());
-				
-				// Search matches ID, or name, or email
-				if (!idStr.equals(kw) && !fullName.contains(kw) && !email.contains(kw)) {
-					matchKeyword = false;
-				}
+				String fullName = ((o.getFirstName() != null ? o.getFirstName() : "") + " " + (o.getLastName() != null ? o.getLastName() : "")).toLowerCase();
+				String email = (o.getEmail() != null ? o.getEmail() : "").toLowerCase();
+				String idStr = o.getId() != null ? o.getId().toString() : "";
+				String orderCodeStr = o.getId() != null ? "o-" + String.format("%02d", o.getId()) : "";
+				matchKeyword = fullName.contains(kw) || email.contains(kw) || idStr.equals(kw) || orderCodeStr.equals(kw);
 			}
 
-			if (orderDateStr != null && !orderDateStr.trim().isEmpty()) {
-				if (order.getOrderDate() != null) {
-					String orderDateFormatted = sdf.format(order.getOrderDate());
-					if (!orderDateFormatted.equals(orderDateStr.trim())) {
-						matchDate = false;
-					}
+			boolean matchDate = true;
+			if (orderDate != null && !orderDate.trim().isEmpty()) {
+				if (o.getOrderDate() != null) {
+					String dStr = sdf.format(o.getOrderDate());
+					matchDate = dStr.equals(orderDate.trim());
 				} else {
 					matchDate = false;
 				}
 			}
 
 			if (matchKeyword && matchDate) {
-				filteredOrders.add(order);
+				filteredOrders.add(o);
 			}
 		}
 
@@ -134,15 +131,14 @@ public class AdminController {
 	@RequestMapping(value = "/order-status.htm", method = RequestMethod.POST)
 	public String updateOrderStatus(@RequestParam("orderId") Integer orderId,
 								   @RequestParam("status") Integer status, HttpSession session) {
-		// Validate status pháº£i náº±m trong range 0-4
+		// Validate status phải nằm trong range 0-4
 		if (status == null || status < 0 || status > 4) {
 			return "redirect:/admin/orders.htm";
 		}
 		
-		// DÃ¹ng OrderService Ä‘á»ƒ vá»«a cáº­p nháº­t tráº¡ng thÃ¡i vá»«a phá»¥c há»“i tá»“n kho (náº¿u há»§y Ä‘Æ¡n)
+		// Dùng OrderService để vừa cập nhật trạng thái vừa phục hồi tồn kho (nếu hủy đơn)
 		orderService.updateOrderStatusByAdmin(orderId, status);
 		
 		return "redirect:/admin/order-detail.htm?id=" + orderId;
 	}
 }
-

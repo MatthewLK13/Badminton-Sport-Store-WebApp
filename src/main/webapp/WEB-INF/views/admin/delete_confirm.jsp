@@ -38,7 +38,7 @@ body { background: #f5f5f5; font-family: 'Segoe UI', sans-serif; margin: 0; }
 }
 </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
 <%-- SIDEBAR --%>
 <div class="sidebar">

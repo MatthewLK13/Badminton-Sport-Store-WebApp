@@ -164,7 +164,7 @@
         .btn-back:hover { background: #e36009; }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
     <jsp:include page="includes/header.jsp" />
 

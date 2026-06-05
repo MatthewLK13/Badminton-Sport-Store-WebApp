@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/products.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/spotlight.css">
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
     <div class="breadcrumb-container">
         <div class="breadcrumb-content">
             <a href="${pageContext.request.contextPath}/home.htm">Trang chủ</a>

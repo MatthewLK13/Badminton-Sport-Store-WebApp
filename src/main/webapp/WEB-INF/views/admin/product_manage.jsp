@@ -1,11 +1,11 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Quáº£n lÃ½ sáº£n pháº©m - Yonex Admin</title>
+    <title>Quản lý sản phẩm - Yonex Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -224,12 +224,12 @@
         }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo-area">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <div class="logo-area">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 60px; height: auto; fill: #000;">
                 <path d="M20 70 L35 25 L50 25 L35 70 Z" />
                 <path d="M50 70 L65 25 L80 25 L65 70 Z" />
             </svg>
@@ -252,10 +252,10 @@
         <div class="topbar">
             <div class="search-top">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="TÃ¬m kiáº¿m...">
+                <input type="text" placeholder="Tìm kiếm...">
             </div>
             <div class="admin-profile">
-                <span>`${sessionScope.user.fullName}</span>
+                <span>${sessionScope.user.fullName}</span>
                 <i class="fa-solid fa-circle-user"></i>
             </div>
         </div>
@@ -290,11 +290,11 @@
                     <label>Category</label>
                     <select name="categoryId" class="filter-input">
                         <option value="">All Categories</option>
-                        <option value="1" ${selectedCategoryId == 1 ? 'selected' : ''}>Vá»£t cáº§u lÃ´ng</option>
-                        <option value="2" ${selectedCategoryId == 2 ? 'selected' : ''}>GiÃ y cáº§u lÃ´ng</option>
-                        <option value="3" ${selectedCategoryId == 3 ? 'selected' : ''}>Quáº§n Ã¡o</option>
-                        <option value="4" ${selectedCategoryId == 4 ? 'selected' : ''}>TÃºi vá»£t</option>
-                        <option value="5" ${selectedCategoryId == 5 ? 'selected' : ''}>Phá»¥ kiá»‡n</option>
+                        <option value="1" ${selectedCategoryId == 1 ? 'selected' : ''}>Vợt cầu lông</option>
+                        <option value="2" ${selectedCategoryId == 2 ? 'selected' : ''}>Giày cầu lông</option>
+                        <option value="3" ${selectedCategoryId == 3 ? 'selected' : ''}>Quần áo</option>
+                        <option value="4" ${selectedCategoryId == 4 ? 'selected' : ''}>Túi vợt</option>
+                        <option value="5" ${selectedCategoryId == 5 ? 'selected' : ''}>Phụ kiện</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -361,7 +361,7 @@
                                     <c:when test="${not empty variantsMap[pid]}">
                                         <select class="filter-input" style="padding: 5px; min-width: 140px;">
                                             <c:forEach var="v" items="${variantsMap[pid]}">
-                                                <option>${v.name} â€” SL: ${v.stock}</option>
+                                                <option>${v.name} — SL: ${v.stock}</option>
                                             </c:forEach>
                                         </select>
                                     </c:when>
@@ -386,7 +386,7 @@
                     </c:forEach>
                     <c:if test="${empty products}">
                         <tr>
-                            <td colspan="9" style="text-align: center; padding: 40px; color: #8e8e8e;">KhÃ´ng tÃ¬m tháº¥y sáº£n pháº©m nÃ o!</td>
+                            <td colspan="9" style="text-align: center; padding: 40px; color: #8e8e8e;">Không tìm thấy sản phẩm nào!</td>
                         </tr>
                     </c:if>
                 </tbody>
@@ -415,5 +415,3 @@
 
 </body>
 </html>
-
-

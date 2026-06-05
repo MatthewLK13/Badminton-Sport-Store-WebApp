@@ -81,7 +81,7 @@
         .back-link:hover { color: #000; }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
     <div class="container">
         <a href="${pageContext.request.contextPath}/home.htm" class="back-link">

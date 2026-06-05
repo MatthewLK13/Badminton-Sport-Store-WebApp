@@ -139,7 +139,7 @@
         }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
     <jsp:include page="includes/header.jsp" />
 

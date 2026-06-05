@@ -1,10 +1,10 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>ThÃªm sáº£n pháº©m má»›i - Yonex Admin</title>
+    <title>Thêm sản phẩm mới - Yonex Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -78,12 +78,12 @@
         .btn-save:hover { background: #333; }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo-area">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <div class="logo-area">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 60px; height: auto; fill: #000;">
                 <path d="M20 70 L35 25 L50 25 L35 70 Z" />
                 <path d="M50 70 L65 25 L80 25 L65 70 Z" />
             </svg>
@@ -106,7 +106,7 @@
         <div class="topbar">
             <a href="${pageContext.request.contextPath}/admin/product/management.htm" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Products</a>
             <div class="admin-profile">
-                <span>Admin</span>
+                <span>${sessionScope.user.fullName}</span>
                 <i class="fa-solid fa-circle-user" style="font-size: 20px;"></i>
             </div>
         </div>
@@ -119,7 +119,7 @@
                 <h3 class="section-title">Product Images</h3>
                 <div class="images-grid">
                     <div class="image-upload-card">
-                        <label class="main-img">â˜… Main side</label>
+                        <label class="main-img">★ Main side</label>
                         <input type="file" name="fileMain" class="form-control" accept="image/*" required>
                     </div>
                     <div class="image-upload-card">
@@ -138,26 +138,26 @@
 
                 <h3 class="section-title">Basic Information</h3>
                 <div class="form-group">
-                    <label>TÃªn sáº£n pháº©m</label>
-                    <input type="text" name="productName" class="form-control" placeholder="GÃµ tÃªn sáº£n pháº©m..." required>
+                    <label>Tên sản phẩm</label>
+                    <input type="text" name="productName" class="form-control" placeholder="Gõ tên sản phẩm..." required>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Danh má»¥c</label>
+                        <label>Danh mục</label>
                         <select name="categoryId" class="form-select" required>
-                            <option value="">-- Chá»n danh má»¥c --</option>
-                            <option value="1">Vá»£t cáº§u lÃ´ng</option>
-                            <option value="2">GiÃ y cáº§u lÃ´ng</option>
-                            <option value="3">Quáº§n Ã¡o cáº§u lÃ´ng</option>
-                            <option value="4">TÃºi vá»£t cáº§u lÃ´ng</option>
-                            <option value="5">Phá»¥ kiá»‡n cáº§u lÃ´ng</option>
+                            <option value="">-- Chọn danh mục --</option>
+                            <option value="1">Vợt cầu lông</option>
+                            <option value="2">Giày cầu lông</option>
+                            <option value="3">Quần áo cầu lông</option>
+                            <option value="4">Túi vợt cầu lông</option>
+                            <option value="5">Phụ kiện cầu lông</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>ThÆ°Æ¡ng hiá»‡u</label>
+                        <label>Thương hiệu</label>
                         <select name="brandId" class="form-select" required>
-                            <option value="">-- Chá»n thÆ°Æ¡ng hiá»‡u --</option>
+                            <option value="">-- Chọn thương hiệu --</option>
                             <option value="1">Yonex</option>
                             <option value="2">Victor</option>
                             <option value="3">Lining</option>
@@ -170,21 +170,21 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>GiÃ¡ (USD)</label>
-                        <input type="number" step="0.01" name="price" class="form-control" placeholder="VÃ­ dá»¥: 122.0" required>
+                        <label>Giá (USD)</label>
+                        <input type="number" step="0.01" name="price" class="form-control" placeholder="Ví dụ: 122.0" required>
                     </div>
                     <div class="form-group">
-                        <label>MÃ´ táº£ ngáº¯n</label>
-                        <input type="text" name="description" class="form-control" placeholder="MÃ´ táº£..." required>
+                        <label>Mô tả ngắn</label>
+                        <input type="text" name="description" class="form-control" placeholder="Mô tả..." required>
                     </div>
                 </div>
 
                 <div class="attr-section">
-                    <h3 class="section-title" style="margin-top: 0; border: none; color: #333;"><i class="fa-solid fa-layer-group"></i> KÃCH Cá»  / PHÃ‚N LOáº I BIáº¾N THá»‚</h3>
-                    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">ThÃªm cÃ¡c biáº¿n thá»ƒ vá» kÃ­ch cá»¡ (VD: Size giÃ y 40, Vá»£t 4U G5) vÃ  sá»‘ lÆ°á»£ng tÆ°Æ¡ng á»©ng.</p>
+                    <h3 class="section-title" style="margin-top: 0; border: none; color: #333;"><i class="fa-solid fa-layer-group"></i> KÍCH CỠ / PHÂN LOẠI BIẾN THỂ</h3>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Thêm các biến thể về kích cỡ (VD: Size giày 40, Vợt 4U G5) và số lượng tương ứng.</p>
                     
                     
-                    <!-- Nhanh Size giay -->
+                    <!-- Nhập nhanh Size giày -->
                     <div style="background: #eef2f3; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed #cbd5e1;">
                         <label style="display: block; margin-bottom: 10px; color: #3b82f6; font-weight: 700;"><i class="fa-solid fa-shoe-prints"></i> NHẬP NHANH SIZE GIÀY (Bỏ qua nếu không bán giày):</label>
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -198,31 +198,31 @@
                     </div>
 <div class="form-row mb-3">
                         <div class="form-group">
-                            <input type="text" name="variantNames" class="form-control" placeholder="TÃªn biáº¿n thá»ƒ (VD: 4U G5)">
+                            <input type="text" name="variantNames" class="form-control" placeholder="Tên biến thể (VD: 4U G5)">
                         </div>
                         <div class="form-group">
-                            <input type="number" name="variantStocks" class="form-control" placeholder="Sá»‘ lÆ°á»£ng tá»“n kho" min="0">
+                            <input type="number" name="variantStocks" class="form-control" placeholder="Số lượng tồn kho" min="0">
                         </div>
                     </div>
                     <div class="form-row mb-3">
                         <div class="form-group">
-                            <input type="text" name="variantNames" class="form-control" placeholder="TÃªn biáº¿n thá»ƒ (VD: 3U G5)">
+                            <input type="text" name="variantNames" class="form-control" placeholder="Tên biến thể (VD: 3U G5)">
                         </div>
                         <div class="form-group">
-                            <input type="number" name="variantStocks" class="form-control" placeholder="Sá»‘ lÆ°á»£ng tá»“n kho" min="0">
+                            <input type="number" name="variantStocks" class="form-control" placeholder="Số lượng tồn kho" min="0">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <input type="text" name="variantNames" class="form-control" placeholder="TÃªn biáº¿n thá»ƒ khÃ¡c...">
+                            <input type="text" name="variantNames" class="form-control" placeholder="Tên biến thể khác...">
                         </div>
                         <div class="form-group">
-                            <input type="number" name="variantStocks" class="form-control" placeholder="Sá»‘ lÆ°á»£ng tá»“n kho" min="0">
+                            <input type="number" name="variantStocks" class="form-control" placeholder="Số lượng tồn kho" min="0">
                         </div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-save"><i class="fa-solid fa-check"></i> LÆ¯U Sáº¢N PHáº¨M</button>
+                <button type="submit" class="btn-save"><i class="fa-solid fa-check"></i> LƯU SẢN PHẨM</button>
             </form>
         </div>
     </div>

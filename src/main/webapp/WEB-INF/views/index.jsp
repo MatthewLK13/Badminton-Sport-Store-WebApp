@@ -15,7 +15,7 @@
         .user-name { font-size: 24px; font-weight: 700; color: #333; margin: 10px 0; }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
     <%-- Dùng header chung --%>
     <jsp:include page="includes/header.jsp" />

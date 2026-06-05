@@ -34,7 +34,7 @@
         .bio-section h3 { margin: 30px 0 15px 0; font-size: 24px; color: #333; }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
     <%@include file="/WEB-INF/views/includes/header.jsp" %>
 
     <section class="hero-section">

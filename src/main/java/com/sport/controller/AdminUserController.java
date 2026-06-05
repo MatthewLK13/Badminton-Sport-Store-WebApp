@@ -61,7 +61,7 @@ public class AdminUserController {
                            Model model) {
 
         if (userDAO.existsByEmail(email.trim())) {
-            model.addAttribute("error", "Email Ä‘Ã£ tá»“n táº¡i!");
+            model.addAttribute("error", "Email đã tồn tại!");
             return "admin/add_user";
         }
 
@@ -81,4 +81,3 @@ public class AdminUserController {
         return "redirect:/admin/users.htm";
     }
 }
-

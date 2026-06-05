@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
@@ -19,8 +19,8 @@
             display: flex; flex-direction: column; border-right: 1px solid rgba(0,0,0,0.05);
             position: fixed; height: 100vh;
         }
-        .logo-area { text-align: center; margin-bottom: 50px; }
-        .logo-area svg { width: 60px; height: auto; fill: #000; }
+        .logo-area { text-align: left; margin-bottom: 50px; padding-left: 15px; }
+        .logo-area h3 { color: #888; font-weight: 600; font-size: 16px; }
         .menu-list { list-style: none; display: flex; flex-direction: column; gap: 15px; }
         .menu-item a {
             display: flex; align-items: center; gap: 15px; text-decoration: none;
@@ -81,12 +81,12 @@
         .chart-filter { padding: 6px 12px; border-radius: 20px; border: 1px solid #ddd; outline: none; font-size: 13px; }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo-area">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <div class="logo-area">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 60px; height: auto; fill: #000;">
                 <path d="M20 70 L35 25 L50 25 L35 70 Z" />
                 <path d="M50 70 L65 25 L80 25 L65 70 Z" />
             </svg>
@@ -96,6 +96,7 @@
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/product/management.htm"><i class="fa-solid fa-bag-shopping"></i> Products</a></li>
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-person"></i> Users</a></li>
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
+            
         </ul>
         <div class="logout-container" style="margin-top: auto; padding-top: 20px;">
             <a href="${pageContext.request.contextPath}/logout.htm" style="display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; color: #e74c3c; font-weight: 600; padding: 12px; border-radius: 15px; background: #ffebeb; transition: all 0.3s; width: 100%;">
@@ -109,10 +110,10 @@
         <div class="topbar">
             <div class="search-top">
                 <i class="fa-solid fa-magnifying-glass" style="color:#aaa;"></i>
-                <input type="text" placeholder="TÃ¬m kiáº¿m">
+                <input type="text" placeholder="Tìm kiếm">
             </div>
             <div class="admin-profile">
-                <span>`${sessionScope.user.fullName}</span>
+                <span>${sessionScope.user.fullName}</span>
                 <i class="fa-regular fa-circle-user" style="font-size: 24px;"></i>
             </div>
         </div>
@@ -198,6 +199,3 @@
     </script>
 </body>
 </html>
-
-
-

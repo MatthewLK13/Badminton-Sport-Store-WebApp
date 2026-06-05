@@ -238,7 +238,7 @@
             <div class="action-icons">
                 <%-- Dark mode toggle --%>
                 <a href="${pageContext.request.contextPath}/theme.htm" class="dark-mode-toggle" title="Chế độ tối" aria-label="Toggle dark mode">
-                    <i class="fa-solid fa-moon"></i>
+                    <i id="darkModeIcon" class="fa-solid ${sessionScope.theme == 'dark' ? 'fa-sun' : 'fa-moon'}"></i>
                 </a>
 
                 <c:choose>

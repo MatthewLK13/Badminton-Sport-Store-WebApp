@@ -1,4 +1,4 @@
-﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
@@ -77,12 +77,15 @@
         .error-msg { color: #e74c3c; font-size: 14px; font-weight: 500; margin-bottom: 20px; }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="logo-area">
-            <h3>Desktop - 5</h3>
+                <div class="logo-area">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" style="width: 60px; height: auto; fill: #000;">
+                <path d="M20 70 L35 25 L50 25 L35 70 Z" />
+                <path d="M50 70 L65 25 L80 25 L65 70 Z" />
+            </svg>
         </div>
         <ul class="menu-list">
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/dashboard.htm"><i class="fa-solid fa-border-all"></i> Dashboard</a></li>
@@ -102,10 +105,10 @@
         <div class="topbar">
             <div class="search-top">
                 <i class="fa-solid fa-magnifying-glass" style="color:#aaa;"></i>
-                <input type="text" placeholder="TÃ¬m kiáº¿m">
+                <input type="text" placeholder="Tìm kiếm">
             </div>
             <div class="admin-profile">
-                <span>`${sessionScope.user.fullName}</span>
+                <span>${sessionScope.user.fullName}</span>
                 <i class="fa-regular fa-circle-user" style="font-size: 24px;"></i>
             </div>
         </div>
@@ -124,7 +127,7 @@
         <form action="${pageContext.request.contextPath}/admin/user/save.htm" method="POST" class="form-container">
             <div class="form-group">
                 <label>User's name</label>
-                <input type="text" name="fullName" class="form-control" placeholder="Giá»›i háº¡n 40 kÃ½ tá»±" maxlength="40" required>
+                <input type="text" name="fullName" class="form-control" placeholder="Giới hạn 40 ký tự" maxlength="40" required>
             </div>
             
             <div class="form-group">
@@ -133,8 +136,8 @@
             </div>
 
             <div class="form-group">
-                <label>Password (Máº­t kháº©u khá»Ÿi táº¡o)</label>
-                <input type="password" name="password" class="form-control" placeholder="Tá»‘i thiá»ƒu 6 kÃ½ tá»±" minlength="6" required>
+                <label>Password (Mật khẩu khởi tạo)</label>
+                <input type="password" name="password" class="form-control" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
             </div>
             
             <div class="form-group">
@@ -165,6 +168,3 @@
 
 </body>
 </html>
-
-
-

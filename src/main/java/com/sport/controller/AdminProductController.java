@@ -63,6 +63,7 @@ public class AdminProductController {
         try {
             String uploadFolder = context.getRealPath("/images/products");
 
+            
             String[] allVariantNames = variantNames;
             Integer[] allVariantStocks = variantStocks;
 
@@ -135,13 +136,13 @@ public class AdminProductController {
             int stock = adminProductDao.getTotalStockByProductId(p.getId());
             stockMap.put(p.getId(), stock);
         }
-     // Láº¥y danh sÃ¡ch product ID
+     // Lấy danh sách product ID
         List<Integer> productIds = new java.util.ArrayList<>();
         for (ProductsEntity p : products) {
             productIds.add(p.getId());
         }
 
-        // Láº¥y variants theo tá»«ng product
+        // Lấy variants theo từng product
         Map<Integer, List<Map<String, Object>>> variantsMap =
             productIds.isEmpty() ? new HashMap<>() :
             adminProductDao.getVariantsByProductIds(productIds);

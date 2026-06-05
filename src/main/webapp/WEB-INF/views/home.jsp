@@ -65,7 +65,7 @@
         body { top: 0px !important; }
     </style>
 </head>
-<body>
+<body class="${sessionScope.theme == 'dark' ? 'dark-mode' : ''}">
     <div class="black-top-bar"></div>
 
    <%@include file="/WEB-INF/views/includes/header.jsp" %>
