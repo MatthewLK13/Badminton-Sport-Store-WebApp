@@ -1,10 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Sản phẩm yêu thích - Yonex</title>
+<title><spring:message code="wishlist.title" text="My Wishlist" /> - Yonex</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
@@ -13,20 +14,20 @@
 
 <div class="breadcrumb-container">
     <div class="breadcrumb-content">
-        <a href="${pageContext.request.contextPath}/home.htm">Trang chủ</a>
+        <a href="${pageContext.request.contextPath}/home.htm"><spring:message code="nav.home" text="Home" /></a>
         <span class="breadcrumb-separator">></span>
-        <span class="active">Yêu thích</span>
+        <span class="active"><spring:message code="breadcrumb.wishlist" text="Wishlist" /></span>
     </div>
 </div>
 
 <div class="wishlist-page-container" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
-    <h1 style="margin-bottom: 30px;">SẢN PHẨM YÊU THÍCH</h1>
+    <h1 style="margin-bottom: 30px;"><spring:message code="wishlist.page.title" text="MY WISHLIST" /></h1>
 
     <c:choose>
         <c:when test="${empty wishlistItems}">
             <div style="text-align: center; padding: 60px 20px;">
-                <p style="font-size: 18px; color: #666;">Chưa có sản phẩm yêu thích</p>
-                <a href="${pageContext.request.contextPath}/home.htm" style="display: inline-block; margin-top: 20px; padding: 12px 30px; background: #000; color: #fff; text-decoration: none;">Khám phá sản phẩm</a>
+                <p style="font-size: 18px; color: #666;"><spring:message code="wishlist.empty" text="Your wishlist is empty" /></p>
+                <a href="${pageContext.request.contextPath}/home.htm" style="display: inline-block; margin-top: 20px; padding: 12px 30px; background: #000; color: #fff; text-decoration: none;"><spring:message code="wishlist.explore" text="Explore products" /></a>
             </div>
         </c:when>
         <c:otherwise>

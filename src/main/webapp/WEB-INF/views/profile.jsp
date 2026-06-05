@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="${pageContext.response.locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang cá nhân - Yonex</title>
+    <title><spring:message code="profile.page.title" text="My Profile" /> - Yonex</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
@@ -214,14 +215,14 @@
 
     <!-- Breadcrumb -->
     <div class="breadcrumb">
-        <a href="${pageContext.request.contextPath}/home.htm">Trang chủ</a>
+        <a href="${pageContext.request.contextPath}/home.htm"><spring:message code="nav.home" text="Home" /></a>
         <i class="fa-solid fa-chevron-right"></i>
-        <span>Trang cá nhân</span>
+        <span><spring:message code="breadcrumb.profile" text="My Profile" /></span>
     </div>
 
     <!-- Lời chào -->
     <div class="greeting">
-        Xin chào, <strong>${user.fullName}</strong>
+        <spring:message code="profile.greeting" text="Hello" />, <strong>${user.fullName}</strong>
     </div>
 
     <!-- Layout 2 cột -->
@@ -229,7 +230,7 @@
 
         <!-- PANEL TRÁI: Thông tin tài khoản -->
         <div class="profile-card">
-            <div class="profile-card-title">THÔNG TIN TÀI KHOẢN</div>
+            <div class="profile-card-title"><spring:message code="profile.account.title" text="ACCOUNT INFORMATION" /></div>
             <div class="dots">
                 <div class="dot"></div>
                 <div class="dot gray"></div>
@@ -240,7 +241,7 @@
             <div class="info-row">
                 <i class="fa-regular fa-user"></i>
                 <div>
-                    <div class="info-label">Họ, tên</div>
+                    <div class="info-label"><spring:message code="profile.label.name" text="Full name" /></div>
                     <div class="info-value">${user.fullName}</div>
                 </div>
             </div>
@@ -249,7 +250,7 @@
             <div class="info-row">
                 <i class="fa-solid fa-phone"></i>
                 <div>
-                    <div class="info-label">Điện thoại</div>
+                    <div class="info-label"><spring:message code="profile.label.phone" text="Phone" /></div>
                     <div class="info-value">${user.phone}</div>
                 </div>
             </div>
@@ -258,9 +259,9 @@
             <div class="info-row">
                 <i class="fa-solid fa-location-dot"></i>
                 <div>
-                    <div class="info-label">Địa chỉ</div>
+                    <div class="info-label"><spring:message code="profile.label.address" text="Address" /></div>
                     <div class="info-value">
-                        ${not empty user.address ? user.address : 'Chưa cập nhật'}
+                        ${not empty user.address ? user.address : ''}<c:if test="${empty user.address}"><spring:message code="profile.not.updated" text="Not updated yet" /></c:if>
                     </div>
                 </div>
             </div>
@@ -276,19 +277,19 @@
             <div class="info-row">
                 <i class="fa-regular fa-envelope"></i>
                 <div>
-                    <div class="info-label">Email</div>
+                    <div class="info-label"><spring:message code="profile.label.email" text="Email" /></div>
                     <div class="info-value">${user.email}</div>
                 </div>
             </div>
 
             <!-- Form sửa -->
-            <div style="margin-top:20px; font-weight: bold;">Sửa thông tin cá nhân:</div>
+            <div style="margin-top:20px; font-weight: bold;"><spring:message code="profile.edit.section" text="Edit profile" />:</div>
             <div class="edit-form active" id="editForm" style="display:block;">
                 <form action="${pageContext.request.contextPath}/profile.htm" method="post">
-                    <input type="text" name="fullname" value="${user.fullName}" placeholder="Họ và tên" required>
-                    <input type="text" name="phone" value="${user.phone}" placeholder="Số điện thoại" required>
-                    <input type="text" name="address" value="${user.address}" placeholder="Địa chỉ">
-                    <button type="submit" class="btn-save">Lưu thay đổi</button>
+                    <input type="text" name="fullname" value="${user.fullName}" placeholder="<spring:message code='profile.fullname' text='Full Name' />" required>
+                    <input type="text" name="phone" value="${user.phone}" placeholder="<spring:message code='profile.phone' text='Phone' />" required>
+                    <input type="text" name="address" value="${user.address}" placeholder="<spring:message code='profile.address' text='Address' />">
+                    <button type="submit" class="btn-save"><spring:message code="profile.save" text="Save changes" /></button>
                 </form>
             </div>
         </div>
@@ -296,9 +297,9 @@
         <!-- PANEL PHẢI: Đơn hàng -->
         <div class="orders-panel">
             <div class="orders-title" style="display: flex; justify-content: space-between; align-items: center;">
-                <span>ĐƠN HÀNG CỦA BẠN</span>
+                <span><spring:message code="profile.orders.title" text="YOUR ORDERS" /></span>
                 <a href="${pageContext.request.contextPath}/order/history.htm" style="font-size: 12px; font-weight: 600; color: #e36009; text-decoration: none;">
-                    Xem tất cả <i class="fa-solid fa-arrow-right"></i>
+                    <spring:message code="profile.view.all" text="View all" /> <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>
             <table class="orders-table">

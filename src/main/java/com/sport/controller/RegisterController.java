@@ -3,6 +3,7 @@ package com.sport.controller;
 import com.sport.dao.UserDAO;
 import com.sport.entity.Role;
 import com.sport.util.PasswordUtil;
+import com.sport.util.LocaleUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.sport.model.User;
@@ -36,6 +38,7 @@ public class RegisterController {
             @ModelAttribute("user") @Valid User user,
             @RequestParam("confirmPassword") String repass,
             BindingResult result,
+            HttpServletRequest request,
             Model model) {
 
         if (result.hasErrors()) {
@@ -44,7 +47,7 @@ public class RegisterController {
         }
 
         if (!repass.equals(user.getPassword())) {
-            model.addAttribute("error", "Mật khẩu xác nhận không khớp!");
+            model.addAttribute("error", LocaleUtils.msg(request, "validation.password.mismatch"));
             return "register";
         }
 
@@ -52,12 +55,12 @@ public class RegisterController {
         String phone = user.getPhone().trim();
 
         if (userDAO.existsByEmail(email)) {
-            model.addAttribute("error", "Email này đã được đăng ký!");
+            model.addAttribute("error", LocaleUtils.msg(request, "auth.register.exists"));
             return "register";
         }
 
         if (userDAO.existsByPhone(phone)) {
-            model.addAttribute("error", "Số điện thoại này đã được đăng ký!");
+            model.addAttribute("error", LocaleUtils.msg(request, "auth.register.phone.exists"));
             return "register";
         }
 
@@ -91,7 +94,7 @@ public class RegisterController {
             e.printStackTrace();
         }
 
-        model.addAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
+        model.addAttribute("success", LocaleUtils.msg(request, "auth.register.success"));
         return "redirect:/login.htm";
     }
 }

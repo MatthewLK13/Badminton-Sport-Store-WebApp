@@ -10,6 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
+import com.sport.util.LocaleUtils;
+
 @Controller
 public class ResetPasswordController {
 
@@ -20,11 +24,11 @@ public class ResetPasswordController {
     private PasswordResetTokenService tokenService;
 
     @RequestMapping(value = "/reset-password.htm", method = RequestMethod.GET)
-    public String showResetForm(@RequestParam("token") String token, Model model) {
+    public String showResetForm(@RequestParam("token") String token, HttpServletRequest request, Model model) {
         Integer userId = tokenService.validateToken(token);
 
         if (userId == null) {
-            model.addAttribute("error", "Link reset password không hợp lệ hoặc đã hết hạn!");
+            model.addAttribute("error", LocaleUtils.msg(request, "auth.reset.error"));
             return "reset_password"; // Will show error page
         }
 
@@ -37,31 +41,32 @@ public class ResetPasswordController {
             @RequestParam("token") String token,
             @RequestParam("password") String password,
             @RequestParam("confirmPassword") String confirmPassword,
+            HttpServletRequest request,
             Model model) {
 
         Integer userId = tokenService.validateToken(token);
 
         if (userId == null) {
-            model.addAttribute("error", "Link reset password không hợp lệ hoặc đã hết hạn!");
+            model.addAttribute("error", LocaleUtils.msg(request, "auth.reset.error"));
             return "reset_password";
         }
 
         // Validate passwords
         if (password == null || password.trim().isEmpty()) {
-            model.addAttribute("error", "Vui lòng nhập mật khẩu mới!");
+            model.addAttribute("error", LocaleUtils.msg(request, "auth.reset.password.required"));
             model.addAttribute("token", token);
             return "reset_password";
         }
 
         String passRegex = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,}$";
         if (!password.matches(passRegex)) {
-            model.addAttribute("error", "Mật khẩu phải >= 6 ký tự, gồm cả chữ và số!");
+            model.addAttribute("error", LocaleUtils.msg(request, "auth.reset.password.pattern"));
             model.addAttribute("token", token);
             return "reset_password";
         }
 
         if (!password.equals(confirmPassword)) {
-            model.addAttribute("error", "Mật khẩu xác nhận không khớp!");
+            model.addAttribute("error", LocaleUtils.msg(request, "validation.password.mismatch"));
             model.addAttribute("token", token);
             return "reset_password";
         }
@@ -69,7 +74,7 @@ public class ResetPasswordController {
         // Get user and update password
         User user = userDAO.getUserById(userId);
         if (user == null) {
-            model.addAttribute("error", "Tài khoản không tồn tại!");
+            model.addAttribute("error", LocaleUtils.msg(request, "auth.reset.account.notfound"));
             return "reset_password";
         }
 
@@ -81,7 +86,7 @@ public class ResetPasswordController {
         // Remove used token
         tokenService.removeToken(token);
 
-        model.addAttribute("success", "Đặt lại mật khẩu thành công! Vui lòng đăng nhập.");
+        model.addAttribute("success", LocaleUtils.msg(request, "auth.reset.success"));
         return "login";
     }
 }

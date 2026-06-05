@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!-- Form nhập liệu -->
 <div class="checkout-form-section">
     <!-- Error message display -->
@@ -13,13 +14,13 @@
     <!-- Form này sẽ submit về đường dẫn /checkout.htm bằng phương thức POST -->
     <form:form action="${pageContext.request.contextPath}/checkout.htm" method="POST" modelAttribute="checkoutDTO">
 
-        <h2 class="section-title">Contact</h2>
+        <h2 class="section-title"><spring:message code="checkout.section.contact" text="Contact" /></h2>
         <div class="form-group">
             <form:input type="email" path="email" placeholder="Email" />
             <form:errors path="email" cssClass="field-error" />
         </div>
 
-        <h2 class="section-title">Delivery</h2>
+        <h2 class="section-title"><spring:message code="checkout.section.delivery" text="Delivery" /></h2>
         <div class="form-group">
             <form:select path="region">
                 <form:option value="Hồ Chí Minh">Hồ Chí Minh</form:option>

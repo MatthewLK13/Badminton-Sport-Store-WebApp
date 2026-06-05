@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,20 +14,20 @@
 
 <div class="breadcrumb-container">
     <div class="breadcrumb-content">
-        <a href="${pageContext.request.contextPath}/home.htm">Trang chủ</a>
+        <a href="${pageContext.request.contextPath}/home.htm"><spring:message code="nav.home" text="Home" /></a>
         <span class="breadcrumb-separator">></span>
-        <span class="active">Tìm kiếm: ${query}</span>
+        <span class="active"><spring:message code="search.results.for" text="Search" />: ${query}</span>
     </div>
 </div>
 
 <div class="search-results-container" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
-    <h1 style="margin-bottom: 30px;">KẾT QUẢ TÌM KIẾM: "${query}"</h1>
+    <h1 style="margin-bottom: 30px;"><spring:message code="search.results.for" text="Search results" />: "${query}"</h1>
 
     <c:choose>
         <c:when test="${empty searchResults}">
             <div style="text-align: center; padding: 60px 20px;">
-                <p style="font-size: 18px; color: #666;">Không tìm thấy sản phẩm nào phù hợp với "${query}"</p>
-                <a href="${pageContext.request.contextPath}/home.htm" style="display: inline-block; margin-top: 20px; padding: 12px 30px; background: #000; color: #fff; text-decoration: none;">Tiếp tục mua sắm</a>
+                <p style="font-size: 18px; color: #666;"><spring:message code="search.no.match" arguments="${query}" text="No products found" /></p>
+                <a href="${pageContext.request.contextPath}/home.htm" style="display: inline-block; margin-top: 20px; padding: 12px 30px; background: #000; color: #fff; text-decoration: none;"><spring:message code="cart.continue" text="Continue Shopping" /></a>
             </div>
         </c:when>
         <c:otherwise>

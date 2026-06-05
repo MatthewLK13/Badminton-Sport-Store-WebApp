@@ -6,6 +6,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 
@@ -103,16 +105,19 @@ public class LocaleUtils implements ApplicationContextAware {
     }
 
     public static Locale getCurrentLocale(HttpServletRequest request) {
-        if (request != null && request.getSession(false) != null) {
-            Locale sessionLocale = (Locale) request.getSession(false).getAttribute("locale");
-            if (sessionLocale != null) {
-                return sessionLocale;
+        if (request != null) {
+            Locale resolved = RequestContextUtils.getLocale(request);
+            if (resolved != null) {
+                return resolved;
+            }
+            if (request.getSession(false) != null) {
+                Locale sessionLocale = (Locale) request.getSession(false).getAttribute("locale");
+                if (sessionLocale != null) {
+                    return sessionLocale;
+                }
             }
         }
-        if (request != null) {
-            return request.getLocale();
-        }
-        return Locale.getDefault();
+        return new Locale("vi");
     }
 
     public static String getCurrentLanguage(HttpServletRequest request) {
@@ -122,5 +127,13 @@ public class LocaleUtils implements ApplicationContextAware {
 
     public static boolean isVietnamese(HttpServletRequest request) {
         return "vi".equals(getCurrentLanguage(request));
+    }
+
+    public static String msg(HttpServletRequest request, String code) {
+        return getMessage(request, code, code);
+    }
+
+    public static String msg(HttpServletRequest request, String code, Object[] args) {
+        return getMessage(request, code, args, code);
     }
 }

@@ -2,8 +2,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="${pageContext.response.locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,7 +79,7 @@
     </c:if>
 
     <div class="top-banner">
-        Đơn hàng có thể giao chậm trong các dịp lễ Tết. Mong quý khách thông cảm. Hân hạnh được phục vụ quý khách
+        <spring:message code="home.banner.holiday" text="Orders may be delivered late during holidays." />
     </div>
 
     <section class="hero-section">
@@ -86,11 +87,11 @@
             <h2>PLACE FOR ALL MEMBERS</h2>
            <div class="figma-banner-buttons">
         <a href="${pageContext.request.contextPath}/products/index.htm?id=1" class="figma-btn btn-explore">
-            KHÁM PHÁ NGAY &nbsp;→
+            <spring:message code="home.hero.explore" text="EXPLORE NOW" /> &nbsp;→
         </a>
 
         <a href="${pageContext.request.contextPath}/search.htm?q=sale" class="figma-btn btn-buy">
-            MUA NGAY &nbsp;→
+            <spring:message code="home.hero.buy" text="BUY NOW" /> &nbsp;→
         </a>
     </div>
         </div>

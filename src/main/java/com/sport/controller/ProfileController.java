@@ -1,5 +1,6 @@
 package com.sport.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.sport.dao.UserDAO;
 import com.sport.dao.OrderDAO;
 import com.sport.entity.User;
+import com.sport.util.LocaleUtils;
 
 @Controller
 public class ProfileController {
@@ -41,6 +43,7 @@ public class ProfileController {
             @RequestParam("fullname") String fullname,
             @RequestParam("phone") String phone,
             @RequestParam(value = "address", required = false) String address,
+            HttpServletRequest request,
             HttpSession session,
             Model model) {
 
@@ -56,13 +59,13 @@ public class ProfileController {
         String phoneRegex = "^[0-9]{10}$";
 
         if (fullname.isEmpty()) {
-            model.addAttribute("error", "Họ và tên không được để trống!");
+            model.addAttribute("error", LocaleUtils.msg(request, "validation.name.required"));
             model.addAttribute("user", user);
             return "profile";
         }
 
         if (!phone.matches(phoneRegex)) {
-            model.addAttribute("error", "Số điện thoại phải gồm đúng 10 chữ số!");
+            model.addAttribute("error", LocaleUtils.msg(request, "validation.phone.invalid"));
             model.addAttribute("user", user);
             return "profile";
         }
@@ -81,7 +84,7 @@ public class ProfileController {
         session.setAttribute("user", user);
 
         model.addAttribute("user", user);
-        model.addAttribute("success", "Cập nhật thông tin thành công!");
+        model.addAttribute("success", LocaleUtils.msg(request, "profile.update.success"));
         return "profile";
     }
 }

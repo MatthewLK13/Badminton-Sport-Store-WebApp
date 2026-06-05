@@ -3,7 +3,7 @@ package com.sport.controller;
 import com.sport.dao.UserDAO;
 import com.sport.entity.User;
 import com.sport.service.PasswordResetTokenService;
-import com.sport.util.PasswordUtil;
+import com.sport.util.LocaleUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,7 +38,7 @@ public class ForgotController {
                         HttpServletRequest request) {
 
         if (identifier == null || identifier.trim().isEmpty()) {
-            model.addAttribute("error", "Vui lòng nhập Email hoặc Số điện thoại!");
+            model.addAttribute("error", LocaleUtils.msg(request, "auth.forgot.identifier.required"));
             return "forgot";
         }
 
@@ -80,16 +80,16 @@ public class ForgotController {
 
                 mailSender.send(message);
                 model.addAttribute("success",
-                    "Đã gửi link reset password về email: " + user.getEmail());
+                    LocaleUtils.msg(request, "auth.forgot.success.sent", new Object[] { user.getEmail() }));
             } catch (Exception e) {
                 e.printStackTrace();
-                model.addAttribute("error", "Không thể gửi email. Vui lòng thử lại sau.");
+                model.addAttribute("error", LocaleUtils.msg(request, "auth.forgot.email.failed"));
                 return "forgot";
             }
             return "forgot";
         }
 
-        model.addAttribute("error", "Không tìm thấy tài khoản với thông tin này!");
+        model.addAttribute("error", LocaleUtils.msg(request, "auth.forgot.error"));
         return "forgot";
     }
 }

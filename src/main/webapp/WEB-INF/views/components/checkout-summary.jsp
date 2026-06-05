@@ -1,11 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!-- Cột tóm tắt đơn hàng bên phải -->
 <div class="checkout-summary-section">
     <c:choose>
         <c:when test="${empty cartItems}">
-            <p style="text-align: center; color: #666;">Giỏ hàng trống</p>
+            <p style="text-align: center; color: #666;"><spring:message code="cart.empty" text="Your cart is empty" /></p>
         </c:when>
         <c:otherwise>
             <c:forEach var="item" items="${cartItems}">
@@ -34,7 +35,7 @@
                 </div>
                 <div class="summary-row">
                     <span>Shipping</span>
-                    <span style="font-size:12px; color:#666;">Miễn phí</span>
+                    <span style="font-size:12px; color:#666;"><spring:message code="checkout.shipping.free" text="Free" /></span>
                 </div>
                 <div class="summary-row total">
                     <span>Total</span>

@@ -1,5 +1,6 @@
 package com.sport.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.sport.service.GeminiService;
+import com.sport.util.LocaleUtils;
 
 @Controller
 public class ChatbotPageController {
@@ -26,6 +28,7 @@ public class ChatbotPageController {
     @RequestMapping(value = "/chatbot.htm", method = RequestMethod.POST)
     public String sendMessage(
             @RequestParam("message") String message,
+            HttpServletRequest request,
             HttpSession session,
             Model model) {
 
@@ -38,7 +41,8 @@ public class ChatbotPageController {
         }
 
         // Get bot response (pass history BEFORE adding current user message)
-        String botReply = geminiService.getChatbotResponse(message, chatHistory);
+        String lang = LocaleUtils.getCurrentLanguage(request);
+        String botReply = geminiService.getChatbotResponse(message, chatHistory, lang);
 
         // Add user message to history
         java.util.Map<String, String> userMsg = new java.util.HashMap<>();

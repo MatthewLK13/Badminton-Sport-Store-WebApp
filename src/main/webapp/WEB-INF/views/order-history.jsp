@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="${pageContext.response.locale.language}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lịch sử đơn hàng - Yonex</title>
+    <title><spring:message code="order.history.page" text="Order History" /> - Yonex</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
@@ -144,12 +145,12 @@
     <jsp:include page="includes/header.jsp" />
 
     <div class="breadcrumb">
-        <a href="${pageContext.request.contextPath}/home.htm">Trang chủ</a>
+        <a href="${pageContext.request.contextPath}/home.htm"><spring:message code="nav.home" text="Home" /></a>
         <i class="fa-solid fa-chevron-right"></i>
-        <span>Lịch sử đơn hàng</span>
+        <span><spring:message code="breadcrumb.orders" text="Order History" /></span>
     </div>
 
-    <h1 class="page-title">Lịch sử đơn hàng</h1>
+    <h1 class="page-title"><spring:message code="order.history.page" text="Order History" /></h1>
 
     <div class="orders-container">
         <c:choose>
@@ -157,12 +158,12 @@
                 <table class="orders-table">
                     <thead>
                         <tr>
-                            <th>Mã đơn</th>
-                            <th>Ngày đặt</th>
-                            <th>Địa chỉ giao hàng</th>
-                            <th>Tổng tiền</th>
-                            <th>Tình trạng</th>
-                            <th>Thao tác</th>
+                            <th><spring:message code="order.col.id" text="Order ID" /></th>
+                            <th><spring:message code="order.col.date" text="Date" /></th>
+                            <th><spring:message code="order.col.address" text="Shipping address" /></th>
+                            <th><spring:message code="order.col.total" text="Total" /></th>
+                            <th><spring:message code="order.col.status.detail" text="Status" /></th>
+                            <th><spring:message code="order.col.action" text="Action" /></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -172,7 +173,7 @@
                                 <td>
                                     <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy HH:mm"/>
                                     <div class="order-items-summary">
-                                        ${order.orderItems.size()} sản phẩm
+                                        <spring:message code="order.items.count" arguments="${order.orderItems.size}" text="${order.orderItems.size} items" />
                                     </div>
                                 </td>
                                 <td>${order.address}, ${order.city}</td>
@@ -182,34 +183,34 @@
                                 <td>
                                     <c:choose>
                                         <c:when test="${order.status == 0}">
-                                            <span class="badge badge-pending">Chờ xác nhận</span>
+                                            <span class="badge badge-pending"><spring:message code="order.pending" text="Pending" /></span>
                                         </c:when>
                                         <c:when test="${order.status == 1}">
-                                            <span class="badge badge-pending">Đã xác nhận</span>
+                                            <span class="badge badge-pending"><spring:message code="order.confirmed" text="Confirmed" /></span>
                                         </c:when>
                                         <c:when test="${order.status == 2}">
-                                            <span class="badge badge-shipping">Đang giao hàng</span>
+                                            <span class="badge badge-shipping"><spring:message code="order.shipping" text="Shipping" /></span>
                                         </c:when>
                                         <c:when test="${order.status == 3}">
-                                            <span class="badge badge-done">Đã giao hàng</span>
+                                            <span class="badge badge-done"><spring:message code="order.delivered" text="Delivered" /></span>
                                         </c:when>
                                         <c:when test="${order.status == 4}">
-                                            <span class="badge badge-cancel">Đã hủy</span>
+                                            <span class="badge badge-cancel"><spring:message code="order.cancelled" text="Cancelled" /></span>
                                         </c:when>
                                         <c:when test="${order.status == -1}">
-                                            <span class="badge badge-cancel">Đã hủy</span>
+                                            <span class="badge badge-cancel"><spring:message code="order.cancelled" text="Cancelled" /></span>
                                         </c:when>
                                     </c:choose>
                                 </td>
                                 <td>
                                     <a href="${pageContext.request.contextPath}/order/detail.htm?id=${order.id}" class="btn-view">
-                                        <i class="fa-solid fa-eye"></i> Xem
+                                        <i class="fa-solid fa-eye"></i> <spring:message code="order.view" text="View" />
                                     </a>
                                     <c:if test="${order.status == 0}">
                                         <form action="${pageContext.request.contextPath}/order/cancel.htm" method="post" style="display:inline;">
                                             <input type="hidden" name="orderId" value="${order.id}">
                                             <button type="submit" class="btn-cancel">
-                                                <i class="fa-solid fa-times"></i> Hủy
+                                                <i class="fa-solid fa-times"></i> <spring:message code="order.cancel.btn" text="Cancel" />
                                             </button>
                                         </form>
                                     </c:if>
@@ -222,8 +223,8 @@
             <c:otherwise>
                 <div class="empty-orders">
                     <i class="fa-regular fa-folder-open"></i>
-                    <p>Chưa có đơn hàng nào</p>
-                    <a href="${pageContext.request.contextPath}/home.htm">Khám phá sản phẩm</a>
+                    <p><spring:message code="order.empty" text="You have no orders yet" /></p>
+                    <a href="${pageContext.request.contextPath}/home.htm"><spring:message code="order.empty.shop" text="Start shopping" /></a>
                 </div>
             </c:otherwise>
         </c:choose>

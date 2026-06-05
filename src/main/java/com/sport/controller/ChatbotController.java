@@ -1,5 +1,6 @@
 package com.sport.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.sport.service.GeminiService;
 import com.sport.entity.ProductsEntity;
+import com.sport.util.LocaleUtils;
 
 import java.util.*;
 
@@ -23,6 +25,7 @@ public class ChatbotController {
     @RequestMapping(value = "/chatbot.htm", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> chat(@RequestParam("message") String message,
+                                   HttpServletRequest request,
                                    HttpSession session) {
         Map<String, Object> response = new HashMap<>();
 
@@ -36,7 +39,8 @@ public class ChatbotController {
         }
 
         // Call Gemini API
-        GeminiService.GeminiResponse geminiResponse = geminiService.generateResponse(message, history);
+        String lang = LocaleUtils.getCurrentLanguage(request);
+        GeminiService.GeminiResponse geminiResponse = geminiService.generateResponse(message, history, lang);
 
         String reply = geminiResponse.getReply();
 
@@ -76,11 +80,14 @@ public class ChatbotController {
     // Endpoint to reset conversation
     @RequestMapping(value = "/chatbot/reset.htm", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> resetChat(HttpSession session) {
+    public Map<String, Object> resetChat(HttpServletRequest request, HttpSession session) {
         session.removeAttribute(CHAT_HISTORY);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("reply", "Da reset cuoc tro chuyen. Ban co the bat dau lai!");
+        boolean english = "en".equals(LocaleUtils.getCurrentLanguage(request));
+        response.put("reply", english
+            ? "Conversation reset. You can start again!"
+            : "Da reset cuoc tro chuyen. Ban co the bat dau lai!");
         return response;
     }
 }

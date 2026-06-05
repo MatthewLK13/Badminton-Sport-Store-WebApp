@@ -32,6 +32,7 @@ public class LocaleController {
         }
 
         localeResolver.setLocale(request, response, locale);
+        request.getSession(true).setAttribute("locale", locale);
 
         if (redirect != null && !redirect.isEmpty()) {
             return "redirect:" + redirect;

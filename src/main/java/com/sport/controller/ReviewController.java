@@ -1,5 +1,6 @@
 package com.sport.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.sport.util.LocaleUtils;
+
 @Controller
 @RequestMapping("/review")
 public class ReviewController {
@@ -29,6 +32,7 @@ public class ReviewController {
     public String addReview(@RequestParam("productId") int productId,
                            @RequestParam("rating") int rating,
                            @RequestParam("comment") String comment,
+                           HttpServletRequest request,
                            HttpSession session,
                            org.springframework.ui.Model model) {
         User user = (User) session.getAttribute("user");
@@ -37,13 +41,13 @@ public class ReviewController {
         }
 
         if (rating < 1 || rating > 5) {
-            model.addAttribute("error", "Rating must be between 1 and 5");
+            model.addAttribute("error", LocaleUtils.msg(request, "review.rating.invalid"));
             return "redirect:/products/details.htm?id=" + productId;
         }
 
         // Check if user already reviewed this product
         if (reviewDao.hasUserReviewed(user.getId(), productId)) {
-            model.addAttribute("error", "You have already reviewed this product");
+            model.addAttribute("error", LocaleUtils.msg(request, "review.exists"));
             return "redirect:/products/details.htm?id=" + productId;
         }
 

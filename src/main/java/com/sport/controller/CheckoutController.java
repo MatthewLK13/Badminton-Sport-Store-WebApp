@@ -1,5 +1,6 @@
 package com.sport.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -24,6 +25,7 @@ import com.sport.entity.User;
 import com.sport.entity.CartEntity;
 import com.sport.entity.ProductVariantsEntity;
 import com.sport.entity.ProductsEntity;
+import com.sport.util.LocaleUtils;
 
 @Controller
 @RequestMapping("/checkout.htm")
@@ -81,7 +83,7 @@ public class CheckoutController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String processCheckout(@Valid @ModelAttribute("checkoutDTO") CheckoutDTO checkoutData, BindingResult bindingResult,
-			HttpSession session, Model model) {
+			HttpServletRequest request, HttpSession session, Model model) {
 		User user = (User) session.getAttribute("user");
 		if (user == null) {
 			return "redirect:/login.htm";
@@ -112,14 +114,14 @@ public class CheckoutController {
 			}
 			model.addAttribute("cartItems", cartItems);
 			model.addAttribute("cartTotal", String.format("%.2f", cartTotal));
-			model.addAttribute("error", "Vui lòng kiểm tra lại thông tin!");
+			model.addAttribute("error", LocaleUtils.msg(request, "checkout.error.review"));
 			return "checkout";
 		}
 
 		// Get cart items
 		List<CartEntity> cartItems = cartDao.getByUserId(user.getId());
 		if (cartItems == null || cartItems.isEmpty()) {
-			model.addAttribute("error", "Giỏ hàng trống!");
+			model.addAttribute("error", LocaleUtils.msg(request, "cart.empty"));
 			return "checkout";
 		}
 
@@ -132,7 +134,7 @@ public class CheckoutController {
 		}
 
 		session.setAttribute("cartCount", 0);
-		session.setAttribute("checkoutSuccess", "Đặt hàng thành công! Cảm ơn bạn đã đặt hàng.");
+		session.setAttribute("checkoutSuccess", LocaleUtils.msg(request, "checkout.success.thankyou"));
 
 		System.out.println("LƯU ĐƠN HÀNG THÀNH CÔNG VỚI USER_ID: " + user.getId());
 		return "redirect:/home.htm";

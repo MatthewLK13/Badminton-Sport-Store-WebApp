@@ -1,5 +1,6 @@
 package com.sport.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import com.sport.dao.UserDAO;
 import com.sport.dao.WishlistDao;
 import com.sport.entity.User;
 import com.sport.util.PasswordUtil;
+import com.sport.util.LocaleUtils;
 
 @Controller
 public class LoginController {
@@ -34,6 +36,7 @@ public class LoginController {
     public String login(
             @RequestParam("username") String username,
             @RequestParam("password") String password,
+            HttpServletRequest request,
             HttpSession session,
             Model model) {
 
@@ -75,7 +78,7 @@ public class LoginController {
             }
         }
 
-        model.addAttribute("error", "Sai tài khoản hoặc mật khẩu!");
+        model.addAttribute("error", LocaleUtils.msg(request, "auth.login.error"));
         return "login";
     }
-}
+}

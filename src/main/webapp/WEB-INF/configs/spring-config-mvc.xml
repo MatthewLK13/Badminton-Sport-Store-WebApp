@@ -53,11 +53,12 @@
 		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
 	</bean>
 
-	<!-- Message source for validation messages and i18n -->
+	<!-- Message source for i18n (JSP spring:message, LocaleUtils) -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="basename" value="messages"/>
 		<property name="defaultEncoding" value="UTF-8"/>
-		<property name="fallbackToSystemLocale" value="true"/>
+		<property name="useCodeAsDefaultMessage" value="false"/>
+		<property name="fallbackToSystemLocale" value="false"/>
 	</bean>
 
 	<!-- Locale Resolver cho Đa ngôn ngữ -->

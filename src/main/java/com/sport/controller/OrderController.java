@@ -1,5 +1,6 @@
 package com.sport.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,6 +13,8 @@ import com.sport.entity.Order;
 import com.sport.entity.OrderItemEntity;
 import com.sport.entity.User;
 import java.util.List;
+
+import com.sport.util.LocaleUtils;
 
 @Controller
 @RequestMapping("/order")
@@ -52,7 +55,7 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/cancel.htm", method = RequestMethod.POST)
-    public String cancelOrder(@RequestParam("orderId") Integer orderId, HttpSession session, org.springframework.ui.Model model) {
+    public String cancelOrder(@RequestParam("orderId") Integer orderId, HttpServletRequest request, HttpSession session, org.springframework.ui.Model model) {
         User user = (User) session.getAttribute("user");
         if (user == null) {
             return "redirect:/login.htm";
@@ -66,7 +69,7 @@ public class OrderController {
 
         // Only pending orders (status=0) can be cancelled
         if (order.getStatus() != 0) {
-            model.addAttribute("error", "Chỉ có thể hủy đơn hàng đang chờ xác nhận!");
+            model.addAttribute("error", LocaleUtils.msg(request, "order.cancel.warning"));
             model.addAttribute("orders", orderDAO.findByUserId(user.getId()));
             return "order-history";
         }
@@ -74,12 +77,12 @@ public class OrderController {
         // Cancel order via Transactional Service
         boolean success = orderService.cancelOrderByUser(orderId, user.getId());
         if (!success) {
-            model.addAttribute("error", "Không thể hủy đơn hàng. Vui lòng thử lại!");
+            model.addAttribute("error", LocaleUtils.msg(request, "order.cancel.error"));
             model.addAttribute("orders", orderDAO.findByUserId(user.getId()));
             return "order-history";
         }
 
-        model.addAttribute("success", "Đơn hàng đã được hủy thành công!");
+        model.addAttribute("success", LocaleUtils.msg(request, "order.cancel.success"));
         model.addAttribute("orders", orderDAO.findByUserId(user.getId()));
         return "order-history";
     }
