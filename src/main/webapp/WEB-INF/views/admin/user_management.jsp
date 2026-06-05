@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý người dùng - Yonex Admin</title>
+    <title>Quáº£n lÃ½ ngÆ°á»i dÃ¹ng - Yonex Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -103,6 +103,11 @@
             <li class="menu-item active"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
         </ul>
+        <div class="logout-container" style="margin-top: auto; padding-top: 20px;">
+            <a href="${pageContext.request.contextPath}/logout.htm" style="display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; color: #e74c3c; font-weight: 600; padding: 12px; border-radius: 15px; background: #ffebeb; transition: all 0.3s; width: 100%;">
+                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+            </a>
+        </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -110,10 +115,10 @@
         <div class="topbar">
             <div class="search-top">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Tìm kiếm...">
+                <input type="text" placeholder="TÃ¬m kiáº¿m...">
             </div>
             <div class="admin-profile">
-                <span>Admin</span>
+                <span>`${sessionScope.user.fullName}</span>
                 <i class="fa-solid fa-circle-user"></i>
             </div>
         </div>
@@ -199,7 +204,7 @@
                                 <c:if test="${user.isActive == true}">
                                     <form action="${pageContext.request.contextPath}/admin/user/lock.htm" method="post" style="display:inline;">
                                         <input type="hidden" name="userId" value="${user.id}"/>
-                                        <button type="submit" class="btn-action btn-lock" title="Khóa">
+                                        <button type="submit" class="btn-action btn-lock" title="KhÃ³a">
                                             <i class="fa-solid fa-lock"></i>
                                         </button>
                                     </form>
@@ -207,14 +212,14 @@
                                 <c:if test="${user.isActive == false}">
                                     <form action="${pageContext.request.contextPath}/admin/user/unlock.htm" method="post" style="display:inline;">
                                         <input type="hidden" name="userId" value="${user.id}"/>
-                                        <button type="submit" class="btn-action btn-unlock" title="Mở khóa">
+                                        <button type="submit" class="btn-action btn-unlock" title="Má»Ÿ khÃ³a">
                                             <i class="fa-solid fa-unlock"></i>
                                         </button>
                                     </form>
                                 </c:if>
                                 <form action="${pageContext.request.contextPath}/admin/user/delete.htm" method="post" style="display:inline;">
                                     <input type="hidden" name="userId" value="${user.id}"/>
-                                    <button type="submit" class="btn-action btn-delete" title="Xóa">
+                                    <button type="submit" class="btn-action btn-delete" title="XÃ³a">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
@@ -223,7 +228,7 @@
                     </c:forEach>
                     <c:if test="${empty users}">
                         <tr>
-                            <td colspan="7" style="text-align: center; color: #8e8e8e;">Chưa có người dùng nào!</td>
+                            <td colspan="7" style="text-align: center; color: #8e8e8e;">ChÆ°a cÃ³ ngÆ°á»i dÃ¹ng nÃ o!</td>
                         </tr>
                     </c:if>
                 </tbody>
@@ -233,3 +238,6 @@
 
 </body>
 </html>
+
+
+

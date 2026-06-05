@@ -20,7 +20,6 @@ public class OrderDAO {
 	public void saveOrder(Order order) {
 		Session session = sessionFactory.getCurrentSession();
 		session.save(order);
-		// Cascade will save order items automatically due to FetchType.LAZY + CascadeType.ALL
 	}
 
 	@Transactional

@@ -1,11 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý sản phẩm - Yonex Admin</title>
+    <title>Quáº£n lÃ½ sáº£n pháº©m - Yonex Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -240,6 +240,11 @@
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
         </ul>
+        <div class="logout-container" style="margin-top: auto; padding-top: 20px;">
+            <a href="${pageContext.request.contextPath}/logout.htm" style="display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; color: #e74c3c; font-weight: 600; padding: 12px; border-radius: 15px; background: #ffebeb; transition: all 0.3s; width: 100%;">
+                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+            </a>
+        </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -247,10 +252,10 @@
         <div class="topbar">
             <div class="search-top">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Tìm kiếm...">
+                <input type="text" placeholder="TÃ¬m kiáº¿m...">
             </div>
             <div class="admin-profile">
-                <span>Admin</span>
+                <span>`${sessionScope.user.fullName}</span>
                 <i class="fa-solid fa-circle-user"></i>
             </div>
         </div>
@@ -285,11 +290,11 @@
                     <label>Category</label>
                     <select name="categoryId" class="filter-input">
                         <option value="">All Categories</option>
-                        <option value="1" ${selectedCategoryId == 1 ? 'selected' : ''}>Vợt cầu lông</option>
-                        <option value="2" ${selectedCategoryId == 2 ? 'selected' : ''}>Giày cầu lông</option>
-                        <option value="3" ${selectedCategoryId == 3 ? 'selected' : ''}>Quần áo</option>
-                        <option value="4" ${selectedCategoryId == 4 ? 'selected' : ''}>Túi vợt</option>
-                        <option value="5" ${selectedCategoryId == 5 ? 'selected' : ''}>Phụ kiện</option>
+                        <option value="1" ${selectedCategoryId == 1 ? 'selected' : ''}>Vá»£t cáº§u lÃ´ng</option>
+                        <option value="2" ${selectedCategoryId == 2 ? 'selected' : ''}>GiÃ y cáº§u lÃ´ng</option>
+                        <option value="3" ${selectedCategoryId == 3 ? 'selected' : ''}>Quáº§n Ã¡o</option>
+                        <option value="4" ${selectedCategoryId == 4 ? 'selected' : ''}>TÃºi vá»£t</option>
+                        <option value="5" ${selectedCategoryId == 5 ? 'selected' : ''}>Phá»¥ kiá»‡n</option>
                     </select>
                 </div>
                 <div class="filter-group">
@@ -356,7 +361,7 @@
                                     <c:when test="${not empty variantsMap[pid]}">
                                         <select class="filter-input" style="padding: 5px; min-width: 140px;">
                                             <c:forEach var="v" items="${variantsMap[pid]}">
-                                                <option>${v.name} — SL: ${v.stock}</option>
+                                                <option>${v.name} â€” SL: ${v.stock}</option>
                                             </c:forEach>
                                         </select>
                                     </c:when>
@@ -381,7 +386,7 @@
                     </c:forEach>
                     <c:if test="${empty products}">
                         <tr>
-                            <td colspan="9" style="text-align: center; padding: 40px; color: #8e8e8e;">Không tìm thấy sản phẩm nào!</td>
+                            <td colspan="9" style="text-align: center; padding: 40px; color: #8e8e8e;">KhÃ´ng tÃ¬m tháº¥y sáº£n pháº©m nÃ o!</td>
                         </tr>
                     </c:if>
                 </tbody>
@@ -410,3 +415,5 @@
 
 </body>
 </html>
+
+

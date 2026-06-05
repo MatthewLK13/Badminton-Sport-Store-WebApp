@@ -38,6 +38,9 @@ public class CheckoutController {
 	@Autowired
 	private ProductDao productDao;
 
+	@Autowired
+	private com.sport.service.CheckoutService checkoutService;
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String showCheckoutPage(HttpSession session, Model model) {
 		User user = (User) session.getAttribute("user");
@@ -120,72 +123,14 @@ public class CheckoutController {
 			return "checkout";
 		}
 
-		// Check stock for all items first
-		for (CartEntity item : cartItems) {
-			if (item.getProductVariantId() == null) continue;
-			Integer available = productDao.getAvailableStock(item.getProductVariantId());
-			if (available == null || available < item.getQuantity()) {
-				model.addAttribute("error", "Sản phẩm không đủ số lượng trong kho!");
-				return "checkout";
-			}
+		// Check stock and process order within a single transaction
+		try {
+			checkoutService.processOrder(user, checkoutData, cartItems);
+		} catch (RuntimeException e) {
+			model.addAttribute("error", e.getMessage());
+			return "checkout";
 		}
 
-		// Create order first (before decrementing stock to avoid inventory loss on failure)
-		Order order = new Order();
-		order.setUser(user);
-		order.setEmail(checkoutData.getEmail());
-		order.setFirstName(checkoutData.getFirstName());
-		order.setLastName(checkoutData.getLastName());
-		order.setAddress(checkoutData.getAddress());
-		order.setCity(checkoutData.getCity());
-		order.setState(checkoutData.getState());
-		order.setPhone(checkoutData.getPhone());
-		order.setCardNumber(checkoutData.getCardNumber());
-		order.setOrderDate(new Date());
-		order.setStatus(0);
-
-		// Calculate total amount and create order items
-		Double totalAmount = 0.0;
-		List<OrderItemEntity> orderItems = new ArrayList<>();
-
-		for (CartEntity item : cartItems) {
-			// Fetch variant to get product details
-			ProductVariantsEntity variant = productDao.getVariantById(item.getProductVariantId());
-			if (variant == null) continue;
-
-			String productName = variant.getProduct() != null ? variant.getProduct().getProductName() : "";
-			String variantName = variant.getVariant_name();
-			Double price = variant.getProduct() != null ? variant.getProduct().getPrice() : 0.0;
-			String imageUrl = variant.getProduct() != null ? variant.getProduct().getAvatarName() : "";
-
-			Double subtotal = price * item.getQuantity();
-			totalAmount += subtotal;
-
-			OrderItemEntity orderItem = new OrderItemEntity();
-			orderItem.setOrder(order);
-			orderItem.setVariantId(item.getProductVariantId());
-			if (variant.getProduct() != null) {
-			    orderItem.setProductId(variant.getProduct().getId());
-			}
-			orderItem.setProductName(productName);
-			orderItem.setVariantName(variantName);
-			orderItem.setPrice(price);
-			orderItem.setQuantity(item.getQuantity());
-			orderItem.setImageUrl(imageUrl);
-			orderItems.add(orderItem);
-		}
-
-		order.setTotalAmount(totalAmount);
-		order.setOrderItems(orderItems);
-		orderDAO.saveOrder(order);
-
-		// Decrement stock after order is saved (order of operations: validate -> create order -> decrement stock)
-		for (CartEntity item : cartItems) {
-			productDao.decrementStock(item.getProductVariantId(), item.getQuantity());
-		}
-
-		// Clear cart after successful checkout
-		cartDao.clearCart(user.getId());
 		session.setAttribute("cartCount", 0);
 		session.setAttribute("checkoutSuccess", "Đặt hàng thành công! Cảm ơn bạn đã đặt hàng.");
 

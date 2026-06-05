@@ -1,4 +1,4 @@
-package com.sport.controller;
+﻿package com.sport.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpSession;
@@ -21,18 +21,8 @@ public class AdminUserController {
     @Autowired
     private UserDAO userDAO;
 
-    private static final int ADMIN_ROLE_ID = 1;
-
-    private boolean isAdmin(HttpSession session) {
-        User user = (User) session.getAttribute("user");
-        return user != null && user.getRole() != null && user.getRole().getId() == ADMIN_ROLE_ID;
-    }
-
     @RequestMapping(value = "/users.htm", method = RequestMethod.GET)
     public String listUsers(Model model, HttpSession session) {
-        if (!isAdmin(session)) {
-            return "redirect:/home.htm?error=access_denied";
-        }
         List<User> users = userDAO.getAllUsers();
         model.addAttribute("users", users);
         return "admin/user_management";
@@ -40,36 +30,24 @@ public class AdminUserController {
 
     @RequestMapping(value = "/user/delete.htm", method = RequestMethod.POST)
     public String deleteUser(HttpSession session, @RequestParam("userId") Integer userId) {
-        if (!isAdmin(session)) {
-            return "redirect:/home.htm?error=access_denied";
-        }
         userDAO.deleteUser(userId);
         return "redirect:/admin/users.htm";
     }
 
     @RequestMapping(value = "/user/lock.htm", method = RequestMethod.POST)
     public String lockUser(HttpSession session, @RequestParam("userId") Integer userId) {
-        if (!isAdmin(session)) {
-            return "redirect:/home.htm?error=access_denied";
-        }
         userDAO.lockUser(userId);
         return "redirect:/admin/users.htm";
     }
 
     @RequestMapping(value = "/user/unlock.htm", method = RequestMethod.POST)
     public String unlockUser(HttpSession session, @RequestParam("userId") Integer userId) {
-        if (!isAdmin(session)) {
-            return "redirect:/home.htm?error=access_denied";
-        }
         userDAO.unlockUser(userId);
         return "redirect:/admin/users.htm";
     }
 
     @RequestMapping(value = "/user/add.htm", method = RequestMethod.GET)
     public String showAddUser(HttpSession session) {
-        if (!isAdmin(session)) {
-            return "redirect:/home.htm?error=access_denied";
-        }
         return "admin/add_user";
     }
 
@@ -81,12 +59,9 @@ public class AdminUserController {
                            @RequestParam("roleId") Integer roleId,
                            @RequestParam("status") Integer status,
                            Model model) {
-        if (!isAdmin(session)) {
-            return "redirect:/home.htm?error=access_denied";
-        }
 
         if (userDAO.existsByEmail(email.trim())) {
-            model.addAttribute("error", "Email đã tồn tại!");
+            model.addAttribute("error", "Email Ä‘Ã£ tá»“n táº¡i!");
             return "admin/add_user";
         }
 
@@ -106,3 +81,4 @@ public class AdminUserController {
         return "redirect:/admin/users.htm";
     }
 }
+

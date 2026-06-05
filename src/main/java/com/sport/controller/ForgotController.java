@@ -43,15 +43,11 @@ public class ForgotController {
         }
 
         identifier = identifier.trim();
-
-        // Tìm user trong Database
         User user = userDAO.findByEmailOrPhone(identifier);
 
         if (user != null) {
-            // Generate reset token
             String token = tokenService.generateToken(user.getId());
 
-            // Build reset link dynamically
             String serverName = request.getServerName();
             int serverPort = request.getServerPort();
             String protocol = request.getScheme();

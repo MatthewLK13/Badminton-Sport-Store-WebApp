@@ -1,11 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Chi tiết hóa đơn - Yonex Admin</title>
+    <title>Chi tiáº¿t hÃ³a Ä‘Æ¡n - Yonex Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -123,7 +123,7 @@
         }
         .btn-prev:hover { background: #c8c8c8; }
 
-        /* Receipt Invoice container (Giống thiết kế Figma chuẩn) */
+        /* Receipt Invoice container (Giá»‘ng thiáº¿t káº¿ Figma chuáº©n) */
         .invoice-card {
             background: #fff;
             max-width: 650px;
@@ -227,7 +227,7 @@
             background: #c8c8c8;
         }
 
-        /* Cấu hình in ấn bằng CSS Media Queries */
+        /* Cáº¥u hÃ¬nh in áº¥n báº±ng CSS Media Queries */
         @media print {
             body { background: #fff; }
             .sidebar, .topbar, .title-row, .action-row {
@@ -262,6 +262,11 @@
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
             <li class="menu-item active"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
         </ul>
+        <div class="logout-container" style="margin-top: auto; padding-top: 20px;">
+            <a href="${pageContext.request.contextPath}/logout.htm" style="display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; color: #e74c3c; font-weight: 600; padding: 12px; border-radius: 15px; background: #ffebeb; transition: all 0.3s; width: 100%;">
+                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+            </a>
+        </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -269,10 +274,10 @@
         <div class="topbar">
             <div class="search-top">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Tìm kiếm...">
+                <input type="text" placeholder="TÃ¬m kiáº¿m...">
             </div>
             <div class="admin-profile">
-                <span>VinhNguyen</span>
+                <span>`${sessionScope.user.fullName}</span>
                 <i class="fa-solid fa-circle-user"></i>
             </div>
         </div>
@@ -284,7 +289,7 @@
             </a>
         </div>
 
-        <!-- HÓA ĐƠN CHI TIẾT -->
+        <!-- HÃ“A ÄÆ N CHI TIáº¾T -->
         <div class="invoice-card">
             <div class="invoice-header">
                 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
@@ -292,47 +297,47 @@
                     <path d="M50 70 L65 25 L80 25 L65 70 Z" />
                 </svg>
                 <div class="brand-name">YONEX</div>
-                <div class="invoice-title">Hóa đơn bán lẻ</div>
+                <div class="invoice-title">HÃ³a Ä‘Æ¡n bÃ¡n láº»</div>
             </div>
 
             <div class="invoice-meta">
-                <div>Số HĐ: O-0${order.id}</div>
-                <div>Ngày: <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy"/></div>
-                <div>Giờ: <fmt:formatDate value="${order.orderDate}" pattern="HH:mm:ss"/></div>
+                <div>Sá»‘ HÄ: O-0${order.id}</div>
+                <div>NgÃ y: <fmt:formatDate value="${order.orderDate}" pattern="dd/MM/yyyy"/></div>
+                <div>Giá»: <fmt:formatDate value="${order.orderDate}" pattern="HH:mm:ss"/></div>
             </div>
 
-            <!-- Khách hàng -->
+            <!-- KhÃ¡ch hÃ ng -->
             <div style="font-size: 12px; margin-bottom: 20px;">
-                <p style="margin-bottom: 6px;"><strong>Khách hàng:</strong> ${order.firstName} ${order.lastName}</p>
-                <p style="margin-bottom: 6px;"><strong>Điện thoại:</strong> ${order.phone}</p>
-                <p><strong>Địa chỉ:</strong> ${order.address}, ${order.city}</p>
+                <p style="margin-bottom: 6px;"><strong>KhÃ¡ch hÃ ng:</strong> ${order.firstName} ${order.lastName}</p>
+                <p style="margin-bottom: 6px;"><strong>Äiá»‡n thoáº¡i:</strong> ${order.phone}</p>
+                <p><strong>Äá»‹a chá»‰:</strong> ${order.address}, ${order.city}</p>
             </div>
 
             <!-- Order Status Update -->
             <div style="font-size: 12px; margin-bottom: 20px; padding: 15px; background: #f5f5f5; border-radius: 8px;">
                 <form action="${pageContext.request.contextPath}/admin/order-status.htm" method="post" style="display: flex; align-items: center; gap: 10px;">
                     <input type="hidden" name="orderId" value="${order.id}"/>
-                    <strong>Trạng thái:</strong>
+                    <strong>Tráº¡ng thÃ¡i:</strong>
                     <select name="status" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #ddd; font-size: 12px;">
-                        <option value="0" ${order.status == 0 ? 'selected' : ''}>Chờ xác nhận</option>
-                        <option value="1" ${order.status == 1 ? 'selected' : ''}>Đã xác nhận</option>
-                        <option value="2" ${order.status == 2 ? 'selected' : ''}>Đang giao hàng</option>
-                        <option value="3" ${order.status == 3 ? 'selected' : ''}>Đã giao hàng</option>
-                        <option value="4" ${order.status == 4 ? 'selected' : ''}>Đã hủy</option>
+                        <option value="0" ${order.status == 0 ? 'selected' : ''}>Chá» xÃ¡c nháº­n</option>
+                        <option value="1" ${order.status == 1 ? 'selected' : ''}>ÄÃ£ xÃ¡c nháº­n</option>
+                        <option value="2" ${order.status == 2 ? 'selected' : ''}>Äang giao hÃ ng</option>
+                        <option value="3" ${order.status == 3 ? 'selected' : ''}>ÄÃ£ giao hÃ ng</option>
+                        <option value="4" ${order.status == 4 ? 'selected' : ''}>ÄÃ£ há»§y</option>
                     </select>
-                    <button type="submit" style="padding: 6px 16px; background: #4a4a4a; color: #fff; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;">Cập nhật</button>
+                    <button type="submit" style="padding: 6px 16px; background: #4a4a4a; color: #fff; border: none; border-radius: 6px; font-size: 12px; cursor: pointer;">Cáº­p nháº­t</button>
                 </form>
             </div>
 
-            <!-- Bảng sản phẩm -->
+            <!-- Báº£ng sáº£n pháº©m -->
             <table class="invoice-table">
                 <thead>
                     <tr>
                         <th class="text-center" style="width: 10%;">STT</th>
-                        <th style="width: 50%;">Tên hàng hóa</th>
+                        <th style="width: 50%;">TÃªn hÃ ng hÃ³a</th>
                         <th class="text-center" style="width: 10%;">SL</th>
-                        <th class="text-right" style="width: 15%;">Đơn giá</th>
-                        <th class="text-right" style="width: 15%;">Thành tiền</th>
+                        <th class="text-right" style="width: 15%;">ÄÆ¡n giÃ¡</th>
+                        <th class="text-right" style="width: 15%;">ThÃ nh tiá»n</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -341,8 +346,8 @@
                         <td class="text-center">${status.index + 1}</td>
                         <td>${item.productName} - ${item.variantName}</td>
                         <td class="text-center">${item.quantity}</td>
-                        <td class="text-right"><fmt:formatNumber value="${item.price}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></td>
-                        <td class="text-right"><fmt:formatNumber value="${item.price * item.quantity}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></td>
+                        <td class="text-right"><fmt:formatNumber value="${item.price}" type="currency" currencySymbol="Ä‘" maxFractionDigits="0"/></td>
+                        <td class="text-right"><fmt:formatNumber value="${item.price * item.quantity}" type="currency" currencySymbol="Ä‘" maxFractionDigits="0"/></td>
                     </tr>
                     </c:forEach>
                 </tbody>
@@ -354,23 +359,23 @@
                     <c:set var="totalAmount" value="${totalAmount + (item.price * item.quantity)}"/>
                 </c:forEach>
                 <div class="summary-row">
-                    <span>Tổng cộng:</span>
-                    <span><fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></span>
+                    <span>Tá»•ng cá»™ng:</span>
+                    <span><fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="Ä‘" maxFractionDigits="0"/></span>
                 </div>
                 <div class="summary-total">
-                    <span>Tổng thanh toán</span>
-                    <span><fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="đ" maxFractionDigits="0"/></span>
+                    <span>Tá»•ng thanh toÃ¡n</span>
+                    <span><fmt:formatNumber value="${totalAmount}" type="currency" currencySymbol="Ä‘" maxFractionDigits="0"/></span>
                 </div>
                 <div class="payment-method">
-                    <span>Phương thức thanh toán:</span>
+                    <span>PhÆ°Æ¡ng thá»©c thanh toÃ¡n:</span>
                     <span style="float: right; font-weight: 600;">
-                        <!-- Đọc thẻ tín dụng nếu có lưu -->
+                        <!-- Äá»c tháº» tÃ­n dá»¥ng náº¿u cÃ³ lÆ°u -->
                         <c:choose>
                             <c:when test="${not empty order.cardNumber}">
                                 Visa (**** <c:out value="${order.cardNumber.substring(Math.max(0, order.cardNumber.length() - 4))}"/>)
                             </c:when>
                             <c:otherwise>
-                                Thẻ visa
+                                Tháº» visa
                             </c:otherwise>
                         </c:choose>
                     </span>
@@ -378,9 +383,9 @@
             </div>
         </div>
 
-        <!-- NÚT IN HÓA ĐƠN -->
+        <!-- NÃšT IN HÃ“A ÄÆ N -->
         <div class="action-row">
-            <button class="btn-print" title="In hóa đơn" onclick="window.print()">
+            <button class="btn-print" title="In hÃ³a Ä‘Æ¡n" onclick="window.print()">
                 <i class="fa-solid fa-print"></i> Print
             </button>
         </div>
@@ -388,3 +393,5 @@
 
 </body>
 </html>
+
+

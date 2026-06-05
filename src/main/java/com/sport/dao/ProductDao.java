@@ -493,6 +493,35 @@ public class ProductDao {
             .executeUpdate();
     }
 
+    public List<ProductsEntity> getRandomProducts(int limit) {
+        Session session = factory.getCurrentSession();
+        
+        // 1. Fetch ALL IDs 
+        Query idQuery = session.createQuery("SELECT p.id FROM ProductsEntity p");
+        List<Integer> allIds = idQuery.list();
+        
+        if (allIds == null || allIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        // 2. Shuffle and pick top 'limit'
+        java.util.Collections.shuffle(allIds);
+        List<Integer> selectedIds = allIds.subList(0, Math.min(limit, allIds.size()));
+        
+        // 3. Fetch full entities
+        Query query = session.createQuery(
+            "SELECT DISTINCT p FROM ProductsEntity p " +
+            "LEFT JOIN FETCH p.category_id " +
+            "LEFT JOIN FETCH p.productImages " +
+            "WHERE p.id IN (:ids)"
+        );
+        query.setParameterList("ids", selectedIds);
+        
+        List<ProductsEntity> list = query.list();
+        java.util.Collections.shuffle(list); // Shuffle again to randomize display order
+        return list;
+    }
+
     @SuppressWarnings("unchecked")
     public List<ProductsEntity> getRecommendedProducts(int userId, int limit) {
         Session session = factory.getCurrentSession();
@@ -505,7 +534,7 @@ public class ProductDao {
         List<Integer> viewedProductIds = viewedQuery.list();
 
         if (viewedProductIds == null || viewedProductIds.isEmpty()) {
-            return getNewArrivals(limit);
+            return getRandomProducts(limit);
         }
 
         // Get categories from viewed products
@@ -515,7 +544,7 @@ public class ProductDao {
         List<Integer> categoryIds = categoryQuery.list();
 
         if (categoryIds == null || categoryIds.isEmpty()) {
-            return getNewArrivals(limit);
+            return getRandomProducts(limit);
         }
 
         // Get products from same categories, excluding already viewed
@@ -530,11 +559,18 @@ public class ProductDao {
 
         List<ProductsEntity> results = recommendQuery.list();
 
-        // If not enough, fill with newest products
+        // If not enough, fill with random products
         if (results.size() < limit) {
-            List<ProductsEntity> newArrivals = getNewArrivals(limit - results.size());
-            for (ProductsEntity p : newArrivals) {
-                if (!results.contains(p) && results.size() < limit) {
+            List<ProductsEntity> randomProducts = getRandomProducts(limit * 2);
+            for (ProductsEntity p : randomProducts) {
+                boolean contains = false;
+                for (ProductsEntity r : results) {
+                    if (r.getId() == p.getId()) {
+                        contains = true;
+                        break;
+                    }
+                }
+                if (!contains && results.size() < limit) {
                     results.add(p);
                 }
             }

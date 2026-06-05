@@ -14,7 +14,6 @@ public class WishlistDao {
 	@Autowired
 	private SessionFactory factory;
 	
-	//Lấy danh sách sản phẩm yêu thích theo id
 	public List<WishlistEntity> getByUserId(int userId){
 		Session session = factory.getCurrentSession();
 		Query query = session.createQuery(
@@ -23,7 +22,7 @@ public class WishlistDao {
 		query.setParameter("uid", userId);
 		return query.list();
 	}
-	//Điếm số lượng wishlist
+	
 	public long countByUserId(int userId) {
 		Session session = factory.getCurrentSession();
 		Query query = session.createQuery(
@@ -33,7 +32,6 @@ public class WishlistDao {
 		return (Long) query.uniqueResult();
 	}
 	
-	//Kiểm tra trạng thái xem khách hàng có bấm vào trái tim chưa
 	public boolean exists(int userId, int productId) {
         Session session = factory.getCurrentSession();
         Query query = session.createQuery(
@@ -43,7 +41,6 @@ public class WishlistDao {
         return ((Long) query.uniqueResult()) > 0;
     }
 
-    // Thêm vào wishlist
     public void add(int userId, int productId) {
         Session session = factory.getCurrentSession();
         WishlistEntity w = new WishlistEntity();
@@ -52,7 +49,6 @@ public class WishlistDao {
         session.save(w);
     }
 
-    // Xóa khỏi wishlist
     public void remove(int userId, int productId) {
         Session session = factory.getCurrentSession();
         session.createQuery(

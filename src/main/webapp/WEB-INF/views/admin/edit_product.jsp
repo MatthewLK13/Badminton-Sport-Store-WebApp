@@ -1,11 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Sửa sản phẩm - Yonex Admin</title>
+    <title>Sá»­a sáº£n pháº©m - Yonex Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -110,6 +110,11 @@
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
         </ul>
+        <div class="logout-container" style="margin-top: auto; padding-top: 20px;">
+            <a href="${pageContext.request.contextPath}/logout.htm" style="display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; color: #e74c3c; font-weight: 600; padding: 12px; border-radius: 15px; background: #ffebeb; transition: all 0.3s; width: 100%;">
+                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+            </a>
+        </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -117,7 +122,7 @@
         <div class="topbar">
             <a href="${pageContext.request.contextPath}/admin/product/management.htm" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Products</a>
             <div class="admin-profile">
-                <span>Admin</span>
+                <span>`${sessionScope.user.fullName}</span>
                 <i class="fa-solid fa-circle-user" style="font-size: 20px;"></i>
             </div>
         </div>
@@ -134,11 +139,11 @@
                     <c:forEach var="img" items="${product.productImages}">
                         <div class="image-upload-card">
                             <label class="${img.isMain ? 'main-img' : ''}">
-                                ${img.isMain ? '★ Main side' : 'Side image'}
+                                ${img.isMain ? 'â˜… Main side' : 'Side image'}
                             </label>
                             <img src="${pageContext.request.contextPath}/images/products/${img.imageUrl}" class="image-preview" alt="image">
                             <input type="file" name="${img.isMain ? 'fileMain' : img.imageUrl.contains('right') ? 'fileRight' : img.imageUrl.contains('top') ? 'fileTop' : 'fileBottom'}" class="form-control" accept="image/*">
-                            <small style="font-size:11px; color:#999;">Để trống nếu không đổi ảnh</small>
+                            <small style="font-size:11px; color:#999;">Äá»ƒ trá»‘ng náº¿u khÃ´ng Ä‘á»•i áº£nh</small>
                         </div>
                     </c:forEach>
                     <c:if test="${product.productImages.size() < 2}">
@@ -152,23 +157,23 @@
 
                 <h3 class="section-title">Basic Information</h3>
                 <div class="form-group">
-                    <label>Tên sản phẩm</label>
+                    <label>TÃªn sáº£n pháº©m</label>
                     <input type="text" name="productName" class="form-control" value="${product.productName}" required>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Danh mục</label>
+                        <label>Danh má»¥c</label>
                         <select name="categoryId" class="form-select" required>
-                            <option value="1" ${product.category_id.id == 1 ? 'selected' : ''}>Vợt cầu lông</option>
-                            <option value="2" ${product.category_id.id == 2 ? 'selected' : ''}>Giày cầu lông</option>
-                            <option value="3" ${product.category_id.id == 3 ? 'selected' : ''}>Quần áo cầu lông</option>
-                            <option value="4" ${product.category_id.id == 4 ? 'selected' : ''}>Túi vợt cầu lông</option>
-                            <option value="5" ${product.category_id.id == 5 ? 'selected' : ''}>Phụ kiện cầu lông</option>
+                            <option value="1" ${product.category_id.id == 1 ? 'selected' : ''}>Vá»£t cáº§u lÃ´ng</option>
+                            <option value="2" ${product.category_id.id == 2 ? 'selected' : ''}>GiÃ y cáº§u lÃ´ng</option>
+                            <option value="3" ${product.category_id.id == 3 ? 'selected' : ''}>Quáº§n Ã¡o cáº§u lÃ´ng</option>
+                            <option value="4" ${product.category_id.id == 4 ? 'selected' : ''}>TÃºi vá»£t cáº§u lÃ´ng</option>
+                            <option value="5" ${product.category_id.id == 5 ? 'selected' : ''}>Phá»¥ kiá»‡n cáº§u lÃ´ng</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Thương hiệu</label>
+                        <label>ThÆ°Æ¡ng hiá»‡u</label>
                         <select name="brandId" class="form-select" required>
                             <option value="1" ${product.brand_id.id == 1 ? 'selected' : ''}>Yonex</option>
                             <option value="2" ${product.brand_id.id == 2 ? 'selected' : ''}>Victor</option>
@@ -182,52 +187,52 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Giá (USD)</label>
+                        <label>GiÃ¡ (USD)</label>
                         <input type="number" step="0.01" name="price" class="form-control" value="${product.price}" required>
                     </div>
                     <div class="form-group">
-                        <label>Mô tả ngắn</label>
+                        <label>MÃ´ táº£ ngáº¯n</label>
                         <input type="text" name="description" class="form-control" value="${product.description}">
                     </div>
                 </div>
 
                 <div class="attr-section">
-                    <h3 class="section-title" style="margin-top: 0; border: none; color: #333;"><i class="fa-solid fa-layer-group"></i> KÍCH CỠ & TỒN KHO</h3>
+                    <h3 class="section-title" style="margin-top: 0; border: none; color: #333;"><i class="fa-solid fa-layer-group"></i> KÃCH Cá»  & Tá»’N KHO</h3>
                     
                     <c:forEach var="v" items="${variants}">
                         <div class="variant-row">
                             <input type="hidden" name="variantIds" value="${v.id}">
                             <div class="form-group" style="flex:2; margin-bottom:0;">
-                                <label>Tên size/khối lượng</label>
+                                <label>TÃªn size/khá»‘i lÆ°á»£ng</label>
                                 <input type="text" name="variantNames" class="form-control" value="${v.variant_name}" required>
                             </div>
                             <div class="form-group" style="flex:1; margin-bottom:0;">
-                                <label>Số lượng tồn kho</label>
+                                <label>Sá»‘ lÆ°á»£ng tá»“n kho</label>
                                 <input type="number" name="stockQuantities" class="form-control" value="${v.stock_quantity}" required>
                             </div>
                             <div style="flex:1; text-align:right; margin-top:20px;">
                                 <span class="badge ${v.stock_quantity > 0 ? 'bg-success' : 'bg-danger'}">
-                                    ${v.stock_quantity > 0 ? 'Còn hàng' : 'Hết hàng'}
+                                    ${v.stock_quantity > 0 ? 'CÃ²n hÃ ng' : 'Háº¿t hÃ ng'}
                                 </span>
                             </div>
                         </div>
                     </c:forEach>
 
-                    <a href="?id=${product.id}&extraRows=${extraRows + 1}" class="btn-add-variant"><i class="fa-solid fa-plus"></i> Thêm size mới</a>
+                    <a href="?id=${product.id}&extraRows=${extraRows + 1}" class="btn-add-variant"><i class="fa-solid fa-plus"></i> ThÃªm size má»›i</a>
 
                     <c:forEach begin="1" end="${extraRows}" var="i">
                         <div class="variant-row" style="border: 1px dashed #2ecc71; margin-top: 15px;">
                             <input type="hidden" name="variantIds" value="">
                             <div class="form-group" style="flex:2; margin-bottom:0;">
-                                <label>Tên size mới #${i}</label>
-                                <input type="text" name="variantNames" class="form-control" placeholder="Ví dụ: Size 43, 4U G5...">
+                                <label>TÃªn size má»›i #${i}</label>
+                                <input type="text" name="variantNames" class="form-control" placeholder="VÃ­ dá»¥: Size 43, 4U G5...">
                             </div>
                             <div class="form-group" style="flex:1; margin-bottom:0;">
-                                <label>Số lượng</label>
+                                <label>Sá»‘ lÆ°á»£ng</label>
                                 <input type="number" name="stockQuantities" class="form-control" placeholder="0" min="0">
                             </div>
                             <div style="flex:1; text-align:right; margin-top:20px;">
-                                <span class="badge bg-secondary">Mới</span>
+                                <span class="badge bg-secondary">Má»›i</span>
                             </div>
                         </div>
                     </c:forEach>
@@ -235,16 +240,16 @@
 
                 <c:if test="${not empty attrs}">
                     <div class="attr-section">
-                        <h3 class="section-title" style="margin-top: 0; border: none; color: #333;"><i class="fa-solid fa-tags"></i> THÔNG TIN CHI TIẾT (ATTRIBUTES)</h3>
+                        <h3 class="section-title" style="margin-top: 0; border: none; color: #333;"><i class="fa-solid fa-tags"></i> THÃ”NG TIN CHI TIáº¾T (ATTRIBUTES)</h3>
                         <c:forEach var="attr" items="${attrs}">
                             <c:if test="${attr.attrKey != 'brand_filter' and attr.attrKey != 'weight' and attr.attrKey != 'size_filter' and attr.attrKey != 'cloth_size'}">
                                 <div class="form-row mb-3">
                                     <div class="form-group" style="flex:1;">
-                                        <label>Thuộc tính</label>
+                                        <label>Thuá»™c tÃ­nh</label>
                                         <input type="text" name="attrKeys" class="form-control" value="${attr.attrKey}" readonly>
                                     </div>
                                     <div class="form-group" style="flex:2;">
-                                        <label>Giá trị</label>
+                                        <label>GiÃ¡ trá»‹</label>
                                         <input type="text" name="attrValues" class="form-control" value="${attr.attrValue}">
                                     </div>
                                 </div>
@@ -254,10 +259,12 @@
                 </c:if>
 
                 <div style="text-align: right;">
-                    <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> LƯU THAY ĐỔI</button>
+                    <button type="submit" class="btn-save"><i class="fa-solid fa-floppy-disk"></i> LÆ¯U THAY Äá»”I</button>
                 </div>
             </form>
         </div>
     </div>
 </body>
 </html>
+
+

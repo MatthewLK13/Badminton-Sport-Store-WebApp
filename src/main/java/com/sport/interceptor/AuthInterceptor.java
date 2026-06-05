@@ -16,10 +16,10 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         HttpSession session = request.getSession(false);
         User user = (User) (session != null ? session.getAttribute("user") : null);
 
-        String uri = request.getRequestURI();
 
         if (user == null) {
             if (isAjaxRequest(request)) {
+            	// 401
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("{\"error\": \"Vui lòng đăng nhập\"}");
                 return false;

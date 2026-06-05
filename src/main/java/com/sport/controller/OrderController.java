@@ -21,7 +21,7 @@ public class OrderController {
     private OrderDAO orderDAO;
 
     @Autowired
-    private ProductDao productDao;
+    private com.sport.service.OrderService orderService;
 
     @RequestMapping("/history.htm")
     public String orderHistory(HttpSession session, org.springframework.ui.Model model) {
@@ -71,20 +71,12 @@ public class OrderController {
             return "order-history";
         }
 
-        // Cancel the order first
-        boolean success = orderDAO.cancelOrder(orderId, user.getId());
+        // Cancel order via Transactional Service
+        boolean success = orderService.cancelOrderByUser(orderId, user.getId());
         if (!success) {
             model.addAttribute("error", "Không thể hủy đơn hàng. Vui lòng thử lại!");
             model.addAttribute("orders", orderDAO.findByUserId(user.getId()));
             return "order-history";
-        }
-
-        // Only restore stock AFTER successful cancel
-        List<OrderItemEntity> orderItems = order.getOrderItems();
-        if (orderItems != null && !orderItems.isEmpty()) {
-            for (OrderItemEntity item : orderItems) {
-                productDao.incrementStock(item.getVariantId(), item.getQuantity());
-            }
         }
 
         model.addAttribute("success", "Đơn hàng đã được hủy thành công!");

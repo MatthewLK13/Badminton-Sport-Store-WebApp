@@ -1,11 +1,11 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý đơn hàng - Yonex Admin</title>
+    <title>Quáº£n lÃ½ Ä‘Æ¡n hÃ ng - Yonex Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
@@ -21,7 +21,7 @@
         /* --- SIDEBAR --- */
         .sidebar {
             width: 240px;
-            background-color: #b8c9c3; /* Màu xanh xám nhẹ chuẩn Figma */
+            background-color: #b8c9c3; /* MÃ u xanh xÃ¡m nháº¹ chuáº©n Figma */
             padding: 30px 20px;
             display: flex;
             flex-direction: column;
@@ -212,7 +212,7 @@
     <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="logo-area">
-            <!-- Logo lông chim cách điệu của Yonex -->
+            <!-- Logo lÃ´ng chim cÃ¡ch Ä‘iá»‡u cá»§a Yonex -->
             <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                 <path d="M20 70 L35 25 L50 25 L35 70 Z" />
                 <path d="M50 70 L65 25 L80 25 L65 70 Z" />
@@ -224,6 +224,11 @@
             <li class="menu-item"><a href="${pageContext.request.contextPath}/admin/users.htm"><i class="fa-solid fa-users"></i> Users</a></li>
             <li class="menu-item active"><a href="${pageContext.request.contextPath}/admin/orders.htm"><i class="fa-solid fa-truck"></i> Orders</a></li>
         </ul>
+        <div class="logout-container" style="margin-top: auto; padding-top: 20px;">
+            <a href="${pageContext.request.contextPath}/logout.htm" style="display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; color: #e74c3c; font-weight: 600; padding: 12px; border-radius: 15px; background: #ffebeb; transition: all 0.3s; width: 100%;">
+                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+            </a>
+        </div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -231,10 +236,10 @@
         <div class="topbar">
             <div class="search-top">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Tìm kiếm...">
+                <input type="text" placeholder="TÃ¬m kiáº¿m...">
             </div>
             <div class="admin-profile">
-                <span>VinhNguyen</span>
+                <span>`${sessionScope.user.fullName}</span>
                 <i class="fa-solid fa-circle-user"></i>
             </div>
         </div>
@@ -256,7 +261,7 @@
 
         <div class="orders-list-box">
             <!-- Filter panel -->
-            <form action="${pageContext.request.contextPath}/admin/order/management.htm" method="GET">
+            <form action="${pageContext.request.contextPath}/admin/orders.htm" method="GET">
             <div class="filter-row">
                 <div class="filter-group">
                     <label>Search</label>
@@ -292,7 +297,7 @@
                             <td class="user-name-col">${item.firstName} ${item.lastName}</td>
                             <td>O-0${item.id}</td>
                             <td>
-                                <!-- Giả lập Role cho phù hợp Figma -->
+                                <!-- Giáº£ láº­p Role cho phÃ¹ há»£p Figma -->
                                 <c:choose>
                                     <c:when test="${item.id % 3 == 0}">
                                         <span class="badge admin">Admin</span>
@@ -308,11 +313,11 @@
                             <td><fmt:formatDate value="${item.orderDate}" pattern="dd/MM/yyyy"/></td>
                             <td>
                                 <c:choose>
-                                    <c:when test="${item.status == 0}"><span class="badge pending">Chờ xác nhận</span></c:when>
-                                    <c:when test="${item.status == 1}"><span class="badge" style="background: #dbeafe; color: #1d4ed8;">Đã xác nhận</span></c:when>
-                                    <c:when test="${item.status == 2}"><span class="badge" style="background: #fef3c7; color: #d97706;">Đang giao</span></c:when>
-                                    <c:when test="${item.status == 3}"><span class="badge done">Đã giao</span></c:when>
-                                    <c:when test="${item.status == 4}"><span class="badge" style="background: #fee2e2; color: #dc2626;">Đã hủy</span></c:when>
+                                    <c:when test="${item.status == 0}"><span class="badge pending">Chá» xÃ¡c nháº­n</span></c:when>
+                                    <c:when test="${item.status == 1}"><span class="badge" style="background: #dbeafe; color: #1d4ed8;">ÄÃ£ xÃ¡c nháº­n</span></c:when>
+                                    <c:when test="${item.status == 2}"><span class="badge" style="background: #fef3c7; color: #d97706;">Äang giao</span></c:when>
+                                    <c:when test="${item.status == 3}"><span class="badge done">ÄÃ£ giao</span></c:when>
+                                    <c:when test="${item.status == 4}"><span class="badge" style="background: #fee2e2; color: #dc2626;">ÄÃ£ há»§y</span></c:when>
                                     <c:otherwise><span class="badge pending">Unknown</span></c:otherwise>
                                 </c:choose>
                             </td>
@@ -325,7 +330,7 @@
                     </c:forEach>
                     <c:if test="${empty orders}">
                         <tr>
-                            <td colspan="7" style="text-align: center; color: #8e8e8e;">Chưa có đơn hàng nào trong hệ thống!</td>
+                            <td colspan="7" style="text-align: center; color: #8e8e8e;">ChÆ°a cÃ³ Ä‘Æ¡n hÃ ng nÃ o trong há»‡ thá»‘ng!</td>
                         </tr>
                     </c:if>
                 </tbody>
@@ -335,3 +340,5 @@
 
 </body>
 </html>
+
+

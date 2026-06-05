@@ -80,7 +80,6 @@ public class GeminiService {
         public boolean shouldRecommendProducts() { return shouldRecommendProducts; }
     }
 
-    // New method that accepts List<Map<String,String>> from controller
     public String getChatbotResponse(String userMessage, List<java.util.Map<String, String>> chatHistory) {
         List<ChatMessage> history = new ArrayList<>();
         if (chatHistory != null) {

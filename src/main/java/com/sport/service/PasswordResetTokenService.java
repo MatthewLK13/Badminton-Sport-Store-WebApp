@@ -9,9 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class PasswordResetTokenService {
 
-    private static final long TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+    private static final long TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000;
 
-    // In-memory token storage: token -> {userId, createdAt, expiresAt}
     private static final Map<String, TokenData> tokenStore = new ConcurrentHashMap<>();
 
     public String generateToken(Integer userId) {

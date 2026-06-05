@@ -1,4 +1,4 @@
-package com.sport.controller;
+﻿package com.sport.controller;
 
 import java.util.List;
 import java.util.Calendar;
@@ -25,23 +25,16 @@ public class AdminController {
 	private OrderDAO orderDAO;
 
 	@Autowired
+	private com.sport.service.OrderService orderService;
+
+	@Autowired
 	private UserDAO userDAO;
 
 	@Autowired
 	private AdminProductDao adminProductDao;
 
-	private static final int ADMIN_ROLE_ID = 1;
-
-	private boolean isAdmin(HttpSession session) {
-		User user = (User) session.getAttribute("user");
-		return user != null && user.getRole() != null && user.getRole().getId() == ADMIN_ROLE_ID;
-	}
-
 	@RequestMapping(value ="/dashboard.htm", method = RequestMethod.GET)
 	public String showDashboard(Model model, HttpSession session) {
-		if (!isAdmin(session)) {
-			return "redirect:/home.htm?error=access_denied";
-		}
 		
 		List<Order> orders = orderDAO.getAllOrders();
 		double totalSales = 0;
@@ -63,20 +56,20 @@ public class AdminController {
 	}
 
 	@RequestMapping(value ="/orders.htm", method = RequestMethod.GET)
-	public String listOrders(Model model, HttpSession session) {
-		if (!isAdmin(session)) {
-			return "redirect:/home.htm?error=access_denied";
-		}
-		List<Order> orders = orderDAO.getAllOrders();
+	public String listOrders(
+			@RequestParam(value="keyword", required=false) String keyword,
+			@RequestParam(value="orderDate", required=false) String orderDateStr,
+			Model model, HttpSession session) {
+		List<Order> allOrders = orderDAO.getAllOrders();
 
-		int totalOrders = orders.size();
+		int totalOrders = allOrders.size();
 		int newOrdersThisMonth = 0;
 
 		Calendar cal = Calendar.getInstance();
 		int currentMonth = cal.get(Calendar.MONTH);
 		int currentYear = cal.get(Calendar.YEAR);
 
-		for (Order order : orders) {
+		for (Order order : allOrders) {
 			if (order.getOrderDate() != null) {
 				cal.setTime(order.getOrderDate());
 				if(cal.get(Calendar.MONTH) == currentMonth && cal.get(Calendar.YEAR) == currentYear) {
@@ -85,7 +78,42 @@ public class AdminController {
 			}
 		}
 
-		model.addAttribute("orders", orders);
+		List<Order> filteredOrders = new java.util.ArrayList<Order>();
+		java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+		
+		for (Order order : allOrders) {
+			boolean matchKeyword = true;
+			boolean matchDate = true;
+
+			if (keyword != null && !keyword.trim().isEmpty()) {
+				String kw = keyword.trim().toLowerCase();
+				String fullName = (order.getFirstName() + " " + order.getLastName()).toLowerCase();
+				String email = order.getEmail() != null ? order.getEmail().toLowerCase() : "";
+				String idStr = String.valueOf(order.getId());
+				
+				// Search matches ID, or name, or email
+				if (!idStr.equals(kw) && !fullName.contains(kw) && !email.contains(kw)) {
+					matchKeyword = false;
+				}
+			}
+
+			if (orderDateStr != null && !orderDateStr.trim().isEmpty()) {
+				if (order.getOrderDate() != null) {
+					String orderDateFormatted = sdf.format(order.getOrderDate());
+					if (!orderDateFormatted.equals(orderDateStr.trim())) {
+						matchDate = false;
+					}
+				} else {
+					matchDate = false;
+				}
+			}
+
+			if (matchKeyword && matchDate) {
+				filteredOrders.add(order);
+			}
+		}
+
+		model.addAttribute("orders", filteredOrders);
 		model.addAttribute("totalOrders", totalOrders);
 		model.addAttribute("newOrders", newOrdersThisMonth);
 		return "admin/orders";
@@ -93,9 +121,6 @@ public class AdminController {
 
 	@RequestMapping(value = "/order-detail.htm", method = RequestMethod.GET)
 	public String orderDetail(@RequestParam("id") Integer id, Model model, HttpSession session) {
-		if (!isAdmin(session)) {
-			return "redirect:/home.htm?error=access_denied";
-		}
 		Order order = orderDAO.getOrderByIdWithItems(id);
 		if (order == null) {
 			return "redirect:/admin/orders.htm";
@@ -109,14 +134,15 @@ public class AdminController {
 	@RequestMapping(value = "/order-status.htm", method = RequestMethod.POST)
 	public String updateOrderStatus(@RequestParam("orderId") Integer orderId,
 								   @RequestParam("status") Integer status, HttpSession session) {
-		if (!isAdmin(session)) {
-			return "redirect:/home.htm?error=access_denied";
-		}
-		// Validate status phải nằm trong range 0-4
+		// Validate status pháº£i náº±m trong range 0-4
 		if (status == null || status < 0 || status > 4) {
 			return "redirect:/admin/orders.htm";
 		}
-		orderDAO.updateOrderStatus(orderId, status);
+		
+		// DÃ¹ng OrderService Ä‘á»ƒ vá»«a cáº­p nháº­t tráº¡ng thÃ¡i vá»«a phá»¥c há»“i tá»“n kho (náº¿u há»§y Ä‘Æ¡n)
+		orderService.updateOrderStatusByAdmin(orderId, status);
+		
 		return "redirect:/admin/order-detail.htm?id=" + orderId;
 	}
 }
+

@@ -24,6 +24,7 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
         String roleName = user.getRole().getRoleName();
         if (!"ADMIN".equalsIgnoreCase(roleName)) {
             if (isAjaxRequest(request)) {
+            	// 403
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                 response.getWriter().write("{\"error\": \"Không có quyền truy cập\"}");
                 return false;
