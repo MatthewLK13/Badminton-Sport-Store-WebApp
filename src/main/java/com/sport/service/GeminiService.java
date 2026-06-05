@@ -22,9 +22,19 @@ import com.sport.entity.ProductsEntity;
 @Service
 public class GeminiService {
 
-    private static final String API_KEY = System.getenv("GEMINI_API_KEY");
+    /** Env override; otherwise default key from project config. */
+    private static final String API_KEY = resolveApiKey();
+    private static final String MODEL = "gemini-flash-latest";
     private static final String API_URL =
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
+        "https://generativelanguage.googleapis.com/v1beta/models/" + MODEL + ":generateContent";
+
+    private static String resolveApiKey() {
+        String fromEnv = System.getenv("GEMINI_API_KEY");
+        if (fromEnv != null && !fromEnv.isBlank()) {
+            return fromEnv.trim();
+        }
+        return "YOUR_API_KEY_HERE";
+    }
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -84,11 +94,12 @@ public class GeminiService {
         List<ChatMessage> history = new ArrayList<>();
         if (chatHistory != null) {
             for (java.util.Map<String, String> msg : chatHistory) {
-                String role = msg.get("role");
-                if ("bot".equals(role)) {
-                    role = "model";
+                String role = normalizeRole(msg.get("role"));
+                String text = msg.get("content");
+                if (role == null || text == null || text.isBlank()) {
+                    continue;
                 }
-                history.add(new ChatMessage(role, msg.get("content")));
+                history.add(new ChatMessage(role, text));
             }
         }
         GeminiResponse response = generateResponse(userMessage, history);
@@ -102,26 +113,31 @@ public class GeminiService {
                 null, false);
         }
 
+        if (userMessage == null) {
+            userMessage = "";
+        }
+
         try {
             String jsonBody = buildRequestBody(userMessage, history);
             RequestBody body = RequestBody.create(jsonBody, JSON);
 
             Request request = new Request.Builder()
-                    .url(API_URL + "?key=" + API_KEY)
+                    .url(API_URL)
                     .post(body)
                     .addHeader("Content-Type", "application/json")
+                    .addHeader("x-goog-api-key", API_KEY)
                     .build();
 
             try (Response response = client.newCall(request).execute()) {
+                String responseBody = response.body() != null ? response.body().string() : "";
+
                 if (!response.isSuccessful()) {
-                    String errorBody = response.body() != null ? response.body().string() : "No body";
-                    System.out.println("GEMINI API ERROR: " + response.code() + " - " + errorBody);
+                    System.out.println("GEMINI API ERROR: " + response.code() + " - " + responseBody);
                     return new GeminiResponse(
-                        "Xin loi, da co loi xay ra. Vui long thu lai sau.",
+                        mapApiErrorToUserMessage(response.code(), responseBody),
                         null, false);
                 }
 
-                String responseBody = response.body().string();
                 String reply = parseResponse(responseBody);
 
                 // Check if we should recommend products
@@ -151,10 +167,17 @@ public class GeminiService {
 
         com.fasterxml.jackson.databind.node.ArrayNode contents = root.putArray("contents");
 
-        for (ChatMessage msg : history) {
-            com.fasterxml.jackson.databind.node.ObjectNode content = contents.addObject();
-            content.put("role", msg.getRole());
-            content.putArray("parts").addObject().put("text", msg.getText());
+        if (history != null) {
+            for (ChatMessage msg : history) {
+                String role = normalizeRole(msg.getRole());
+                String text = msg.getText();
+                if (role == null || text == null || text.isBlank()) {
+                    continue;
+                }
+                com.fasterxml.jackson.databind.node.ObjectNode content = contents.addObject();
+                content.put("role", role);
+                content.putArray("parts").addObject().put("text", text);
+            }
         }
 
         com.fasterxml.jackson.databind.node.ObjectNode userContent = contents.addObject();
@@ -162,6 +185,38 @@ public class GeminiService {
         userContent.putArray("parts").addObject().put("text", userMessage);
 
         return objectMapper.writeValueAsString(root);
+    }
+
+    private static String normalizeRole(String role) {
+        if (role == null || role.isBlank()) {
+            return null;
+        }
+        switch (role.trim().toLowerCase()) {
+            case "user":
+                return "user";
+            case "model":
+            case "bot":
+            case "assistant":
+                return "model";
+            default:
+                return null;
+        }
+    }
+
+    private String mapApiErrorToUserMessage(int httpCode, String errorBody) {
+        try {
+            JsonNode error = objectMapper.readTree(errorBody).path("error");
+            String apiMessage = error.path("message").asText("");
+            if (httpCode == 429 || apiMessage.toLowerCase().contains("quota")) {
+                return "Xin loi, he thong AI dang qua tai. Vui long thu lai sau vai phut.";
+            }
+            if (!apiMessage.isBlank()) {
+                return "Xin loi, da co loi tu API: " + apiMessage;
+            }
+        } catch (Exception ignored) {
+            // fall through
+        }
+        return "Xin loi, da co loi xay ra. Vui long thu lai sau.";
     }
 
     private String escapeJson(String text) {
